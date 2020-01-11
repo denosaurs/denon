@@ -2,15 +2,15 @@ import { walk } from "https://deno.land/std/fs/mod.ts";
 
 export type FileModifiedMap = { [filename: string]: number };
 
-export enum Event {
+export enum FileEvent {
     Changed,
     Created,
     Removed
 }
 
-export interface Change {
+export interface FileChange {
     path: string;
-    event: Event;
+    event: FileEvent;
 }
 
 export interface WatchOptions {
@@ -23,7 +23,7 @@ export interface WatchOptions {
     skip?: RegExp[];
 }
 
-export class Watcher implements AsyncIterator<Change[]> {
+export class Watcher implements AsyncIterator<FileChange[]> {
     private target: string;
     private interval: number;
     private prevFiles: FileModifiedMap;
@@ -55,9 +55,9 @@ export class Watcher implements AsyncIterator<Change[]> {
         this.skip = skip;
     }
 
-    public async next(): Promise<IteratorResult<Change[]>> {
+    public async next(): Promise<IteratorResult<FileChange[]>> {
         const currFiles: FileModifiedMap = {};
-        const changes: Change[] = [];
+        const changes: FileChange[] = [];
         const start = Date.now();
 
         for await (const { filename, info } of walk(this.target, {
@@ -75,7 +75,7 @@ export class Watcher implements AsyncIterator<Change[]> {
             if (this.prevFiles[file] && !currFiles[file]) {
                 changes.push({
                     path: file,
-                    event: Event.Removed
+                    event: FileEvent.Removed
                 });
             } else if (
                 this.prevFiles[file] &&
@@ -84,7 +84,7 @@ export class Watcher implements AsyncIterator<Change[]> {
             ) {
                 changes.push({
                     path: file,
-                    event: Event.Changed
+                    event: FileEvent.Changed
                 });
             }
         }
@@ -93,7 +93,7 @@ export class Watcher implements AsyncIterator<Change[]> {
             if (!this.prevFiles[file] && currFiles[file]) {
                 changes.push({
                     path: file,
-                    event: Event.Created
+                    event: FileEvent.Created
                 });
             }
         }
@@ -109,7 +109,7 @@ export class Watcher implements AsyncIterator<Change[]> {
     }
 }
 
-export function watch(target: string, options?: WatchOptions): AsyncIterable<Change[]> {
+export function watch(target: string, options?: WatchOptions): AsyncIterable<FileChange[]> {
     const watcher = new Watcher(target, options);
 
     return {

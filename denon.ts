@@ -3,7 +3,7 @@ import { resolve, dirname } from "https://deno.land/std/path/mod.ts";
 import { exists } from "https://deno.land/std/fs/mod.ts";
 import { yellow, green, red, setColorEnabled } from "https://deno.land/std/fmt/mod.ts";
 import { walk } from "https://deno.land/std/fs/mod.ts";
-import { watch, Event, FileModifiedMap } from "./watcher.ts";
+import { watch, FileEvent, FileModifiedMap } from "./watcher.ts";
 
 setColorEnabled(true);
 
