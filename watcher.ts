@@ -1,4 +1,6 @@
-import { walk, WalkOptions } from "https://deno.land/std/fs/mod.ts";
+import { walk } from "https://deno.land/std/fs/mod.ts";
+
+export type FileModifiedMap = { [filename: string]: number };
 
 export enum Event {
     Changed,
@@ -11,119 +13,100 @@ export interface Change {
     event: Event;
 }
 
-export interface WatchOptions extends WalkOptions {
-    interval: number;
-    files: { [file: string]: number };
+export interface WatchOptions {
+    interval?: number;
+    startFiles?: FileModifiedMap;
+
+    maxDepth?: number;
+    exts?: string[];
+    match?: RegExp[];
+    skip?: RegExp[];
 }
 
-export const defaultWatchOptions: WatchOptions = {
-    interval: 500,
-    files: {}
-};
-
 export class Watcher implements AsyncIterator<Change[]> {
-    public files: { [file: string]: number } = {};
-    public target: string;
-    public options: WatchOptions;
+    private target: string;
+    private interval: number;
+    private prevFiles: FileModifiedMap;
+
+    private maxDepth: number;
+    private exts: string[];
+    private match: RegExp[];
+    private skip: RegExp[];
 
     constructor(
         target: string,
-        options: WatchOptions = defaultWatchOptions
+        {
+            interval = 500,
+            startFiles = {},
+
+            maxDepth = Infinity,
+            exts = null,
+            match = null,
+            skip = null
+        }: WatchOptions = {}
     ) {
         this.target = target;
-        this.options = options;
-        this.files = options.files;
-    }
+        this.interval = interval;
+        this.prevFiles = startFiles;
 
-    private difference(
-        a: { [key: string]: number },
-        b: { [key: string]: number }
-    ): {
-        created: {};
-        removed: {};
-        changed: {};
-    } {
-        const difference = {
-            created: {},
-            removed: {},
-            changed: {}
-        };
-
-        for (const key in a) {
-            if (a[key] && !b[key]) {
-                difference.removed[key] = a[key];
-            } else if (a[key] && b[key] && a[key] !== b[key]) {
-                difference.changed[key] = b[key];
-            }
-        }
-
-        for (const key in b) {
-            if (!a[key] && b[key]) {
-                difference.created[key] = b[key];
-            }
-        }
-
-        return difference;
+        this.maxDepth = maxDepth;
+        this.exts = exts;
+        this.match = match;
+        this.skip = skip;
     }
 
     public async next(): Promise<IteratorResult<Change[]>> {
-        const newFiles: { [file: string]: number } = {};
+        const currFiles: FileModifiedMap = {};
         const changes: Change[] = [];
         const start = Date.now();
 
-        for await (const { filename, info } of walk(this.target, this.options)) {
-            if (info.isFile()) {
-                newFiles[filename] = info.modified;
+        for await (const { filename, info } of walk(this.target, {
+            maxDepth: this.maxDepth,
+            includeDirs: false,
+            followSymlinks: false,
+            exts: this.exts,
+            match: this.match,
+            skip: this.skip
+        })) {
+            currFiles[filename] = info.modified;
+        }
+
+        for (const file in this.prevFiles) {
+            if (this.prevFiles[file] && !currFiles[file]) {
+                changes.push({
+                    path: file,
+                    event: Event.Removed
+                });
+            } else if (
+                this.prevFiles[file] &&
+                currFiles[file] &&
+                this.prevFiles[file] !== currFiles[file]
+            ) {
+                changes.push({
+                    path: file,
+                    event: Event.Changed
+                });
             }
         }
 
-        const { created, removed, changed } = this.difference(this.files, newFiles);
-
-        for (const key in created) {
-            changes.push({
-                path: key,
-                event: Event.Created
-            });
+        for (const file in currFiles) {
+            if (!this.prevFiles[file] && currFiles[file]) {
+                changes.push({
+                    path: file,
+                    event: Event.Created
+                });
+            }
         }
 
-        for (const key in removed) {
-            changes.push({
-                path: key,
-                event: Event.Removed
-            });
-        }
-
-        for (const key in changed) {
-            changes.push({
-                path: key,
-                event: Event.Changed
-            });
-        }
-
-        this.files = newFiles;
+        this.prevFiles = currFiles;
 
         const end = Date.now();
-        const wait = this.options.interval - (end - start);
+        const wait = this.interval - (end - start);
 
         if (wait > 0) await new Promise(r => setTimeout(r, wait));
 
         return changes.length === 0 ? this.next() : { done: false, value: changes };
     }
-}
-
-export async function files(
-    path: string,
-    options?: WalkOptions
-): Promise<{ [file: string]: number }> {
-    const files: { [file: string]: number } = {};
-
-    for await (const { filename, info } of walk(path, options)) {
-        if (info.isFile()) {
-            files[filename] = info.modified;
-        }
-    }
-
-    return files;
 }
 
 export function watch(target: string, options?: WatchOptions): AsyncIterable<Change[]> {
