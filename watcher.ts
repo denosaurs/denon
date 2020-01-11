@@ -20,8 +20,6 @@ export class Watcher implements AsyncIterator<Change[]> {
     public target: string;
     public options: WatchOptions;
 
-    private previous: number;
-
     constructor(
         target: string,
         options: WatchOptions = {
@@ -32,8 +30,6 @@ export class Watcher implements AsyncIterator<Change[]> {
         this.files = files;
         this.target = target;
         this.options = options;
-
-        this.previous = Date.now();
     }
 
     private difference(
@@ -70,6 +66,7 @@ export class Watcher implements AsyncIterator<Change[]> {
     public async next(): Promise<IteratorResult<Change[]>> {
         const newFiles: { [file: string]: number } = {};
         const changes: Change[] = [];
+        const start = Date.now();
 
         for await (const { filename, info } of walk(this.target, this.options)) {
             if (info.isFile()) {
@@ -102,13 +99,10 @@ export class Watcher implements AsyncIterator<Change[]> {
 
         this.files = newFiles;
 
-        while (true) {
-            const time = Date.now();
-            if (this.previous + this.options.interval <= time) {
-                this.previous = time;
-                break;
-            }
-        }
+        const end = Date.now();
+        const wait = this.options.interval - (end - start);
+
+        if (wait > 0) await new Promise(r => setTimeout(r, wait));
 
         return changes.length === 0 ? this.next() : { done: false, value: changes };
     }
