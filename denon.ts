@@ -1,20 +1,22 @@
 import { parse } from "https://deno.land/std/flags/mod.ts";
 import { resolve, dirname } from "https://deno.land/std/path/mod.ts";
 import { exists } from "https://deno.land/std/fs/mod.ts";
+import { sprintf, underline, green, red, setColorEnabled } from "https://deno.land/std/fmt/mod.ts";
 import { watch } from "./watcher.ts";
+
+setColorEnabled(true);
 
 const args = parse(Deno.args);
 
 if (args._.length < 1 || !(await exists(args._[0]))) {
-    fail("no file was provided");
+    fail("Could not start denon because no file was provided");
 }
 
 const file = resolve(args._[0]);
 const path = dirname(file);
 const runner = run();
 
-log(`Watching ${path}`);
-log(`Running...`);
+log(`Watching ${path}, Running...`);
 
 runner();
 
@@ -40,13 +42,13 @@ function run() {
     };
 }
 
-function fail(reason: string) {
-    log(`Could not start Denon because ${reason}`);
-    Deno.exit(1);
+function fail(reason: string, code: number = 1) {
+    console.log(red(`[DENON] ${reason}`));
+    Deno.exit(code);
 }
 
 function log(text: string) {
-    console.log(`[DENON] ${text}`);
+    console.log(green(`[DENON] ${text}`));
 }
 
 function help() {}

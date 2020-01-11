@@ -114,7 +114,10 @@ export class Watcher implements AsyncIterator<Change[]> {
     }
 }
 
-export async function watch(target: string, options?: WatchOptions): Promise<AsyncIterable<Change[]>> {
+export async function watch(
+    target: string,
+    options?: WatchOptions
+): Promise<AsyncIterable<Change[]>> {
     const files: { [file: string]: number } = {};
 
     for await (const { filename, info } of walk(target, options)) {
