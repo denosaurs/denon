@@ -13,7 +13,13 @@ export interface Change {
 
 export interface WatchOptions extends WalkOptions {
     interval: number;
+    files: { [file: string]: number };
 }
+
+export const defaultWatchOptions: WatchOptions = {
+    interval: 500,
+    files: {}
+};
 
 export class Watcher implements AsyncIterator<Change[]> {
     public files: { [file: string]: number } = {};
@@ -22,14 +28,11 @@ export class Watcher implements AsyncIterator<Change[]> {
 
     constructor(
         target: string,
-        options: WatchOptions = {
-            interval: 500
-        },
-        files: { [file: string]: number } = {}
+        options: WatchOptions = defaultWatchOptions
     ) {
-        this.files = files;
         this.target = target;
         this.options = options;
+        this.files = options.files;
     }
 
     private difference(
@@ -108,19 +111,23 @@ export class Watcher implements AsyncIterator<Change[]> {
     }
 }
 
-export async function watch(
-    target: string,
-    options?: WatchOptions
-): Promise<AsyncIterable<Change[]>> {
+export async function files(
+    path: string,
+    options?: WalkOptions
+): Promise<{ [file: string]: number }> {
     const files: { [file: string]: number } = {};
 
-    for await (const { filename, info } of walk(target, options)) {
+    for await (const { filename, info } of walk(path, options)) {
         if (info.isFile()) {
             files[filename] = info.modified;
         }
     }
 
-    const watcher = new Watcher(target, options, files);
+    return files;
+}
+
+export function watch(target: string, options?: WatchOptions): AsyncIterable<Change[]> {
+    const watcher = new Watcher(target, options);
 
     return {
         [Symbol.asyncIterator]() {

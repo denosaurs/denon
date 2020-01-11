@@ -2,7 +2,7 @@ import { parse } from "https://deno.land/std/flags/mod.ts";
 import { resolve, dirname } from "https://deno.land/std/path/mod.ts";
 import { exists } from "https://deno.land/std/fs/mod.ts";
 import { yellow, green, red, setColorEnabled } from "https://deno.land/std/fmt/mod.ts";
-import { watch, Event } from "./watcher.ts";
+import { watch, Event, files, defaultWatchOptions } from "./watcher.ts";
 
 setColorEnabled(true);
 
@@ -21,7 +21,10 @@ log(`Watching ${path}, Running...`);
 
 runner();
 
-for await (const changes of await watch(path)) {
+for await (const changes of watch(path, {
+    interval: 500,
+    files: await files(path, defaultWatchOptions)
+})) {
     log(`Detected ${changes.length} change${changes.length > 1 ? "s" : ""}. Rerunning...`);
 
     for (const change of changes) {
