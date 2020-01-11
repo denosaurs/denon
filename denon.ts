@@ -1,11 +1,12 @@
 import { parse } from "https://deno.land/std/flags/mod.ts";
 import { resolve, dirname } from "https://deno.land/std/path/mod.ts";
 import { exists } from "https://deno.land/std/fs/mod.ts";
-import { sprintf, underline, green, red, setColorEnabled } from "https://deno.land/std/fmt/mod.ts";
-import { watch } from "./watcher.ts";
+import { yellow, green, red, setColorEnabled } from "https://deno.land/std/fmt/mod.ts";
+import { watch, Event } from "./watcher.ts";
 
 setColorEnabled(true);
 
+const debugging = false;
 const args = parse(Deno.args);
 
 if (args._.length < 1 || !(await exists(args._[0]))) {
@@ -21,7 +22,12 @@ log(`Watching ${path}, Running...`);
 runner();
 
 for await (const changes of await watch(path)) {
-    log(`Detected ${changes.length} change(s). Rerunning...`);
+    log(`Detected ${changes.length} change${changes.length > 1 ? "s" : ""}. Rerunning...`);
+
+    for (const change of changes) {
+        debug(`File "${change.path}" was ${Event[change.event].toLowerCase()}`);
+    }
+
     runner();
 }
 
@@ -49,6 +55,10 @@ function fail(reason: string, code: number = 1) {
 
 function log(text: string) {
     console.log(green(`[DENON] ${text}`));
+}
+
+function debug(text: string) {
+    if (debugging) console.log(yellow(`[DENON] ${text}`));
 }
 
 function help() {}
