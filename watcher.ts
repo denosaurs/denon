@@ -51,6 +51,7 @@ export async function* watch(
 ): AsyncGenerator<FileChange[]> {
     let prevFiles = {};
 
+    // First walk the target path so we dont create `Created` events for files that are already there
     for await (const { filename, info } of walk(target, {
         maxDepth: maxDepth,
         includeDirs: false,
@@ -67,6 +68,7 @@ export async function* watch(
         const changes = [];
         const start = Date.now();
 
+        // Walk the target path and put all of the files into an array
         for await (const { filename, info } of walk(target, {
             maxDepth: maxDepth,
             includeDirs: false,
@@ -79,9 +81,8 @@ export async function* watch(
         }
 
         for (const file in prevFiles) {
+            // Check if a file has been removed else check if has been changed
             if (prevFiles[file] && !currFiles[file]) {
-                console.log(file);
-
                 changes.push({
                     path: file,
                     event: FileEvent.Removed
@@ -95,6 +96,7 @@ export async function* watch(
         }
 
         for (const file in currFiles) {
+            // Check if a file has been created
             if (!prevFiles[file] && currFiles[file]) {
                 changes.push({
                     path: file,
@@ -108,8 +110,10 @@ export async function* watch(
         const end = Date.now();
         const wait = interval - (end - start);
 
+        // Wait to make sure it runs the whole interval time
         if (wait > 0) await new Promise(r => setTimeout(r, wait));
 
+        // If there was no changes continue to look for them else yield the changes
         if (changes.length === 0) {
             continue;
         } else {
