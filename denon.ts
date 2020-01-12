@@ -16,19 +16,20 @@ interface DenonOptions {
 const parseOptions = {
     boolean: ["d", "debug"],
     alias: {
-        "debug": "d",
-        "extensions": ["e", "exts"],
-        "match": "m",
-        "skip": "s",
-        "interval": "i"
+        help: "h",
+        debug: "d",
+        extensions: "e",
+        match: "m",
+        skip: "s",
+        interval: "i"
     },
     default: {
-        "debug": false,
-        "maxdepth": Infinity,
-        "extensions": null,
-        "match": null,
-        "skip": null,
-        "interval": 500
+        debug: false,
+        maxdepth: Infinity,
+        extensions: null,
+        match: null,
+        skip: null,
+        interval: 500
     }
 };
 
@@ -36,8 +37,13 @@ if (!Deno.noColor) setColorEnabled(true);
 const allArgs = [...Deno.args];
 const allFlags = parse(allArgs, parseOptions);
 
+if (allFlags.help) {
+    help();
+    Deno.exit(0);
+}
+
 if (allFlags._.length < 1 || !(await exists(allFlags._[0]))) {
-    fail("Could not start denon because no file was provided");
+    fail("Could not start denon because no file was provided, use -h for help");
 }
 
 const denonArgs = allArgs.slice(0, allArgs.indexOf(allFlags._[0]) + 1);
@@ -107,4 +113,17 @@ function debug(text: string) {
     if (options.debug) console.log(yellow(`[DENON] ${text}`));
 }
 
-function help() {}
+function help() {
+    console.log(`
+Usage:
+    denon [OPTIONS] [SCRIPT] [<OTHER>...]
+
+Options:
+    -h, --help          Prints this
+    -d, --debug         Debugging mode for more verbose logging
+    -e, --extensions    List of extensions to look for separated by commas
+    -m, --match         Glob pattern for all the files to match
+    -s, --skip          Glob pattern for ignoring specific files or directories
+    -i, --interval      The number of milliseconds between each check
+`);
+}

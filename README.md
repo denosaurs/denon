@@ -17,7 +17,7 @@ To use Denon simply think of `denon` as an alternative to `deno run` which accep
 
 ## Todo
 
-- [ ] Help dialog
+- [x] Help dialog
 - [ ] Configuration flags
 - [ ] Configuration file?
 - [ ] Non-deno scripts
