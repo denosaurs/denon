@@ -1,6 +1,7 @@
 # Denon
 
 Like Nodemon, but for Deno.
+[(Also a deno style file watcher)](https://github.com/eliassjogreen/denon/blob/master/watcher.ts)
 
 ## Install
 

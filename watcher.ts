@@ -1,7 +1,5 @@
 import { walk } from "https://deno.land/std/fs/mod.ts";
 
-export type FileModifiedMap = { [filename: string]: number };
-
 export enum FileEvent {
     Changed,
     Created,
@@ -15,73 +13,60 @@ export interface FileChange {
 
 export interface WatchOptions {
     interval?: number;
-    startFiles?: FileModifiedMap;
-
     maxDepth?: number;
     exts?: string[];
     match?: RegExp[];
     skip?: RegExp[];
 }
 
-export class Watcher implements AsyncIterator<FileChange[]> {
-    private target: string;
-    private interval: number;
-    private prevFiles: FileModifiedMap;
+export async function* watch(
+    target: string,
+    {
+        interval = 500,
+        maxDepth = Infinity,
+        exts = null,
+        match = null,
+        skip = null
+    }: WatchOptions = {}
+): AsyncGenerator<FileChange[]> {
+    let prevFiles = {};
 
-    private maxDepth: number;
-    private exts: string[];
-    private match: RegExp[];
-    private skip: RegExp[];
-
-    constructor(
-        target: string,
-        {
-            interval = 500,
-            startFiles = {},
-
-            maxDepth = Infinity,
-            exts = null,
-            match = null,
-            skip = null
-        }: WatchOptions = {}
-    ) {
-        this.target = target;
-        this.interval = interval;
-        this.prevFiles = startFiles;
-
-        this.maxDepth = maxDepth;
-        this.exts = exts;
-        this.match = match;
-        this.skip = skip;
+    for await (const { filename, info } of walk(target, {
+        maxDepth: maxDepth,
+        includeDirs: false,
+        followSymlinks: false,
+        exts: exts,
+        match: match,
+        skip: skip
+    })) {
+        prevFiles[filename] = info.modified;
     }
 
-    public async next(): Promise<IteratorResult<FileChange[]>> {
-        const currFiles: FileModifiedMap = {};
+    while (true) {
+        const currFiles = {};
         const changes: FileChange[] = [];
         const start = Date.now();
 
-        for await (const { filename, info } of walk(this.target, {
-            maxDepth: this.maxDepth,
+        for await (const { filename, info } of walk(target, {
+            maxDepth: maxDepth,
             includeDirs: false,
             followSymlinks: false,
-            exts: this.exts,
-            match: this.match,
-            skip: this.skip
+            exts: exts,
+            match: match,
+            skip: skip
         })) {
             currFiles[filename] = info.modified;
         }
 
-        for (const file in this.prevFiles) {
-            if (this.prevFiles[file] && !currFiles[file]) {
+        for (const file in prevFiles) {
+            if (prevFiles[file] && !currFiles[file]) {
+                console.log(file);
+
                 changes.push({
                     path: file,
                     event: FileEvent.Removed
                 });
-            } else if (
-                this.prevFiles[file] &&
-                currFiles[file] &&
-                this.prevFiles[file] !== currFiles[file]
-            ) {
+            } else if (prevFiles[file] && currFiles[file] && prevFiles[file] !== currFiles[file]) {
                 changes.push({
                     path: file,
                     event: FileEvent.Changed
@@ -90,7 +75,7 @@ export class Watcher implements AsyncIterator<FileChange[]> {
         }
 
         for (const file in currFiles) {
-            if (!this.prevFiles[file] && currFiles[file]) {
+            if (!prevFiles[file] && currFiles[file]) {
                 changes.push({
                     path: file,
                     event: FileEvent.Created
@@ -98,23 +83,17 @@ export class Watcher implements AsyncIterator<FileChange[]> {
             }
         }
 
-        this.prevFiles = currFiles;
+        prevFiles = currFiles;
 
         const end = Date.now();
-        const wait = this.interval - (end - start);
+        const wait = interval - (end - start);
 
         if (wait > 0) await new Promise(r => setTimeout(r, wait));
 
-        return changes.length === 0 ? this.next() : { done: false, value: changes };
-    }
-}
-
-export function watch(target: string, options?: WatchOptions): AsyncIterable<FileChange[]> {
-    const watcher = new Watcher(target, options);
-
-    return {
-        [Symbol.asyncIterator]() {
-            return watcher;
+        if (changes.length === 0) {
+            continue;
+        } else {
+            yield changes;
         }
-    };
+    }
 }

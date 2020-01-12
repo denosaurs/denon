@@ -2,8 +2,7 @@ import { parse } from "https://deno.land/std/flags/mod.ts";
 import { resolve, dirname, globToRegExp } from "https://deno.land/std/path/mod.ts";
 import { exists } from "https://deno.land/std/fs/mod.ts";
 import { yellow, green, red, setColorEnabled } from "https://deno.land/std/fmt/mod.ts";
-import { walk } from "https://deno.land/std/fs/mod.ts";
-import { watch, FileModifiedMap, FileEvent } from "./watcher.ts";
+import { watch, FileEvent } from "./watcher.ts";
 
 interface DenonOptions {
     debug?: boolean;
@@ -58,20 +57,6 @@ const options: DenonOptions = {
 const file = resolve(flags._[0]);
 const path = dirname(file);
 const runner = run();
-const files: FileModifiedMap = {};
-
-for await (const { filename, info } of walk(path, {
-    maxDepth: options.maxDepth,
-    includeDirs: false,
-    followSymlinks: false,
-    exts: options.exts,
-    match: options.match,
-    skip: options.skip
-})) {
-    if (info.isFile()) {
-        files[filename] = info.modified;
-    }
-}
 
 log(`Watching ${path}, Running...`);
 
@@ -79,7 +64,6 @@ runner();
 
 for await (const changes of watch(path, {
     interval: options.interval,
-    startFiles: files,
     maxDepth: options.maxDepth,
     exts: options.exts,
     match: options.match,
