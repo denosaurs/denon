@@ -15,6 +15,19 @@ Yeah the last part is funky but it works at least...
 
 To use Denon simply think of `denon` as an alternative to `deno run` which accepts all the same flags
 
+```
+Usage:
+    denon [OPTIONS] [SCRIPT] [<OTHER>...]
+
+Options:
+    -h, --help          Prints this
+    -d, --debug         Debugging mode for more verbose logging
+    -e, --extensions    List of extensions to look for separated by commas
+    -m, --match         Glob pattern for all the files to match
+    -s, --skip          Glob pattern for ignoring specific files or directories
+    -i, --interval      The number of milliseconds between each check
+```
+
 ## Todo
 
 - [x] Help dialog
