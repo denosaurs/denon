@@ -43,28 +43,31 @@ is specified.
 Example configuration with all of the possible configuration values set to something:
 ```json
 {
-    files: [
+    "files": [
         "main.ts"
     ],
-    quiet: false,
-    debug: true,
-    fullscreen: true,
-    extensions: [
-        "js", "ts", "py", "json"
+    "quiet": false,
+    "debug": true,
+    "fullscreen": true,
+    "extensions": [
+        "js",
+        "ts",
+        "py",
+        "json"
     ],
-    match: [
+    "match": [
         "*.ts"
     ],
-    skip: [
+    "skip": [
         "*_test.ts",
         "*_test.js"
     ],
-    interval: 500,
-    watch: [
+    "interval": 500,
+    "watch": [
         "source/",
         "tools/"
     ],
-    execute: {
+    "execute": {
         ".js": ["deno", "run"],
         ".ts": ["deno", "run"],
         ".py": ["python"]
