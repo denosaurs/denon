@@ -7,16 +7,18 @@ Like [nodemon](https://nodemon.io/), but made in [deno](https://deno.land/).
 
 To install denon simply enter the following into a terminal:
 
-`deno install . denon https://denolib.com/eliassjogreen/denon/denon.ts --allow-read --allow-run -- -- --`
+`deno install . denon https://denolib.com/eliassjogreen/denon/denon.ts --allow-net --allow-read --allow-run -- -- --` 
 
-Yeah the last part is funky but it works at least...
+Yeah the last part is funky but it works at least... 
+
+(The reason it need allow-net is because the workers need to access `https://deno.land/std/path/mod.ts` which apparently requires allow-net)
 
 ## Usage
 
 To use denon simply think of `denon` as an alternative to `deno run` which accepts all the same flags if no
 flags or configuration has been set.
 
-```
+``` 
 Usage:
     denon [options] [script] [-- <your_args>]
 
@@ -42,7 +44,8 @@ options. All of the options in the configuration file are optional and will be s
 is specified.
 
 Example configuration with all of the possible configuration values set to something:
-```json
+
+``` json
 {
     "files": [
         "main.ts"

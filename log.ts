@@ -1,5 +1,5 @@
 import { yellow, green, red, setColorEnabled } from "https://deno.land/std/fmt/mod.ts";
-import { DenonConfig, DenonConfigDefaults } from "./denonrc.ts";
+import { DenonConfig } from "./denonrc.ts";
 
 setColorEnabled(true);
 
