@@ -1,129 +1,185 @@
 import { parse } from "https://deno.land/std/flags/mod.ts";
-import { resolve, dirname, globToRegExp } from "https://deno.land/std/path/mod.ts";
 import { exists } from "https://deno.land/std/fs/mod.ts";
-import { yellow, green, red, setColorEnabled } from "https://deno.land/std/fmt/mod.ts";
-import { watch, FileEvent } from "./watcher.ts";
+import { dirname, resolve } from "https://deno.land/std/path/mod.ts";
+import parry from "https://denolib.com/eliassjogreen/parry/mod.ts";
+import { DenonConfig, DenonConfigDefaults, readConfig } from "./denonrc.ts";
+import { debug, fail, setConfig } from "./log.ts";
 
-interface DenonOptions {
-    debug?: boolean;
-    interval?: number;
-    maxDepth?: number;
-    exts?: string[];
-    match?: RegExp[];
-    skip?: RegExp[];
-}
+export let config: DenonConfig = DenonConfigDefaults;
+setConfig(config);
 
-const parseOptions = {
-    boolean: ["d", "debug"],
-    alias: {
-        help: "h",
-        debug: "d",
-        extensions: "e",
-        match: "m",
-        skip: "s",
-        interval: "i"
-    },
-    default: {
-        debug: false,
-        maxdepth: Infinity,
-        extensions: null,
-        match: null,
-        skip: null,
-        interval: 500
-    }
-};
+export async function denonWatcher(path: string, config: DenonConfig, args: string[]) {
+    const { globToRegExp, extname } = await import("https://deno.land/std/path/mod.ts");
 
-if (!Deno.noColor) setColorEnabled(true);
-const allArgs = [...Deno.args];
-const allFlags = parse(allArgs, parseOptions);
+    const { watch, FileEvent } = await import("./watcher.ts");
+    const { log, debug, setConfig } = await import("./log.ts");
 
-if (allFlags.help) {
-    help();
-    Deno.exit(0);
-}
+    setConfig(config);
 
-if (allFlags._.length < 1 || !(await exists(allFlags._[0]))) {
-    fail("Could not start denon because no file was provided, use -h for help");
-}
+    const execute = (...args: string[]) => {
+        let proc: Deno.Process | undefined;
 
-const denonArgs = allArgs.slice(0, allArgs.indexOf(allFlags._[0]) + 1);
-const denoArgs = allArgs.splice(allArgs.indexOf(allFlags._[0]) + 1);
+        return () => {
+            if (proc) {
+                proc.close();
+            }
 
-const flags = parse(denonArgs, parseOptions);
+            debug(`Running "${args.join(" ")}"`);
+            proc = Deno.run({
+                args: args
+            });
+        };
+    };
 
-const options: DenonOptions = {
-    debug: flags.debug,
-    maxDepth: flags.maxDepth,
-    exts: flags.extensions ? flags.extensions.split(",") : null,
-    match: flags.match ? [globToRegExp(flags.match)] : null,
-    skip: flags.skip ? [globToRegExp(flags.skip)] : null,
-    interval: flags.interval
-};
+    const executors: { [extension: string]: { [file: string]: () => void } } = {};
 
-const file = resolve(flags._[0]);
-const path = dirname(file);
-const runner = run();
+    for (const extension in config.execute) {
+        executors[extension] = {};
 
-log(`Watching ${path}, Running...`);
-
-runner();
-
-for await (const changes of watch(path, {
-    interval: options.interval,
-    maxDepth: options.maxDepth,
-    exts: options.exts,
-    match: options.match,
-    skip: options.skip
-})) {
-    log(`Detected ${changes.length} change${changes.length > 1 ? "s" : ""}. Rerunning...`);
-
-    for (const change of changes) {
-        debug(`File "${change.path}" was ${FileEvent[change.event].toLowerCase()}`);
+        for (const file of config.files) {
+            if (extname(file) === extension) {
+                executors[extension][file] = execute(...config.execute[extension], file, ...args);
+                executors[extension][file]();
+            }
+        }
     }
 
-    runner();
-}
+    log(`Watching ${path}`);
+    for await (const changes of watch(path, {
+        interval: config.interval,
+        exts: config.extensions,
+        match: config.match ? config.match.map(v => globToRegExp(v)) : undefined,
+        skip: config.skip ? config.skip.map(v => globToRegExp(v)) : undefined
+    })) {
+        // if (config.fullscreen) {
+        //     console.clear();
+        // }
 
-function run() {
-    let proc: Deno.Process | undefined;
+        log(`Detected ${changes.length} change${changes.length > 1 ? "s" : ""}. Rerunning...`);
 
-    return () => {
-        if (proc) {
-            proc.close();
+        for (const change of changes) {
+            debug(`File "${change.path}" was ${FileEvent[change.event].toLowerCase()}`);
         }
 
-        debug(`Running "${["deno", "run", file, ...denoArgs].join(" ")}"`);
-
-        proc = Deno.run({
-            args: ["deno", "run", file, ...denoArgs]
-        });
-    };
+        for (const extension in config.execute) {
+            for (const file of config.files) {
+                if (executors[extension][file]) {
+                    executors[extension][file]();
+                }
+            }
+        }
+    }
 }
 
-function fail(reason: string, code: number = 1) {
-    console.log(red(`[DENON] ${reason}`));
-    Deno.exit(code);
-}
-
-function log(text: string) {
-    console.log(green(`[DENON] ${text}`));
-}
-
-function debug(text: string) {
-    if (options.debug) console.log(yellow(`[DENON] ${text}`));
-}
-
-function help() {
+const help = () =>
     console.log(`
 Usage:
-    denon [OPTIONS] [SCRIPT] [<OTHER>...]
+    denon [options] [script] [-- <your_args>]
 
 Options:
-    -h, --help          Prints this
-    -d, --debug         Debugging mode for more verbose logging
-    -e, --extensions    List of extensions to look for separated by commas
-    -m, --match         Glob pattern for all the files to match
-    -s, --skip          Glob pattern for ignoring specific files or directories
-    -i, --interval      The number of milliseconds between each check
+    -c, --config <file>     A path to a config file, defaults to [default: .denonrc | .denonrc.json]
+    -d, --debug             Debugging mode for more verbose logging
+    -e, --extensions        List of extensions to look for separated by commas
+    -f, --fullscreen        Clears the screen each reload
+    -h, --help              Prints this
+    -i, --interval <ms>     The number of milliseconds between each check
+    -m, --match <glob>      Glob pattern for all the files to match
+    -q, --quiet             Turns off all logging
+    -s, --skip <glob>       Glob pattern for ignoring specific files or directories
+    -w, --watch             List of paths to watch separated by commas
 `);
+
+if (import.meta.main) {
+    const flags = parse(Deno.args, {
+        string: ["config", "extensions", "interval", "match", "skip", "watch"],
+        boolean: ["debug", "fullscreen", "help", "quiet"],
+        alias: {
+            config: "c",
+            debug: "d",
+            extensions: "e",
+            fullscreen: "f",
+            help: "h",
+            interval: "i",
+            match: "m",
+            quiet: "q",
+            skip: "s",
+            watch: "w"
+        },
+        "--": true
+    });
+
+    if (flags.debug) {
+        config.debug = flags.debug;
+    }
+
+    if (flags.help) {
+        debug("Printing help...");
+        help();
+        Deno.exit(0);
+    }
+
+    if (flags.config) {
+        debug(`Reading config from ${flags.config}`);
+        config = await readConfig(flags.config);
+    } else {
+        debug(`Reading config from .denonrc | .denonrc.json`);
+        config = await readConfig();
+    }
+
+    if (flags.extensions) {
+        config.extensions = flags.extensions.split(",");
+    }
+
+    if (flags.fullscreen) {
+        config.fullscreen = flags.fullscreen;
+    }
+
+    if (flags.interval) {
+        config.interval = parseInt(flags.interval);
+    }
+
+    if (flags.match) {
+        config.match = [flags.match];
+    }
+
+    if (flags.watch) {
+        config.watch = flags.watch.split(",");
+    }
+
+    if (flags.quiet) {
+        config.quiet = flags.quiet;
+    }
+
+    if (flags.skip) {
+        config.skip = [flags.skip];
+    }
+
+    if (config.files.length < 1) {
+        if (flags._.length < 1 || !(await exists(flags._[0]))) {
+            fail("Could not start denon because no file was provided, use -h for help");
+        }
+    }
+
+    if (!(await exists(flags._[0]))) {
+        fail("Could not start denon because file does not exist");
+    } else {
+        const file = resolve(flags._[0]);
+
+        config.files.push(file);
+        config.watch.push(dirname(file));
+    }
+
+    const watchers: Promise<void>[] = [];
+
+    debug("Creating watchers");
+    for (const path of config.watch) {
+        if (!(await exists(path))) {
+            fail(`Can not watch directory ${path} because it does not exist`);
+        }
+
+        debug(`Creating watcher for path "${path}"`);
+        watchers.push(parry(denonWatcher)(path, config, flags["--"]));
+    }
+
+    Promise.all(watchers);
 }
