@@ -7,11 +7,7 @@ Like [nodemon](https://nodemon.io/), but made in [deno](https://deno.land/).
 
 To install denon simply enter the following into a terminal:
 
-`deno install . denon https://denolib.com/eliassjogreen/denon/denon.ts --allow-net --allow-read --allow-run -- -- --` 
-
-Yeah the last part is funky but it works at least... 
-
-(The reason it need allow-net is because the workers need to access `https://deno.land/std/path/mod.ts` which apparently requires allow-net)
+`deno install denon https://denolib.com/eliassjogreen/denon/denon.ts --allow-read --allow-run --allow-net` 
 
 ## Usage
 

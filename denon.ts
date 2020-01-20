@@ -3,7 +3,7 @@ import { exists } from "https://deno.land/std/fs/mod.ts";
 import { dirname, resolve } from "https://deno.land/std/path/mod.ts";
 import parry from "https://denolib.com/eliassjogreen/parry/mod.ts";
 import { DenonConfig, DenonConfigDefaults, readConfig } from "./denonrc.ts";
-import { debug, fail, setConfig } from "./log.ts";
+import { debug, log, fail, setConfig } from "./log.ts";
 
 export let config: DenonConfig = DenonConfigDefaults;
 setConfig(config);
@@ -90,7 +90,12 @@ Options:
 `);
 
 if (import.meta.main) {
-    const flags = parse(Deno.args, {
+    const args = [...Deno.args];
+    if (args[0] === "--") {
+        args.shift();
+    }
+
+    const flags = parse(args, {
         string: ["config", "extensions", "interval", "match", "skip", "watch"],
         boolean: ["debug", "fullscreen", "help", "quiet"],
         alias: {
@@ -111,6 +116,9 @@ if (import.meta.main) {
     if (flags.debug) {
         config.debug = flags.debug;
     }
+
+    debug(`Args: ${args}`);
+    debug(`Flags: ${JSON.stringify(flags)}`);
 
     if (flags.help) {
         debug("Printing help...");
