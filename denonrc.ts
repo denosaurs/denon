@@ -1,5 +1,5 @@
 import { exists, readFileStr } from "https://deno.land/std/fs/mod.ts";
-import { fail } from "./log.ts";
+import { fail, debug } from "./log.ts";
 
 export interface DenonConfig {
     files: string[];

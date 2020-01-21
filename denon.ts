@@ -11,8 +11,11 @@ setConfig(config);
 export async function denonWatcher(path: string, config: DenonConfig, args: string[]) {
     const { globToRegExp, extname } = await import("https://deno.land/std/path/mod.ts");
 
-    const { watch, FileEvent } = await import("./watcher.ts");
-    const { log, debug, setConfig } = await import("./log.ts");
+    // Far from a good solution for imports but nothing else seemed to work...
+    const { watch, FileEvent } = await import("https://denolib.com/eliassjogreen/denon/watcher.ts");
+    const { log, debug, setConfig } = await import(
+        "https://denolib.com/eliassjogreen/denon/log.ts"
+    );
 
     setConfig(config);
 
@@ -134,6 +137,8 @@ if (import.meta.main) {
         config = await readConfig();
     }
 
+    debug(`Config: ${JSON.stringify(config)}`);
+
     if (flags.extensions) {
         config.extensions = flags.extensions.split(",");
     }
@@ -168,16 +173,49 @@ if (import.meta.main) {
         }
     }
 
-    if (!(await exists(flags._[0]))) {
-        fail("Could not start denon because file does not exist");
-    } else {
-        const file = resolve(flags._[0]);
+    if (flags._[0]) {
+        if (!(await exists(flags._[0]))) {
+            fail("Could not start denon because file does not exist");
+        } else {
+            const file = resolve(flags._[0]);
 
-        config.files.push(file);
-        config.watch.push(dirname(file));
+            config.files.push(file);
+            config.watch.push(dirname(file));
+        }
     }
 
+    const tmpFiles = [...config.files];
+    config.files = [];
+
+    for (const file of tmpFiles) {
+        if (!(await exists(file))) {
+            fail(`Could not start denon because file "${file}" does not exist`);
+        }
+
+        config.files.push(resolve(file));
+    }
+
+    // Remove duplicates
+    config.files = [...new Set(config.files)];
+    debug(`Files: ${config.files}`);
+
+    const tmpWatch = [...config.watch];
+    config.watch = [];
+
+    for (const path of tmpWatch) {
+        if (!(await exists(path))) {
+            fail(`Could not start denon because path "${path}" does not exist`);
+        }
+
+        config.watch.push(resolve(path));
+    }
+
+    // Remove duplicates
+    config.watch = [...new Set(config.watch)];
+    debug(`Paths: ${config.watch}`);
+
     const watchers: Promise<void>[] = [];
+    const runnerFlags = flags["--"] ? flags["--"] : [];
 
     debug("Creating watchers");
     for (const path of config.watch) {
@@ -186,7 +224,10 @@ if (import.meta.main) {
         }
 
         debug(`Creating watcher for path "${path}"`);
-        watchers.push(parry(denonWatcher)(path, config, flags["--"]));
+
+        watchers.push(
+            parry(denonWatcher)(path, config, runnerFlags).catch(e => fail(JSON.stringify(e)))
+        );
     }
 
     Promise.all(watchers);
