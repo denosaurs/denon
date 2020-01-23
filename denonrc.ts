@@ -36,12 +36,12 @@ export async function readConfig(file?: string): Promise<DenonConfig> {
     }
 
     if (!file) {
-        if (await exists(".denorc")) {
-            file = ".denorc";
+        if (await exists(".denonrc")) {
+            file = ".denonrc";
         }
 
-        if (await exists(".denorc.json")) {
-            file = ".denorc.json";
+        if (await exists(".denonrc.json")) {
+            file = ".denonrc.json";
         }
     }
 
