@@ -12,7 +12,7 @@ export async function denonWatcher(path: string, config: DenonConfig, args: stri
     const { globToRegExp, extname } = await import("https://deno.land/std/path/mod.ts");
 
     // Far from a good solution for imports but nothing else seemed to work...
-    const { watch, FileEvent } = await import("https://denolib.com/eliassjogreen/denon/watcher.ts");
+    const { watch, FileEvent } = await import("https://deno.land/x/denon/watcher.ts");
     const { log, debug, setConfig } = await import(
         "https://denolib.com/eliassjogreen/denon/log.ts"
     );
