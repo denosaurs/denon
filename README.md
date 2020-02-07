@@ -84,5 +84,5 @@ Example configuration with all of the possible configuration values set to somet
 -   [x] Mapping file extensions to certain scripts
 -   [x] Multiple directories
 -   [x] Using denon from deno
--   [ ] "Fullscreen" mode using console.clear each time its rerun (console.clear does not seem to be implemented for Workers)
+-   [x] "Fullscreen" mode using console.clear each time its rerun
 -   [ ] Tests

@@ -187,6 +187,11 @@ if (import.meta.main) {
                     file,
                     ...runnerFlags
                 );
+
+                if (config.fullscreen) {
+                    console.clear();
+                }
+
                 executors[extension][file]();
             }
         }
@@ -218,6 +223,11 @@ if (import.meta.main) {
 
     log(`Watching ${config.watch.join(", ")}`);
     for await (const changes of multiplexer) {
+        if (config.fullscreen) {
+            debug("Clearing screen");
+            console.clear();
+        }
+
         log(
             `Detected ${changes.length} change${
                 changes.length > 1 ? "s" : ""
