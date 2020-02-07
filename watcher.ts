@@ -87,7 +87,11 @@ export async function* watch(
                     path: file,
                     event: FileEvent.Removed
                 });
-            } else if (prevFiles[file] && currFiles[file] && prevFiles[file] !== currFiles[file]) {
+            } else if (
+                prevFiles[file] &&
+                currFiles[file] &&
+                prevFiles[file] !== currFiles[file]
+            ) {
                 changes.push({
                     path: file,
                     event: FileEvent.Changed

@@ -1,78 +1,18 @@
 import { parse } from "https://deno.land/std/flags/mod.ts";
 import { exists } from "https://deno.land/std/fs/mod.ts";
-import { dirname, resolve } from "https://deno.land/std/path/mod.ts";
-import parry from "https://denolib.com/eliassjogreen/parry/mod.ts";
+import {
+    dirname,
+    resolve,
+    globToRegExp,
+    extname
+} from "https://deno.land/std/path/mod.ts";
+import { mux } from "https://denolib.com/kt3k/mux-async-iterator/mod.ts";
 import { DenonConfig, DenonConfigDefaults, readConfig } from "./denonrc.ts";
 import { debug, log, fail, setConfig } from "./log.ts";
+import { watch, FileEvent, FileChange } from "./watcher.ts";
 
 export let config: DenonConfig = DenonConfigDefaults;
 setConfig(config);
-
-export async function denonWatcher(path: string, config: DenonConfig, args: string[]) {
-    const { globToRegExp, extname } = await import("https://deno.land/std/path/mod.ts");
-
-    // Far from a good solution for imports but nothing else seemed to work...
-    const { watch, FileEvent } = await import("https://deno.land/x/denon/watcher.ts");
-    const { log, debug, setConfig } = await import(
-        "https://denolib.com/eliassjogreen/denon/log.ts"
-    );
-
-    setConfig(config);
-
-    const execute = (...args: string[]) => {
-        let proc: Deno.Process | undefined;
-
-        return () => {
-            if (proc) {
-                proc.close();
-            }
-
-            debug(`Running "${args.join(" ")}"`);
-            proc = Deno.run({
-                args: args
-            });
-        };
-    };
-
-    const executors: { [extension: string]: { [file: string]: () => void } } = {};
-
-    for (const extension in config.execute) {
-        executors[extension] = {};
-
-        for (const file of config.files) {
-            if (extname(file) === extension) {
-                executors[extension][file] = execute(...config.execute[extension], file, ...args);
-                executors[extension][file]();
-            }
-        }
-    }
-
-    log(`Watching ${path}`);
-    for await (const changes of watch(path, {
-        interval: config.interval,
-        exts: config.extensions,
-        match: config.match ? config.match.map(v => globToRegExp(v)) : undefined,
-        skip: config.skip ? config.skip.map(v => globToRegExp(v)) : undefined
-    })) {
-        // if (config.fullscreen) {
-        //     console.clear();
-        // }
-
-        log(`Detected ${changes.length} change${changes.length > 1 ? "s" : ""}. Rerunning...`);
-
-        for (const change of changes) {
-            debug(`File "${change.path}" was ${FileEvent[change.event].toLowerCase()}`);
-        }
-
-        for (const extension in config.execute) {
-            for (const file of config.files) {
-                if (executors[extension][file]) {
-                    executors[extension][file]();
-                }
-            }
-        }
-    }
-}
 
 const help = () =>
     console.log(`
@@ -169,7 +109,9 @@ if (import.meta.main) {
 
     if (config.files.length < 1) {
         if (flags._.length < 1 || !(await exists(flags._[0]))) {
-            fail("Could not start denon because no file was provided, use -h for help");
+            fail(
+                "Could not start denon because no file was provided, use -h for help"
+            );
         }
     }
 
@@ -214,8 +156,41 @@ if (import.meta.main) {
     config.watch = [...new Set(config.watch)];
     debug(`Paths: ${config.watch}`);
 
-    const watchers: Promise<void>[] = [];
+    const watchers: AsyncGenerator<FileChange[], any, unknown>[] = [];
     const runnerFlags = flags["--"] ? flags["--"] : [];
+    const executors: {
+        [extension: string]: { [file: string]: () => void };
+    } = {};
+
+    const execute = (...args: string[]) => {
+        let proc: Deno.Process | undefined;
+
+        return () => {
+            if (proc) {
+                proc.close();
+            }
+
+            debug(`Running "${args.join(" ")}"`);
+            proc = Deno.run({
+                args: args
+            });
+        };
+    };
+
+    for (const extension in config.execute) {
+        executors[extension] = {};
+
+        for (const file of config.files) {
+            if (extname(file) === extension) {
+                executors[extension][file] = execute(
+                    ...config.execute[extension],
+                    file,
+                    ...runnerFlags
+                );
+                executors[extension][file]();
+            }
+        }
+    }
 
     debug("Creating watchers");
     for (const path of config.watch) {
@@ -226,9 +201,43 @@ if (import.meta.main) {
         debug(`Creating watcher for path "${path}"`);
 
         watchers.push(
-            parry(denonWatcher)(path, config, runnerFlags).catch(e => fail(JSON.stringify(e)))
+            watch(path, {
+                interval: config.interval,
+                exts: config.extensions,
+                match: config.match
+                    ? config.match.map(v => globToRegExp(v))
+                    : undefined,
+                skip: config.skip
+                    ? config.skip.map(v => globToRegExp(v))
+                    : undefined
+            })
         );
     }
 
-    Promise.all(watchers);
+    const multiplexer = mux(...watchers);
+
+    log(`Watching ${config.watch.join(", ")}`);
+    for await (const changes of multiplexer) {
+        log(
+            `Detected ${changes.length} change${
+                changes.length > 1 ? "s" : ""
+            }. Rerunning...`
+        );
+
+        for (const change of changes) {
+            debug(
+                `File "${change.path}" was ${FileEvent[
+                    change.event
+                ].toLowerCase()}`
+            );
+        }
+
+        for (const extension in config.execute) {
+            for (const file of config.files) {
+                if (executors[extension][file]) {
+                    executors[extension][file]();
+                }
+            }
+        }
+    }
 }
