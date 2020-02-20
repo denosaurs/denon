@@ -60,6 +60,16 @@ if (import.meta.main) {
         config.debug = flags.debug;
     }
 
+    if (flags.config) {
+        debug(`Reading config from ${flags.config}`);
+        config = await readConfig(flags.config);
+    } else {
+        debug(`Reading config from .denonrc | .denonrc.json`);
+        config = await readConfig();
+    }
+
+    setConfig(config);
+
     debug(`Args: ${args}`);
     debug(`Flags: ${JSON.stringify(flags)}`);
 
@@ -67,14 +77,6 @@ if (import.meta.main) {
         debug("Printing help...");
         help();
         Deno.exit(0);
-    }
-
-    if (flags.config) {
-        debug(`Reading config from ${flags.config}`);
-        config = await readConfig(flags.config);
-    } else {
-        debug(`Reading config from .denonrc | .denonrc.json`);
-        config = await readConfig();
     }
 
     debug(`Config: ${JSON.stringify(config)}`);

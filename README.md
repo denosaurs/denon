@@ -50,17 +50,10 @@ Example configuration with all of the possible configuration values set to somet
     "debug": true,
     "fullscreen": true,
     "extensions": [
-        "js",
-        "ts",
-        "py",
-        "json"
-    ],
-    "match": [
-        "*.ts"
-    ],
-    "skip": [
-        "*_test.ts",
-        "*_test.js"
+        ".js",
+        ".ts",
+        ".py",
+        ".json"
     ],
     "interval": 500,
     "watch": [
@@ -84,5 +77,6 @@ Example configuration with all of the possible configuration values set to somet
 -   [x] Mapping file extensions to certain scripts
 -   [x] Multiple directories
 -   [x] Using denon from deno
--   [x] "Fullscreen" mode using console.clear each time its rerun
+-   [x] "Fullscreen" mode using console.clear each time its rerun´
+-   [ ] Fix match and skip globs
 -   [ ] Tests
