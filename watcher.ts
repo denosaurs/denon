@@ -44,12 +44,12 @@ export async function* watch(
     {
         interval = 500,
         maxDepth = Infinity,
-        exts = null,
-        match = null,
-        skip = null
+        exts = undefined,
+        match = undefined,
+        skip = undefined
     }: WatchOptions = {}
 ): AsyncGenerator<FileChange[]> {
-    let prevFiles = {};
+    let prevFiles: { [filename: string]: number | null } = {};
 
     // First walk the target path so we dont create `Created` events for files that are already there
     for await (const { filename, info } of walk(target, {
@@ -64,7 +64,7 @@ export async function* watch(
     }
 
     while (true) {
-        const currFiles = {};
+        const currFiles: { [filename: string]: number | null } = {};
         const changes = [];
         const start = Date.now();
 

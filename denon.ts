@@ -56,6 +56,8 @@ if (import.meta.main) {
         "--": true
     });
 
+    const remaningFlags = flags._.map(f => String(f));
+
     if (flags.debug) {
         config.debug = flags.debug;
     }
@@ -110,18 +112,18 @@ if (import.meta.main) {
     }
 
     if (config.files.length < 1) {
-        if (flags._.length < 1 || !(await exists(flags._[0]))) {
+        if (remaningFlags.length < 1 || !(await exists(remaningFlags[0]))) {
             fail(
                 "Could not start denon because no file was provided, use -h for help"
             );
         }
     }
 
-    if (flags._[0]) {
-        if (!(await exists(flags._[0]))) {
+    if (remaningFlags[0]) {
+        if (!(await exists(remaningFlags[0]))) {
             fail("Could not start denon because file does not exist");
         } else {
-            const file = resolve(flags._[0]);
+            const file = resolve(remaningFlags[0]);
 
             config.files.push(file);
             config.watch.push(dirname(file));
@@ -174,7 +176,7 @@ if (import.meta.main) {
 
             debug(`Running "${args.join(" ")}"`);
             proc = Deno.run({
-                args: args
+                cmd: args
             });
         };
     };
