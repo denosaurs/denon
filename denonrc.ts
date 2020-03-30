@@ -11,6 +11,7 @@ export interface DenonConfig {
     skip: string[] | undefined;
     interval: number;
     watch: string[];
+    permissions: string[];
     execute: { [extension: string]: string[] };
 }
 
@@ -24,6 +25,7 @@ export const DenonConfigDefaults: DenonConfig = {
     skip: undefined,
     interval: 500,
     watch: [],
+    permissions: [],
     execute: {
         ".js": ["deno", "run"],
         ".ts": ["deno", "run"]
@@ -45,10 +47,16 @@ export async function readConfig(file?: string): Promise<DenonConfig> {
         }
     }
 
-    let json = {};
+    let json = {} as any;
 
     if (file) {
         json = JSON.parse(await readFileStr(file));
+    }
+
+    if (json.permissions) {
+        json.permissions = json.permissions.map((p: string) =>
+            p.startsWith("--allow-") ? p : `--allow-${p}`
+        );
     }
 
     return { ...DenonConfigDefaults, ...json };
