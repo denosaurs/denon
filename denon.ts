@@ -14,12 +14,12 @@ import { watch, FileEvent, FileChange } from "./watcher.ts";
 export let config: DenonConfig = DenonConfigDefaults;
 setConfig(config);
 
-const help = () =>
+function help() {
     console.log(`
 Usage:
-    denon [options] [script] [-- <your_args>]
+    denon [OPTIONS] [PERMISSIONS] [SCRIPT] [-- <SCRIPT_ARGS>]
 
-Options:
+OPTIONS:
     -c, --config <file>     A path to a config file, defaults to [default: .denonrc | .denonrc.json]
     -d, --debug             Debugging mode for more verbose logging
     -e, --extensions        List of extensions to look for separated by commas
@@ -30,13 +30,43 @@ Options:
     -q, --quiet             Turns off all logging
     -s, --skip <glob>       Glob pattern for ignoring specific files or directories
     -w, --watch             List of paths to watch separated by commas
-`);
 
-if (import.meta.main) {
-    const args = [...Deno.args];
+PERMISSIONS: All deno permission options to run SCRIPT (--allow-*)
+`);
+}
+
+interface Args {
+    config?: string;
+    extensions?: string;
+    interval?: string;
+    match?: string;
+    skip?: string;
+    watch?: string;
+    debug?: boolean;
+    fullscreen?: boolean;
+    help?: boolean;
+    quiet?: boolean;
+    runnerFlags: string[];
+    permissions: string[];
+    files: string[];
+}
+
+export function parseArgs(args: string[]): Args {
     if (args[0] === "--") {
-        args.shift();
+        args = args.slice(1);
     }
+
+    const doubleDashIdx = args.findIndex(arg => arg === "--");
+    const permissions = args
+        .slice(0, doubleDashIdx > 0 ? doubleDashIdx : undefined)
+        .filter(a => a.startsWith("--allow-"));
+
+    args = [
+        ...args
+            .slice(0, doubleDashIdx > 0 ? doubleDashIdx : undefined)
+            .filter(a => !a.startsWith("--allow-")),
+        ...args.slice(doubleDashIdx)
+    ];
 
     const flags = parse(args, {
         string: ["config", "extensions", "interval", "match", "skip", "watch"],
@@ -56,7 +86,25 @@ if (import.meta.main) {
         "--": true
     });
 
-    const remaningFlags = flags._.map(f => String(f));
+    return {
+        config: flags.config,
+        debug: flags.debug,
+        extensions: flags.extensions,
+        fullscreen: flags.fullscreen,
+        help: flags.help,
+        interval: flags.interval,
+        match: flags.match,
+        quiet: flags.quiet,
+        skip: flags.skip,
+        watch: flags.watch,
+        runnerFlags: flags["--"],
+        files: flags._.map(f => String(f)),
+        permissions
+    };
+}
+
+if (import.meta.main) {
+    const flags = parseArgs(Deno.args);
 
     if (flags.debug) {
         config.debug = flags.debug;
@@ -72,7 +120,7 @@ if (import.meta.main) {
 
     setConfig(config);
 
-    debug(`Args: ${args}`);
+    debug(`Args: ${Deno.args}`);
     debug(`Flags: ${JSON.stringify(flags)}`);
 
     if (flags.help) {
@@ -92,7 +140,7 @@ if (import.meta.main) {
     }
 
     if (flags.interval) {
-        config.interval = parseInt(flags.interval);
+        config.interval = parseInt(flags.interval, 10);
     }
 
     if (flags.match) {
@@ -111,23 +159,24 @@ if (import.meta.main) {
         config.skip = [flags.skip];
     }
 
-    if (config.files.length < 1) {
-        if (remaningFlags.length < 1 || !(await exists(remaningFlags[0]))) {
-            fail(
-                "Could not start denon because no file was provided, use -h for help"
-            );
-        }
+    if (flags.permissions.length) {
+        config.permissions = flags.permissions;
     }
 
-    if (remaningFlags[0]) {
-        if (!(await exists(remaningFlags[0]))) {
-            fail("Could not start denon because file does not exist");
-        } else {
-            const file = resolve(remaningFlags[0]);
+    if (config.files.length < 1 && flags.files.length < 1) {
+        fail(
+            "Could not start denon because no file was provided, use -h for help"
+        );
+    }
 
-            config.files.push(file);
-            config.watch.push(dirname(file));
+    for (const file of flags.files) {
+        if (!(await exists(file))) {
+            fail(`Could not start denon because file "${file}" does not exist`);
         }
+
+        const filePath = resolve(file);
+        config.files.push(filePath);
+        config.watch.push(dirname(filePath));
     }
 
     const tmpFiles = [...config.files];
@@ -161,7 +210,6 @@ if (import.meta.main) {
     debug(`Paths: ${config.watch}`);
 
     const watchers: AsyncGenerator<FileChange[], any, unknown>[] = [];
-    const runnerFlags = flags["--"] ? flags["--"] : [];
     const executors: {
         [extension: string]: { [file: string]: () => void };
     } = {};
@@ -183,13 +231,16 @@ if (import.meta.main) {
 
     for (const extension in config.execute) {
         executors[extension] = {};
+        const cmds = config.execute[extension];
+        const binary = cmds[0];
 
         for (const file of config.files) {
             if (extname(file) === extension) {
                 executors[extension][file] = execute(
-                    ...config.execute[extension],
+                    ...cmds,
+                    ...(binary === "deno" ? flags.permissions : []),
                     file,
-                    ...runnerFlags
+                    ...flags.runnerFlags
                 );
 
                 if (config.fullscreen) {

@@ -16,9 +16,9 @@ flags or configuration has been set.
 
 ``` 
 Usage:
-    denon [options] [script] [-- <your_args>]
+    denon [OPTIONS] [PERMISSIONS] [SCRIPT] [-- <SCRIPT_ARGS>]
 
-Options:
+OPTIONS:
     -c, --config <file>     A path to a config file, defaults to [default: .denonrc | .denonrc.json]
     -d, --debug             Debugging mode for more verbose logging
     -e, --extensions        List of extensions to look for separated by commas
@@ -29,6 +29,8 @@ Options:
     -q, --quiet             Turns off all logging
     -s, --skip <glob>       Glob pattern for ignoring specific files or directories
     -w, --watch             List of paths to watch separated by commas
+
+PERMISSIONS: All deno permission options to run SCRIPT (--allow-*)
 ```
 
 ## Configuration
@@ -59,6 +61,10 @@ Example configuration with all of the possible configuration values set to somet
     "watch": [
         "source/",
         "tools/"
+    ],
+    "permissions":[
+        "net",
+        "read"
     ],
     "execute": {
         ".js": ["deno", "run"],
