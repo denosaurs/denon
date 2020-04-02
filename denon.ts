@@ -224,7 +224,7 @@ if (import.meta.main) {
 
             debug(`Running "${args.join(" ")}"`);
             proc = Deno.run({
-                cmd: args
+                args
             });
         };
     };
