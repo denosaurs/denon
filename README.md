@@ -74,6 +74,9 @@ Example configuration with all of the possible configuration values set to somet
 }
 ```
 
+## Contributing
+Contributions are very welcome! Just remember to run `deno fmt` to keep the style consistent.
+
 ## Todo
 
 -   [x] Help dialog
@@ -84,5 +87,6 @@ Example configuration with all of the possible configuration values set to somet
 -   [x] Multiple directories
 -   [x] Using denon from deno
 -   [x] "Fullscreen" mode using console.clear each time its rerun´
--   [ ] Fix match and skip globs
+-   [ ] Fix match and skip globs [#10](https://github.com/eliassjogreen/denon/issues/10)
 -   [ ] Tests
+-   [ ] Use [deno fs evens](https://deno.land/std/manual.md) instead of the current watcher
