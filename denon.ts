@@ -1,4 +1,4 @@
-import { parse } from "https://deno.land/std/flags/mod.ts";
+import { parse } from "https://raw.githubusercontent.com/ronhippler/deno/master/std/flags/mod.ts";
 import { exists } from "https://deno.land/std/fs/mod.ts";
 import {
   dirname,
@@ -17,7 +17,7 @@ setConfig(config);
 function help() {
   console.log(`
 Usage:
-    denon [OPTIONS] [PERMISSIONS] [SCRIPT] [-- <SCRIPT_ARGS>]
+    denon [OPTIONS] [DENO_ARGS] [SCRIPT] [-- <SCRIPT_ARGS>]
 
 OPTIONS:
     -c, --config <file>     A path to a config file, defaults to [default: .denonrc | .denonrc.json]
@@ -31,11 +31,11 @@ OPTIONS:
     -s, --skip <glob>       Glob pattern for ignoring specific files or directories
     -w, --watch             List of paths to watch separated by commas
 
-PERMISSIONS: All deno permission options to run SCRIPT (--allow-*)
+DENO_ARGS: Arguments passed to Deno to run SCRIPT (like permisssions)
 `);
 }
 
-interface Args {
+export interface Args {
   config?: string;
   extensions?: string;
   interval?: string;
@@ -47,7 +47,7 @@ interface Args {
   help?: boolean;
   quiet?: boolean;
   runnerFlags: string[];
-  permissions: string[];
+  deno_args: string[];
   files: string[];
 }
 
@@ -56,17 +56,7 @@ export function parseArgs(args: string[]): Args {
     args = args.slice(1);
   }
 
-  const doubleDashIdx = args.findIndex((arg) => arg === "--");
-  const permissions = args
-    .slice(0, doubleDashIdx > 0 ? doubleDashIdx : undefined)
-    .filter((a) => a.startsWith("--allow-"));
-
-  args = [
-    ...args
-      .slice(0, doubleDashIdx > 0 ? doubleDashIdx : undefined)
-      .filter((a) => !a.startsWith("--allow-")),
-    ...args.slice(doubleDashIdx),
-  ];
+  let deno_args: string[] = [];
 
   const flags = parse(args, {
     string: ["config", "extensions", "interval", "match", "skip", "watch"],
@@ -84,7 +74,21 @@ export function parseArgs(args: string[]): Args {
       watch: "w",
     },
     "--": true,
+    unknown: (arg: string, k?: string, v?: unknown) => {
+      deno_args.push(arg);
+      if (v && !arg.endsWith(String(v)) && typeof (v) !== "boolean") {
+        deno_args.push(String(v));
+      }
+      return false;
+    },
   });
+
+  const files: string[] = [];
+  const script = deno_args[deno_args.length - 1];
+  if (script && !script.startsWith("-")) {
+    files.push(script);
+    deno_args = deno_args.slice(0, -1);
+  }
 
   return {
     config: flags.config,
@@ -98,8 +102,8 @@ export function parseArgs(args: string[]): Args {
     skip: flags.skip,
     watch: flags.watch,
     runnerFlags: flags["--"],
-    files: flags._.map((f) => String(f)),
-    permissions,
+    files,
+    deno_args,
   };
 }
 
@@ -159,8 +163,8 @@ if (import.meta.main) {
     config.skip = [flags.skip];
   }
 
-  if (flags.permissions.length) {
-    config.permissions = flags.permissions;
+  if (flags.deno_args.length) {
+    config.deno_args = flags.deno_args;
   }
 
   if (config.files.length < 1 && flags.files.length < 1) {
@@ -238,7 +242,7 @@ if (import.meta.main) {
       if (extname(file) === extension) {
         executors[extension][file] = execute(
           ...cmds,
-          ...(binary === "deno" ? flags.permissions : []),
+          ...(binary === "deno" ? flags.deno_args : []),
           file,
           ...flags.runnerFlags,
         );
