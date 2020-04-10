@@ -90,4 +90,3 @@ Contributions are very welcome! Just remember to run `deno fmt` to keep the styl
 -   [ ] Fix match and skip globs [#10](https://github.com/eliassjogreen/denon/issues/10)
 -   [ ] Tests
 -   [ ] Use [deno fs evens](https://deno.land/std/manual.md) instead of the current watcher
--   [ ] Use [denomander](https://github.com/siokas/denomander)
