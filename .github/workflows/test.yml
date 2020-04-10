@@ -15,4 +15,4 @@ jobs:
       - uses: denolib/setup-deno@master
         with:
           deno-version: 0.40.0
-      - run: deno test -A *_test.ts
+      - run: deno test -A denon_test.ts
