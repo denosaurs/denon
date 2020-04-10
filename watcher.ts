@@ -1,4 +1,4 @@
-import { walk } from "https://deno.land/std/fs/mod.ts";
+import { walk } from "./deps.ts";
 
 /** All of the types of changes that a file can have */
 export enum FileEvent {

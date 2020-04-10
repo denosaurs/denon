@@ -1,4 +1,4 @@
-import { exists, readFileStr } from "https://deno.land/std/fs/mod.ts";
+import { exists, readFileStr } from "./deps.ts";
 import { fail, debug } from "./log.ts";
 
 export interface DenonConfig {

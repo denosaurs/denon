@@ -1,12 +1,12 @@
-import { parse } from "https://raw.githubusercontent.com/ronhippler/deno/master/std/flags/mod.ts";
-import { exists } from "https://deno.land/std/fs/mod.ts";
 import {
   dirname,
-  resolve,
+  exists,
+  extname,
   globToRegExp,
-  extname
-} from "https://deno.land/std/path/mod.ts";
-import { MuxAsyncIterator } from "https://deno.land/std/util/async.ts";
+  MuxAsyncIterator,
+  parse,
+  resolve,
+} from "./deps.ts";
 import { DenonConfig, DenonConfigDefaults, readConfig } from "./denonrc.ts";
 import { debug, log, fail, setConfig } from "./log.ts";
 import { watch, FileEvent, FileChange } from "./watcher.ts";
