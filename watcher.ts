@@ -1,14 +1,6 @@
-import { walk } from "./deps.ts";
+import { deferred, globToRegExp, resolve } from "./deps.ts";
 
-/** All of the types of changes that a file can have */
-export enum FileEvent {
-  /** The file was changed */
-  Changed,
-  /** The file was created */
-  Created,
-  /** The file was remove */
-  Removed,
-}
+type FileEvent = "any" | "access" | "create" | "modify" | "remove";
 
 /** A file that was changed, created or removed */
 export interface FileChange {
@@ -20,112 +12,107 @@ export interface FileChange {
 
 /** All of the options for the `watch` generator */
 export interface WatchOptions {
-  /** The number of milliseconds between each scan */
+  /** The number of milliseconds after the last change */
   interval?: number;
-  /** The max depth that it will scan for files at */
-  maxDepth?: number;
+  /** Scan for files if in folders of `paths` */
+  recursive?: boolean;
   /** The file extensions that it will scan for */
   exts?: string[];
-  /** The regexps that it will scan for */
-  match?: RegExp[];
-  /** The regexps that it will not scan for */
-  skip?: RegExp[];
+  /** The globs that it will scan for */
+  match?: string[];
+  /** The globs that it will not scan for */
+  skip?: string[];
 }
 
 /**
- * Watches for file changes in `target` path yielding an array of all of the changes
- * each time one or more changes are detected. It does this once every `interval`.
- * `maxDepth`, `exts`, `match` and `skip` are all passed to the `fs.walk` generator
- * which makes everything work. Because it uses `fs.walk` it is very inefficient for
- * large directories.
+ * Watches for file changes in `paths` path yielding an array of all of the changes
+ * each time one or more changes are detected. It is debounced by `interval`.
+ * `recursive`, `exts`, `match` and `skip` are filtering the files wich will yield a change
  */
-export async function* watch(
-  target: string,
-  {
-    interval = 500,
-    maxDepth = Infinity,
-    exts = undefined,
-    match = undefined,
-    skip = undefined,
-  }: WatchOptions = {},
-): AsyncGenerator<FileChange[]> {
-  let prevFiles: { [filename: string]: number | null } = {};
+export default class Watcher implements AsyncIterable<FileChange[]> {
+  // private events: AsyncIterableIterator<Deno.FsEvent>;
+  private signal = deferred();
+  private changes: { [key: string]: FileEvent } = {};
+  private interval: number;
+  private exts?: string[];
+  private match?: RegExp[];
+  private skip?: RegExp[];
+  private recursive: boolean;
+  private paths: string[];
 
-  // First walk the target path so we dont create `Created` events for files that are already there
-  for await (
-    const { filename, info } of walk(target, {
-      maxDepth: maxDepth,
-      includeDirs: false,
-      followSymlinks: false,
-      exts: exts,
-      match: match,
-      skip: skip,
-    })
+  constructor(
+    paths: string[],
+    {
+      interval = 500,
+      recursive = true,
+      exts = undefined,
+      match = undefined,
+      skip = undefined,
+    }: WatchOptions = {},
   ) {
-    prevFiles[filename] = info.modified;
+    this.paths = paths.map((p) => resolve(p));
+    this.interval = interval;
+    this.exts = exts?.map((e) => e.startsWith(".") ? e : `.${e}`);
+    this.match = match?.map((s) =>
+      globToRegExp(s, { extended: true, globstar: false })
+    );
+    this.skip = skip?.map((s) =>
+      globToRegExp(s, { extended: true, globstar: false })
+    );
+    this.recursive = recursive ?? true;
   }
 
-  while (true) {
-    const currFiles: { [filename: string]: number | null } = {};
-    const changes = [];
-    const start = Date.now();
+  reset() {
+    this.changes = {};
+    this.signal = deferred();
+  }
 
-    // Walk the target path and put all of the files into an array
+  isWatched(
+    path: string,
+  ): boolean {
+    if (this.exts?.every((ext) => !path.endsWith(ext))) {
+      return false;
+    } else if (this.skip?.some((skip) => path.match(skip))) {
+      return false;
+    } else if (this.match?.every((match) => !path.match(match))) {
+      return false;
+    }
+    return true;
+  }
+
+  async watch() {
+    let timer = 0;
+    const debounce = () => {
+      clearTimeout(timer);
+      timer = setTimeout(this.signal.resolve, this.interval);
+    };
+
     for await (
-      const { filename, info } of walk(target, {
-        maxDepth: maxDepth,
-        includeDirs: false,
-        followSymlinks: false,
-        exts: exts,
-        match: match,
-        skip: skip,
-      })
+      const event of Deno.fsEvents(this.paths, { recursive: this.recursive })
     ) {
-      currFiles[filename] = info.modified;
+      const { kind, paths } = event;
+      paths.forEach((path) => {
+        if (this.isWatched(path)) {
+          this.changes[path] = kind;
+          debounce();
+        }
+      });
     }
+  }
 
-    for (const file in prevFiles) {
-      // Check if a file has been removed else check if has been changed
-      if (prevFiles[file] && !currFiles[file]) {
-        changes.push({
-          path: file,
-          event: FileEvent.Removed,
-        });
-      } else if (
-        prevFiles[file] &&
-        currFiles[file] &&
-        prevFiles[file] !== currFiles[file]
-      ) {
-        changes.push({
-          path: file,
-          event: FileEvent.Changed,
-        });
-      }
+  async *iterate(): AsyncIterator<FileChange[]> {
+    this.watch();
+    while (true) {
+      await this.signal;
+      yield Object.entries(this.changes).map(([
+        path,
+        event,
+      ]) => ({ path, event }));
+      this.reset();
     }
+  }
 
-    for (const file in currFiles) {
-      // Check if a file has been created
-      if (!prevFiles[file] && currFiles[file]) {
-        changes.push({
-          path: file,
-          event: FileEvent.Created,
-        });
-      }
-    }
-
-    prevFiles = currFiles;
-
-    const end = Date.now();
-    const wait = interval - (end - start);
-
-    // Wait to make sure it runs the whole interval time
-    if (wait > 0) await new Promise((r) => setTimeout(r, wait));
-
-    // If there was no changes continue to look for them else yield the changes
-    if (changes.length === 0) {
-      continue;
-    } else {
-      yield changes;
-    }
+  [Symbol.asyncIterator](): AsyncIterator<FileChange[]> {
+    return this.iterate();
   }
 }

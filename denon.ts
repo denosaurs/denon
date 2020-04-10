@@ -2,14 +2,12 @@ import {
   dirname,
   exists,
   extname,
-  globToRegExp,
-  MuxAsyncIterator,
   parse,
   resolve,
 } from "./deps.ts";
 import { DenonConfig, DenonConfigDefaults, readConfig } from "./denonrc.ts";
 import { debug, log, fail, setConfig } from "./log.ts";
-import { watch, FileEvent, FileChange } from "./watcher.ts";
+import Watcher from "./watcher.ts";
 
 export let config: DenonConfig = DenonConfigDefaults;
 setConfig(config);
@@ -180,7 +178,9 @@ if (import.meta.main) {
 
     const filePath = resolve(file);
     config.files.push(filePath);
-    config.watch.push(dirname(filePath));
+    if (!config.watch.length) {
+      config.watch.push(dirname(filePath));
+    }
   }
 
   const tmpFiles = [...config.files];
@@ -213,7 +213,6 @@ if (import.meta.main) {
   config.watch = [...new Set(config.watch)];
   debug(`Paths: ${config.watch}`);
 
-  const watchers: AsyncGenerator<FileChange[], any, unknown>[] = [];
   const executors: {
     [extension: string]: { [file: string]: () => void };
   } = {};
@@ -261,31 +260,18 @@ if (import.meta.main) {
     if (!(await exists(path))) {
       fail(`Can not watch directory ${path} because it does not exist`);
     }
-
-    debug(`Creating watcher for path "${path}"`);
-
-    watchers.push(
-      watch(path, {
-        interval: config.interval,
-        exts: config.extensions,
-        match: config.match
-          ? config.match.map((v) => globToRegExp(v))
-          : undefined,
-        skip: config.skip
-          ? config.skip.map((v) => globToRegExp(v))
-          : undefined,
-      }),
-    );
   }
 
-  const multiplexer = new MuxAsyncIterator<FileChange[]>();
-
-  for (const watcher of watchers) {
-    multiplexer.add(watcher);
-  }
+  debug(`Creating watcher for paths "${config.watch}"`);
+  const watcher = new Watcher(config.watch, {
+    interval: config.interval,
+    exts: config.extensions,
+    match: config.match,
+    skip: config.skip,
+  });
 
   log(`Watching ${config.watch.join(", ")}`);
-  for await (const changes of multiplexer) {
+  for await (const changes of watcher) {
     if (config.fullscreen) {
       debug("Clearing screen");
       console.clear();
@@ -298,11 +284,7 @@ if (import.meta.main) {
     );
 
     for (const change of changes) {
-      debug(
-        `File "${change.path}" was ${FileEvent[
-          change.event
-        ].toLowerCase()}`,
-      );
+      debug(`File "${change.path}" was ${change.event}`);
     }
 
     for (const extension in config.execute) {
