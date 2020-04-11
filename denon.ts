@@ -190,8 +190,13 @@ if (import.meta.main) {
     if (!(await exists(file))) {
       fail(`Could not start denon because file "${file}" does not exist`);
     }
+    const filepath = resolve(file);
+    const fileInfo = await Deno.lstat(filepath);
+    if (fileInfo.isDirectory()) {
+      fail(`Could not start denon because "${file}" is a directory`);
+    }
 
-    config.files.push(resolve(file));
+    config.files.push(filepath);
   }
 
   // Remove duplicates
@@ -213,10 +218,7 @@ if (import.meta.main) {
   config.watch = [...new Set(config.watch)];
   debug(`Paths: ${config.watch}`);
 
-  const executors: {
-    [extension: string]: { [file: string]: () => void };
-  } = {};
-
+  const executors: (() => void)[] = [];
   const execute = (...args: string[]) => {
     let proc: Deno.Process | undefined;
 
@@ -232,26 +234,29 @@ if (import.meta.main) {
     };
   };
 
-  for (const extension in config.execute) {
-    executors[extension] = {};
-    const cmds = config.execute[extension];
-    const binary = cmds[0];
+  for (const file of config.files) {
+    const extension = extname(file);
+    const cmds = config.execute[extension] as string[] | undefined;
 
-    for (const file of config.files) {
-      if (extname(file) === extension) {
-        executors[extension][file] = execute(
-          ...cmds,
-          ...(binary === "deno" ? flags.deno_args : []),
-          file,
-          ...flags.runnerFlags,
-        );
+    if (cmds) {
+      const binary = cmds[0];
 
-        if (config.fullscreen) {
-          console.clear();
-        }
+      const executor = execute(
+        ...cmds,
+        ...(binary === "deno" ? flags.deno_args : []),
+        file,
+        ...flags.runnerFlags,
+      );
 
-        executors[extension][file]();
+      executors.push(executor);
+
+      if (config.fullscreen) {
+        console.clear();
       }
+
+      executor();
+    } else {
+      fail(`Can not run ${file}. No config for "${extension}" found`);
     }
   }
 
@@ -287,12 +292,6 @@ if (import.meta.main) {
       debug(`File "${change.path}" was ${change.event}`);
     }
 
-    for (const extension in config.execute) {
-      for (const file of config.files) {
-        if (executors[extension][file]) {
-          executors[extension][file]();
-        }
-      }
-    }
+    executors.forEach((ex) => ex());
   }
 }
