@@ -87,6 +87,5 @@ Contributions are very welcome! Just remember to run `deno fmt` to keep the styl
 -   [x] Multiple directories
 -   [x] Using denon from deno
 -   [x] "Fullscreen" mode using console.clear each time its rerun´
--   [ ] Fix match and skip globs [#10](https://github.com/eliassjogreen/denon/issues/10)
+-   [x] Use [deno fs evens](https://deno.land/std/manual.md) instead of the current watcher
 -   [ ] Tests
--   [ ] Use [deno fs evens](https://deno.land/std/manual.md) instead of the current watcher
