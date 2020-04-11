@@ -1,109 +1,11 @@
-import {
-  dirname,
-  exists,
-  extname,
-  parse,
-  resolve,
-} from "./deps.ts";
+import { dirname, exists, extname, resolve } from "./deps.ts";
+import { parseArgs, help, applyIfDefined } from "./cli.ts";
 import { DenonConfig, DenonConfigDefaults, readConfig } from "./denonrc.ts";
 import { debug, log, fail, setConfig } from "./log.ts";
 import Watcher from "./watcher.ts";
 
 export let config: DenonConfig = DenonConfigDefaults;
 setConfig(config);
-
-function help() {
-  console.log(`
-Usage:
-    denon [OPTIONS] [DENO_ARGS] [SCRIPT] [-- <SCRIPT_ARGS>]
-
-OPTIONS:
-    -c, --config <file>     A path to a config file, defaults to [default: .denonrc | .denonrc.json]
-    -d, --debug             Debugging mode for more verbose logging
-    -e, --extensions        List of extensions to look for separated by commas
-    -f, --fullscreen        Clears the screen each reload
-    -h, --help              Prints this
-    -i, --interval <ms>     The number of milliseconds between each check
-    -m, --match <glob>      Glob pattern for all the files to match
-    -q, --quiet             Turns off all logging
-    -s, --skip <glob>       Glob pattern for ignoring specific files or directories
-    -w, --watch             List of paths to watch separated by commas
-
-DENO_ARGS: Arguments passed to Deno to run SCRIPT (like permisssions)
-`);
-}
-
-export interface Args {
-  config?: string;
-  extensions?: string;
-  interval?: string;
-  match?: string;
-  skip?: string;
-  watch?: string;
-  debug?: boolean;
-  fullscreen?: boolean;
-  help?: boolean;
-  quiet?: boolean;
-  runnerFlags: string[];
-  deno_args: string[];
-  files: string[];
-}
-
-export function parseArgs(args: string[]): Args {
-  if (args[0] === "--") {
-    args = args.slice(1);
-  }
-
-  let deno_args: string[] = [];
-
-  const flags = parse(args, {
-    string: ["config", "extensions", "interval", "match", "skip", "watch"],
-    boolean: ["debug", "fullscreen", "help", "quiet"],
-    alias: {
-      config: "c",
-      debug: "d",
-      extensions: "e",
-      fullscreen: "f",
-      help: "h",
-      interval: "i",
-      match: "m",
-      quiet: "q",
-      skip: "s",
-      watch: "w",
-    },
-    "--": true,
-    unknown: (arg: string, k?: string, v?: unknown) => {
-      deno_args.push(arg);
-      if (v && !arg.endsWith(String(v)) && typeof (v) !== "boolean") {
-        deno_args.push(String(v));
-      }
-      return false;
-    },
-  });
-
-  const files: string[] = [];
-  const script = deno_args[deno_args.length - 1];
-  if (script && !script.startsWith("-")) {
-    files.push(script);
-    deno_args = deno_args.slice(0, -1);
-  }
-
-  return {
-    config: flags.config,
-    debug: flags.debug,
-    extensions: flags.extensions,
-    fullscreen: flags.fullscreen,
-    help: flags.help,
-    interval: flags.interval,
-    match: flags.match,
-    quiet: flags.quiet,
-    skip: flags.skip,
-    watch: flags.watch,
-    runnerFlags: flags["--"],
-    files,
-    deno_args,
-  };
-}
 
 if (import.meta.main) {
   const flags = parseArgs(Deno.args);
@@ -131,39 +33,22 @@ if (import.meta.main) {
     Deno.exit(0);
   }
 
+  applyIfDefined(
+    flags,
+    config,
+    [
+      "deno_args",
+      "extensions",
+      "fullscreen",
+      "interval",
+      "match",
+      "quiet",
+      "skip",
+      "watch",
+    ],
+  );
+
   debug(`Config: ${JSON.stringify(config)}`);
-
-  if (flags.extensions) {
-    config.extensions = flags.extensions.split(",");
-  }
-
-  if (flags.fullscreen) {
-    config.fullscreen = flags.fullscreen;
-  }
-
-  if (flags.interval) {
-    config.interval = parseInt(flags.interval, 10);
-  }
-
-  if (flags.match) {
-    config.match = [flags.match];
-  }
-
-  if (flags.watch) {
-    config.watch = flags.watch.split(",");
-  }
-
-  if (flags.quiet) {
-    config.quiet = flags.quiet;
-  }
-
-  if (flags.skip) {
-    config.skip = [flags.skip];
-  }
-
-  if (flags.deno_args.length) {
-    config.deno_args = flags.deno_args;
-  }
 
   if (config.files.length < 1 && flags.files.length < 1) {
     fail(
