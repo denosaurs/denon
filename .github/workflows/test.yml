@@ -15,4 +15,6 @@ jobs:
       - uses: denolib/setup-deno@master
         with:
           deno-version: 0.40.0
+      - if: matrix.os == 'ubuntu-latest'
+        run: deno fmt --check
       - run: deno test -A
