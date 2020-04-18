@@ -77,7 +77,7 @@ if (import.meta.main) {
     }
     const filepath = resolve(file);
     const fileInfo = await Deno.lstat(filepath);
-    if (fileInfo.isDirectory()) {
+    if (fileInfo.isDirectory) {
       fail(`Could not start denon because "${file}" is a directory`);
     }
 
