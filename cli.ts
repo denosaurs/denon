@@ -23,7 +23,7 @@ export interface Args {
 export function help() {
   console.log(`
   Usage:
-      denon [OPTIONS] [DENO_ARGS] [SCRIPT] [-- <SCRIPT_ARGS>]
+      denon [COMMANDS] [OPTIONS] [DENO_ARGS] [SCRIPT] [-- <SCRIPT_ARGS>]
 
   OPTIONS:
       -c, --config <file>     A path to a config file, defaults to [default: .denon | denon.json | .denonrc | .denonrc.json]
