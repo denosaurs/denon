@@ -16,15 +16,17 @@ export interface Args {
   runnerFlags: string[];
   skip?: string[];
   watch?: string[];
+  fmt?: boolean;
+  test?: boolean;
 }
 
 export function help() {
   console.log(`
   Usage:
       denon [OPTIONS] [DENO_ARGS] [SCRIPT] [-- <SCRIPT_ARGS>]
-  
+
   OPTIONS:
-      -c, --config <file>     A path to a config file, defaults to [default: .denonrc | .denonrc.json]
+      -c, --config <file>     A path to a config file, defaults to [default: .denon | denon.json | .denonrc | .denonrc.json]
       -d, --debug             Debugging mode for more verbose logging
       -e, --extensions        List of extensions to look for separated by commas
       -f, --fullscreen        Clears the screen each reload
@@ -34,7 +36,13 @@ export function help() {
       -q, --quiet             Turns off all logging
       -s, --skip <glob>       Glob pattern for ignoring specific files or directories
       -w, --watch             List of paths to watch separated by commas
-  
+          --fmt               Adds a deno fmt executor
+          --test              Adds a deno test executor
+
+  COMMANDS:
+      fmt                     Alias for flag --fmt
+      test                    Alias for flag --test
+
   DENO_ARGS: Arguments passed to Deno to run SCRIPT (like permisssions)
   `);
 }
@@ -68,9 +76,12 @@ export function parseArgs(args: string[]): Args {
   let deno_args: string[] = [];
   const files: string[] = [];
 
+  let fmt = false;
+  let test = false;
+
   const flags = parse(args, {
     string: ["config", "extensions", "interval", "match", "skip", "watch"],
-    boolean: ["debug", "fullscreen", "help", "quiet"],
+    boolean: ["debug", "fullscreen", "help", "quiet", "fmt", "test"],
     alias: {
       config: "c",
       debug: "d",
@@ -86,7 +97,17 @@ export function parseArgs(args: string[]): Args {
     "--": true,
     unknown: (arg: string, k?: string, v?: unknown) => {
       if (k == null && v == null) {
-        files.push(arg);
+        switch (arg) {
+          case "fmt":
+            fmt = true;
+            break;
+          case "test":
+            test = true;
+            break;
+          default:
+            files.push(arg);
+            break;
+        }
         return false;
       }
       deno_args.push(arg);
@@ -117,6 +138,8 @@ export function parseArgs(args: string[]): Args {
     files,
     runnerFlags: flags["--"],
     deno_args,
+    fmt: fmt || flags.fmt,
+    test: test || flags.test,
   };
 }
 

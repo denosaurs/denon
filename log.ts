@@ -4,7 +4,7 @@ import {
   red,
   setColorEnabled,
 } from "./deps.ts";
-import { DenonConfig } from "./denonrc.ts";
+import { DenonConfig } from "./denon_config.ts";
 
 setColorEnabled(true);
 

@@ -1,6 +1,10 @@
 import { dirname, exists, extname, resolve } from "./deps.ts";
 import { parseArgs, help, applyIfDefined } from "./cli.ts";
-import { DenonConfig, DenonConfigDefaults, readConfig } from "./denonrc.ts";
+import {
+  DenonConfig,
+  DenonConfigDefaults,
+  readConfig,
+} from "./denon_config.ts";
 import { debug, log, fail, setConfig } from "./log.ts";
 import Watcher from "./watcher.ts";
 
@@ -12,17 +16,18 @@ if (import.meta.main) {
 
   if (flags.debug) {
     config.debug = flags.debug;
+    debug("Debug enabled!");
   }
 
   if (flags.config) {
     debug(`Reading config from ${flags.config}`);
     config = await readConfig(flags.config);
   } else {
-    debug(`Reading config from .denonrc | .denonrc.json`);
+    debug(
+      `Reading config from .denon | .denon.json | .denonrc | .denonrc.json`,
+    );
     config = await readConfig();
   }
-
-  setConfig(config);
 
   debug(`Args: ${Deno.args}`);
   debug(`Flags: ${JSON.stringify(flags)}`);
@@ -45,12 +50,16 @@ if (import.meta.main) {
       "quiet",
       "skip",
       "watch",
+      "fmt",
+      "test",
     ],
   );
 
   debug(`Config: ${JSON.stringify(config)}`);
 
-  if (config.files.length < 1 && flags.files.length < 1) {
+  if (config.fmt || config.test) {
+    config.watch.push(Deno.cwd());
+  } else if (config.files.length < 1 && flags.files.length < 1) {
     fail(
       "Could not start denon because no file was provided, use -h for help",
     );
@@ -118,6 +127,16 @@ if (import.meta.main) {
       });
     };
   };
+
+  if (config.fmt) {
+    debug("Added deno fmt executor");
+    executors.push(execute("deno", "fmt"));
+  }
+
+  if (config.test) {
+    debug("Added deno test executor");
+    executors.push(execute("deno", "test"));
+  }
 
   for (const file of config.files) {
     const extension = extname(file);

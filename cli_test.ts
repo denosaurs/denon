@@ -17,6 +17,8 @@ test(function parseArgsEmpty() {
     runnerFlags: [],
     skip: undefined,
     watch: undefined,
+    fmt: false,
+    test: false,
   };
   assertEquals(parseArgs([]), expected);
 });
@@ -37,6 +39,8 @@ test(function parseArgsOnlyFile() {
     runnerFlags: [],
     skip: undefined,
     watch: undefined,
+    fmt: false,
+    test: false,
   };
   assertEquals(parseArgs(args), expected);
 });
@@ -57,6 +61,8 @@ test(function parseArgsWithoutFile() {
     runnerFlags: [],
     skip: undefined,
     watch: undefined,
+    fmt: false,
+    test: false,
   };
   assertEquals(parseArgs(args), expected);
 });
@@ -77,13 +83,16 @@ test(function parseArgsDoubleDashWithoutFile() {
     runnerFlags: ["--foo", "bar"],
     skip: undefined,
     watch: undefined,
+    fmt: false,
+    test: false,
   };
   assertEquals(parseArgs(args), expected);
 });
 
 test(function parseArgsAll() {
-  let args = "--config denon.json -dfqhe js,ts -i 500 -m foo/** -s bar/**"
-    .split(" ");
+  let args =
+    "--config denon.json -dfqhe js,ts -i 500 -m foo/** -s bar/** --fmt --test"
+      .split(" ");
   args = args.concat(
     "-w lib/** --importmap=import_map.json -A mod.ts -- --allow-net --port 500"
       .split(" "),
@@ -102,6 +111,8 @@ test(function parseArgsAll() {
     runnerFlags: ["--allow-net", "--port", "500"],
     skip: ["bar/**"],
     watch: ["lib/**"],
+    fmt: true,
+    test: true,
   };
   assertEquals(parseArgs(args), expected);
 });
@@ -125,6 +136,8 @@ test(function parseSameArgsMultipleTimes() {
     runnerFlags: [],
     skip: ["foo", "bar", "bla"],
     watch: ["foo", "bar", "bla"],
+    fmt: false,
+    test: false,
   };
   assertEquals(parseArgs(args), expected);
 });

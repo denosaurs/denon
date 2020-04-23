@@ -1,5 +1,5 @@
 import { exists, readFileStr } from "./deps.ts";
-import { fail, debug } from "./log.ts";
+import { fail } from "./log.ts";
 
 export interface DenonConfig {
   files: string[];
@@ -13,6 +13,8 @@ export interface DenonConfig {
   watch: string[];
   deno_args: string[];
   execute: { [extension: string]: string[] };
+  fmt: boolean;
+  test: boolean;
 }
 
 export const DenonConfigDefaults: DenonConfig = {
@@ -30,6 +32,8 @@ export const DenonConfigDefaults: DenonConfig = {
     ".js": ["deno", "run"],
     ".ts": ["deno", "run"],
   },
+  fmt: false,
+  test: false,
 };
 
 export async function readConfig(file?: string): Promise<DenonConfig> {
@@ -38,11 +42,13 @@ export async function readConfig(file?: string): Promise<DenonConfig> {
   }
 
   if (!file) {
-    if (await exists(".denonrc")) {
+    if (await exists(".denon")) {
+      file = ".denon";
+    } else if (await exists(".denon.json")) {
+      file = ".denon.json";
+    } else if (await exists(".denonrc")) {
       file = ".denonrc";
-    }
-
-    if (await exists(".denonrc.json")) {
+    } else if (await exists(".denonrc.json")) {
       file = ".denonrc.json";
     }
   }
