@@ -19,7 +19,7 @@ Usage:
     denon [OPTIONS] [DENO_ARGS] [SCRIPT] [-- <SCRIPT_ARGS>]
 
 OPTIONS:
-    -c, --config <file>     A path to a config file, defaults to [default: .denonrc | .denonrc.json]
+    -c, --config <file>     A path to a config file, defaults to [default: .denon | denon.json | .denonrc | .denonrc.json]
     -d, --debug             Debugging mode for more verbose logging
     -e, --extensions        List of extensions to look for separated by commas
     -f, --fullscreen        Clears the screen each reload
@@ -29,6 +29,12 @@ OPTIONS:
     -q, --quiet             Turns off all logging
     -s, --skip <glob>       Glob pattern for ignoring specific files or directories
     -w, --watch             List of paths to watch separated by commas
+        --fmt               Adds a deno fmt executor
+        --test              Adds a deno test executor
+
+COMMANDS:
+    fmt                     Alias for flag --fmt
+    test                    Alias for flag --test
 
 DENO_ARGS: Arguments passed to Deno to run SCRIPT (like permisssions)
 ```
@@ -70,7 +76,9 @@ Example configuration with all of the possible configuration values set to somet
         ".js": ["deno", "run"],
         ".ts": ["deno", "run"],
         ".py": ["python"]
-    }
+    },
+    "fmt": false,
+    "test": true
 }
 ```
 
