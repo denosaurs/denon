@@ -88,7 +88,7 @@ export default class Watcher implements AsyncIterable<FileChange[]> {
     };
 
     for await (
-      const event of Deno.fsEvents(this.paths, { recursive: this.recursive })
+      const event of Deno.watchFs(this.paths, { recursive: this.recursive })
     ) {
       const { kind, paths } = event;
       paths.forEach((path) => {

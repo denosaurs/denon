@@ -1,5 +1,13 @@
 # Denon
 
+[![license](https://img.shields.io/github/license/eliassjogreen/denon)](https://github.com/eliassjogreen/denon/blob/master/LICENSE)
+[![stars](https://img.shields.io/github/stars/eliassjogreen/denon)](https://github.com/eliassjogreen/denon/stargazers)
+[![issues](https://img.shields.io/github/issues/eliassjogreen/denon)](https://github.com/eliassjogreen/denon/issues)
+[![ci](https://github.com/eliassjogreen/denon/workflows/test/badge.svg)](https://github.com/eliassjogreen/denon/actions)
+[![releases](https://img.shields.io/github/downloads/eliassjogreen/denon/total)](https://github.com/eliassjogreen/denon/releases/latest/)
+[![deno version](https://img.shields.io/badge/deno-0.42.0-success)](https://github.com/denoland/deno)
+[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/denon/mod.ts)
+
 Denon aims to be the [deno](https://deno.land/) replacement for [nodemon](https://nodemon.io/) providing a feature packed and easy to use experience.
 
 ## Features
@@ -27,7 +35,7 @@ To install denon simply enter the following into a terminal:
 To use denon simply think of `denon` as an alternative to `deno run` which accepts all the same flags if no
 flags or configuration has been set.
 
-``` 
+```
 Usage:
     denon [COMMANDS] [OPTIONS] [DENO_ARGS] [SCRIPT] [-- <SCRIPT_ARGS>]
 
@@ -97,16 +105,3 @@ Example configuration with all of the possible configuration values set to somet
 
 ## Contributing
 Contributions are very welcome! Just remember to run `deno fmt` to keep the style consistent.
-
-## Todo
-
--   [x] Help dialog
--   [x] Configuration flags
--   [x] Configuration file.
--   [x] Non-deno scripts
--   [x] Mapping file extensions to certain scripts
--   [x] Multiple directories
--   [x] Using denon from deno
--   [x] "Fullscreen" mode using console.clear each time its rerun´
--   [x] Use [deno fs evens](https://deno.land/std/manual.md) instead of the current watcher
--   [ ] Tests
