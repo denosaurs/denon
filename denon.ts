@@ -187,9 +187,9 @@ if (import.meta.main) {
     }
 
     log(
-      `Detected ${changes.length} change${changes.length > 1
-        ? "s"
-        : ""}. Rerunning...`,
+      `Detected ${changes.length} change${
+        changes.length > 1 ? "s" : ""
+      }. Rerunning...`,
     );
 
     for (const change of changes) {
