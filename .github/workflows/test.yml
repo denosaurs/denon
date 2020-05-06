@@ -14,7 +14,9 @@ jobs:
       - uses: actions/checkout@master
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 0.42.0
+          deno-version: 1.0.0-rc1
+
       - if: matrix.os == 'ubuntu-latest'
         run: deno fmt --check
-      - run: deno test -A
+
+      - run: deno test -A --unstable
