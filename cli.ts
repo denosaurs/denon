@@ -26,7 +26,7 @@ export function help() {
       denon [COMMANDS] [OPTIONS] [DENO_ARGS] [SCRIPT] [-- <SCRIPT_ARGS>]
 
   OPTIONS:
-      -c, --config <file>     A path to a config file, defaults to [default: .denon | denon.json | .denonrc | .denonrc.json]
+      -c, --config <file>     A path to a config file, defaults to [default: .denon | .denon.json | .denonrc | .denonrc.json]
       -d, --debug             Debugging mode for more verbose logging
       -e, --extensions        List of extensions to look for separated by commas
       -f, --fullscreen        Clears the screen each reload

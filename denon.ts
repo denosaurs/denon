@@ -1,4 +1,4 @@
-import { dirname, exists, extname, resolve } from "./deps.ts";
+import { dirname, exists, extname, resolve, grant } from "./deps.ts";
 import { parseArgs, help, applyIfDefined } from "./cli.ts";
 import {
   DenonConfig,
@@ -17,6 +17,14 @@ if (import.meta.main) {
   if (flags.debug) {
     config.debug = flags.debug;
     debug("Debug enabled!");
+  }
+
+  const permissions = await grant({ name: "read" }, { name: "run" });
+
+  if (permissions && permissions.length >= 2) {
+    debug(`Required permissions "read" and "run" granted`);
+  } else {
+    fail(`Required permissions "read" and "run" not granted`);
   }
 
   if (flags.config) {
@@ -128,13 +136,21 @@ if (import.meta.main) {
     };
   };
 
+  if (config.fullscreen) {
+    debug("Adding fullscreen executor");
+    executors.push(() => {
+      debug("Clearing screen");
+      console.clear();
+    });
+  }
+
   if (config.fmt) {
-    debug("Added deno fmt executor");
+    debug("Adding deno fmt executor");
     executors.push(execute("deno", "fmt"));
   }
 
   if (config.test) {
-    debug("Added deno test executor");
+    debug("Adding deno test executor");
     executors.push(execute("deno", "test"));
   }
 
@@ -157,12 +173,12 @@ if (import.meta.main) {
       if (config.fullscreen) {
         console.clear();
       }
-
-      executor();
     } else {
       fail(`Can not run ${file}. No config for "${extension}" found`);
     }
   }
+
+  executors.forEach((ex) => ex());
 
   debug("Creating watchers");
   for (const path of config.watch) {
@@ -181,11 +197,6 @@ if (import.meta.main) {
 
   log(`Watching ${config.watch.join(", ")}`);
   for await (const changes of watcher) {
-    if (config.fullscreen) {
-      debug("Clearing screen");
-      console.clear();
-    }
-
     log(
       `Detected ${changes.length} change${
         changes.length > 1 ? "s" : ""
