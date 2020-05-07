@@ -28,7 +28,7 @@ Denon provides most of the features you would expect of a file watcher and more.
 
 To install denon simply enter the following into a terminal:
 
-`deno install denon --unstable --allow-read --allow-run -f https://deno.land/x/denon/denon.ts`
+`deno install --unstable --allow-read --allow-run -f https://deno.land/x/denon/denon.ts`
 
 ## Usage
 
