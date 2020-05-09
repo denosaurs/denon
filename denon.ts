@@ -37,6 +37,8 @@ if (import.meta.main) {
     config = await readConfig();
   }
 
+  debug(`Read config: ${JSON.stringify(config)}`);
+
   debug(`Args: ${Deno.args}`);
   debug(`Flags: ${JSON.stringify(flags)}`);
 
@@ -47,8 +49,8 @@ if (import.meta.main) {
   }
 
   applyIfDefined(
-    flags,
     config,
+    flags,
     [
       "deno_args",
       "extensions",
@@ -66,7 +68,9 @@ if (import.meta.main) {
   debug(`Config: ${JSON.stringify(config)}`);
 
   if (config.fmt || config.test) {
-    config.watch.push(Deno.cwd());
+    const cwd = Deno.cwd();
+    debug(`Added watcher for "${cwd}" because of fmt or test config`);
+    config.watch.push(cwd);
   } else if (config.files.length < 1 && flags.files.length < 1) {
     fail(
       "Could not start denon because no file was provided, use -h for help",
@@ -169,15 +173,12 @@ if (import.meta.main) {
       );
 
       executors.push(executor);
-
-      if (config.fullscreen) {
-        console.clear();
-      }
     } else {
       fail(`Can not run ${file}. No config for "${extension}" found`);
     }
   }
 
+  debug("Initial execution of executors");
   executors.forEach((ex) => ex());
 
   debug("Creating watchers");
