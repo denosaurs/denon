@@ -73,7 +73,7 @@ if (import.meta.main) {
   );
 
   debug(`Config: ${JSON.stringify(config)}`);
-  
+
   if (config.fmt || config.test) {
     const cwd = Deno.cwd();
     debug(`Added watcher for "${cwd}" because of fmt or test config`);
