@@ -52,10 +52,12 @@ OPTIONS:
     -w, --watch             List of paths to watch separated by commas
         --fmt               Adds a deno fmt executor
         --test              Adds a deno test executor
+    -u, --upgrade           Upgrade Specific Version. Default is latest.
 
 COMMANDS:
     fmt                     Alias for flag --fmt
     test                    Alias for flag --test
+    upgrade                 Alias for flag --upgrade latest
 
 DENO_ARGS: Arguments passed to Deno to run SCRIPT (like permisssions)
 ```
