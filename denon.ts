@@ -1,5 +1,5 @@
 import { dirname, exists, extname, resolve, grant } from "./deps.ts";
-import { parseArgs, help, applyIfDefined } from "./cli.ts";
+import { parseArgs, help, applyIfDefined, upgrade } from "./cli.ts";
 import {
   DenonConfig,
   DenonConfigDefaults,
@@ -48,6 +48,13 @@ if (import.meta.main) {
     Deno.exit(0);
   }
 
+  if(flags.upgrade) {
+    debug("Update execute");
+    config.upgrade = flags.upgrade;
+    upgrade(config.upgrade)
+    Deno.exit(0);
+  }
+
   applyIfDefined(
     config,
     flags,
@@ -66,7 +73,7 @@ if (import.meta.main) {
   );
 
   debug(`Config: ${JSON.stringify(config)}`);
-
+  
   if (config.fmt || config.test) {
     const cwd = Deno.cwd();
     debug(`Added watcher for "${cwd}" because of fmt or test config`);

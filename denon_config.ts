@@ -15,6 +15,7 @@ export interface DenonConfig {
   execute: { [extension: string]: string[] };
   fmt: boolean;
   test: boolean;
+  upgrade: string;
 }
 
 export const DenonConfigDefaults: DenonConfig = {
@@ -34,6 +35,7 @@ export const DenonConfigDefaults: DenonConfig = {
   },
   fmt: false,
   test: false,
+  upgrade: 'master'
 };
 
 export async function readConfig(file?: string): Promise<DenonConfig> {

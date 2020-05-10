@@ -18,6 +18,7 @@ export interface Args {
   watch?: string[];
   fmt?: boolean;
   test?: boolean;
+  upgrade: string;
 }
 
 export function help() {
@@ -38,10 +39,12 @@ export function help() {
       -w, --watch             List of paths to watch separated by commas
           --fmt               Adds a deno fmt executor
           --test              Adds a deno test executor
+      -u, --upgrade           Upgrade Specific Version. Default is latest.
 
   COMMANDS:
       fmt                     Alias for flag --fmt
       test                    Alias for flag --test
+      upgrade                 Alias for flag --upgrade latest
 
   DENO_ARGS: Arguments passed to Deno to run SCRIPT (like permisssions)
   `);
@@ -68,6 +71,22 @@ function convertToStringArray(
   return arg;
 }
 
+export function upgrade(version: string) {
+  const versionWithoutVprefix = RegExp(/^\d\.\d\.\d/);
+  const redColor = '\u001b[31m'
+  if(version === 'latest') {
+    version = 'master'
+  }
+
+  if(versionWithoutVprefix.test(version)) {
+    console.warn(redColor,`Do you mean v${version}? If it's you should add v prefix`)
+  }
+
+  Deno.run({
+    cmd : ['deno', 'install', '--unstable', '--allow-read', '--allow-run', '-f', `https://deno.land/x/denon@${version}/denon.ts`]
+  })
+}
+
 export function parseArgs(args: string[]): Args {
   if (args[0] === "--") {
     args = args.slice(1);
@@ -80,7 +99,7 @@ export function parseArgs(args: string[]): Args {
   let test = false;
 
   const flags = parse(args, {
-    string: ["config", "extensions", "interval", "match", "skip", "watch"],
+    string: ["config", "extensions", "interval", "match", "skip", "watch", "upgrade"],
     boolean: ["debug", "fullscreen", "help", "quiet", "fmt", "test"],
     alias: {
       config: "c",
@@ -93,6 +112,7 @@ export function parseArgs(args: string[]): Args {
       quiet: "q",
       skip: "s",
       watch: "w",
+      upgrade: "u"
     },
     "--": true,
     unknown: (arg: string, k?: string, v?: unknown) => {
@@ -140,6 +160,7 @@ export function parseArgs(args: string[]): Args {
     deno_args,
     fmt: fmt || flags.fmt,
     test: test || flags.test,
+    upgrade: flags.upgrade || 'master',
   };
 }
 
