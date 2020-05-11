@@ -151,7 +151,7 @@ export function parseArgs(args: string[]): Args {
         return false;
       }
       deno_args.push(arg);
-      if (v && arg.endsWith(String(v)) && typeof (v) !== "boolean") {
+      if (v && !arg.endsWith(String(v)) && typeof (v) !== "boolean") {
         deno_args.push(String(v));
       }
       return false;
