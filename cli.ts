@@ -44,7 +44,7 @@ export function help() {
   COMMANDS:
       fmt                     Alias for flag --fmt
       test                    Alias for flag --test
-      upgrade                 
+      upgrade                 Upgrade Specific Version. Default is latest.                 
 
   DENO_ARGS: Arguments passed to Deno to run SCRIPT (like permisssions)
   `);
