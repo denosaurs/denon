@@ -24,7 +24,7 @@ export function fail(reason: string, code: number = 1) {
 
 export function log(text: string) {
   if (!config.quiet) {
-    console.log(green(` ${text}`));
+    console.log(green(`[DENON] ${text}`));
   }
 }
 

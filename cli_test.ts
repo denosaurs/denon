@@ -21,7 +21,7 @@ test({
       watch: undefined,
       fmt: false,
       test: false,
-      upgrade: "master",
+      upgrade: "",
     };
     assertEquals(parseArgs([]), expected);
   },
@@ -47,7 +47,7 @@ test({
       watch: undefined,
       fmt: false,
       test: false,
-      upgrade: "master",
+      upgrade: "",
     };
     assertEquals(parseArgs(args), expected);
   },
@@ -73,7 +73,7 @@ test({
       watch: undefined,
       fmt: false,
       test: false,
-      upgrade: "master",
+      upgrade: "",
     };
     assertEquals(parseArgs(args), expected);
   },
@@ -99,7 +99,7 @@ test({
       watch: undefined,
       fmt: false,
       test: false,
-      upgrade: "master",
+      upgrade: "",
     };
     assertEquals(parseArgs(args), expected);
   },
@@ -131,7 +131,7 @@ test({
       watch: ["lib/**"],
       fmt: true,
       test: true,
-      upgrade: "master",
+      upgrade: "",
     };
     assertEquals(parseArgs(args), expected);
   },
@@ -162,7 +162,7 @@ test({
       watch: ["foo", "bar", "bla"],
       fmt: false,
       test: false,
-      upgrade: "master",
+      upgrade: "",
     };
     assertEquals(parseArgs(args), expected);
   },

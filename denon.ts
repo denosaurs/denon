@@ -47,7 +47,7 @@ if (import.meta.main) {
     help();
     Deno.exit(0);
   }
-
+  console.log(flags);
   if (flags.upgrade) {
     debug("Update execute");
     upgrade(flags.upgrade);

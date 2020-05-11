@@ -104,7 +104,7 @@ export function parseArgs(args: string[]): Args {
 
   let fmt = false;
   let test = false;
-  let upgrade = "master";
+  let upgrade = "";
 
   const flags = parse(args, {
     string: [
@@ -131,7 +131,7 @@ export function parseArgs(args: string[]): Args {
     },
     "--": true,
     unknown: (arg: string, k?: string, v?: unknown) => {
-      if (!k && !v) {
+      if (k == null && v == null) {
         switch (arg) {
           case "fmt":
             fmt = true;
@@ -141,7 +141,8 @@ export function parseArgs(args: string[]): Args {
             break;
           case "upgrade":
             const upgradeIndex = args.findIndex((arg) => arg === "upgrade");
-            const version = args[upgradeIndex + 1];
+            let version = "master";
+            if (args[upgradeIndex + 1]) version = args[upgradeIndex + 1];
             upgrade = version;
             break;
           default:
