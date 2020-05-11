@@ -99,7 +99,7 @@ test({
       watch: undefined,
       fmt: false,
       test: false,
-      upgrade: 'master'
+      upgrade: "master",
     };
     assertEquals(parseArgs(args), expected);
   },
