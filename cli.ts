@@ -140,7 +140,8 @@ export function parseArgs(args: string[]): Args {
             test = true;
             break;
           case "upgrade":
-            const version = args[1];
+            const upgradeIndex = args.findIndex((arg) => arg === "upgrade")
+            const version = args[upgradeIndex+1];
             upgrade = version;
             break;
           default:
@@ -162,7 +163,6 @@ export function parseArgs(args: string[]): Args {
     files.push(script);
     deno_args = deno_args.slice(0, -1);
   }
-
   return {
     debug: flags.debug,
     help: flags.help,
