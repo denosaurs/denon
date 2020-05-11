@@ -140,8 +140,8 @@ export function parseArgs(args: string[]): Args {
             test = true;
             break;
           case "upgrade":
-            const upgradeIndex = args.findIndex((arg) => arg === "upgrade")
-            const version = args[upgradeIndex+1];
+            const upgradeIndex = args.findIndex((arg) => arg === "upgrade");
+            const version = args[upgradeIndex + 1];
             upgrade = version;
             break;
           default:
