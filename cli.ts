@@ -1,6 +1,7 @@
 import {
   parse,
 } from "./deps.ts";
+import { warn } from "./log.ts";
 
 export interface Args {
   debug?: boolean;
@@ -39,12 +40,11 @@ export function help() {
       -w, --watch             List of paths to watch separated by commas
           --fmt               Adds a deno fmt executor
           --test              Adds a deno test executor
-      -u, --upgrade           Upgrade Specific Version. Default is latest.
 
   COMMANDS:
       fmt                     Alias for flag --fmt
       test                    Alias for flag --test
-      upgrade                 Alias for flag --upgrade latest
+      upgrade                 
 
   DENO_ARGS: Arguments passed to Deno to run SCRIPT (like permisssions)
   `);
@@ -73,18 +73,25 @@ function convertToStringArray(
 
 export function upgrade(version: string) {
   const versionWithoutVprefix = RegExp(/^\d\.\d\.\d/);
-  const redColor = '\u001b[31m'
-  if(version === 'latest') {
-    version = 'master'
+  if (version === "latest") {
+    version = "master";
   }
 
-  if(versionWithoutVprefix.test(version)) {
-    console.warn(redColor,`Do you mean v${version}? If it's you should add v prefix`)
+  if (versionWithoutVprefix.test(version)) {
+    warn(`Do you mean v${version}? If it's you should add v prefix`);
   }
 
   Deno.run({
-    cmd : ['deno', 'install', '--unstable', '--allow-read', '--allow-run', '-f', `https://deno.land/x/denon@${version}/denon.ts`]
-  })
+    cmd: [
+      "deno",
+      "install",
+      "--unstable",
+      "--allow-read",
+      "--allow-run",
+      "-f",
+      `https://deno.land/x/denon@${version}/denon.ts`,
+    ],
+  });
 }
 
 export function parseArgs(args: string[]): Args {
@@ -97,9 +104,18 @@ export function parseArgs(args: string[]): Args {
 
   let fmt = false;
   let test = false;
+  let upgrade = 'master';
 
   const flags = parse(args, {
-    string: ["config", "extensions", "interval", "match", "skip", "watch", "upgrade"],
+    string: [
+      "config",
+      "extensions",
+      "interval",
+      "match",
+      "skip",
+      "watch",
+      "upgrade"
+    ],
     boolean: ["debug", "fullscreen", "help", "quiet", "fmt", "test"],
     alias: {
       config: "c",
@@ -112,11 +128,10 @@ export function parseArgs(args: string[]): Args {
       quiet: "q",
       skip: "s",
       watch: "w",
-      upgrade: "u"
     },
     "--": true,
     unknown: (arg: string, k?: string, v?: unknown) => {
-      if (k == null && v == null) {
+      if (!k && !v) {
         switch (arg) {
           case "fmt":
             fmt = true;
@@ -124,14 +139,19 @@ export function parseArgs(args: string[]): Args {
           case "test":
             test = true;
             break;
+          case "upgrade":
+            const version = args[1]
+            upgrade = version;
+            break;
           default:
             files.push(arg);
             break;
         }
+        console.log('false')
         return false;
       }
       deno_args.push(arg);
-      if (v && !arg.endsWith(String(v)) && typeof (v) !== "boolean") {
+      if (v &&arg.endsWith(String(v)) && typeof (v) !== "boolean") {
         deno_args.push(String(v));
       }
       return false;
@@ -160,7 +180,7 @@ export function parseArgs(args: string[]): Args {
     deno_args,
     fmt: fmt || flags.fmt,
     test: test || flags.test,
-    upgrade: flags.upgrade || 'master',
+    upgrade ,
   };
 }
 

@@ -2,6 +2,7 @@ import {
   yellow,
   green,
   red,
+  rgb24,
   setColorEnabled,
 } from "./deps.ts";
 import { DenonConfig } from "./denon_config.ts";
@@ -23,7 +24,18 @@ export function fail(reason: string, code: number = 1) {
 
 export function log(text: string) {
   if (!config.quiet) {
-    console.log(green(`[DENON] ${text}`));
+    console.log(green(` ${text}`));
+  }
+}
+
+export function warn(text: string) {
+  const ORANGE = {
+    r: 255,
+    g: 165,
+    b: 0
+  }
+  if (!config.quiet) {
+    console.warn(rgb24(`[DENON] ${text}`, ORANGE))
   }
 }
 
