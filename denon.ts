@@ -48,10 +48,9 @@ if (import.meta.main) {
     Deno.exit(0);
   }
 
-  if(flags.upgrade) {
+  if (flags.upgrade) {
     debug("Update execute");
-    config.upgrade = flags.upgrade;
-    upgrade(config.upgrade)
+    upgrade(flags.upgrade);
     Deno.exit(0);
   }
 

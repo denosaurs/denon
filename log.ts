@@ -32,10 +32,10 @@ export function warn(text: string) {
   const ORANGE = {
     r: 255,
     g: 165,
-    b: 0
-  }
+    b: 0,
+  };
   if (!config.quiet) {
-    console.warn(rgb24(`[DENON] ${text}`, ORANGE))
+    console.warn(rgb24(`[DENON] ${text}`, ORANGE));
   }
 }
 

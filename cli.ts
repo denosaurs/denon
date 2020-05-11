@@ -104,7 +104,7 @@ export function parseArgs(args: string[]): Args {
 
   let fmt = false;
   let test = false;
-  let upgrade = 'master';
+  let upgrade = "master";
 
   const flags = parse(args, {
     string: [
@@ -114,7 +114,7 @@ export function parseArgs(args: string[]): Args {
       "match",
       "skip",
       "watch",
-      "upgrade"
+      "upgrade",
     ],
     boolean: ["debug", "fullscreen", "help", "quiet", "fmt", "test"],
     alias: {
@@ -140,18 +140,17 @@ export function parseArgs(args: string[]): Args {
             test = true;
             break;
           case "upgrade":
-            const version = args[1]
+            const version = args[1];
             upgrade = version;
             break;
           default:
             files.push(arg);
             break;
         }
-        console.log('false')
         return false;
       }
       deno_args.push(arg);
-      if (v &&arg.endsWith(String(v)) && typeof (v) !== "boolean") {
+      if (v && arg.endsWith(String(v)) && typeof (v) !== "boolean") {
         deno_args.push(String(v));
       }
       return false;
@@ -180,7 +179,7 @@ export function parseArgs(args: string[]): Args {
     deno_args,
     fmt: fmt || flags.fmt,
     test: test || flags.test,
-    upgrade ,
+    upgrade,
   };
 }
 
