@@ -5,7 +5,7 @@
 [![issues](https://img.shields.io/github/issues/eliassjogreen/denon)](https://github.com/eliassjogreen/denon/issues)
 [![ci](https://github.com/eliassjogreen/denon/workflows/test/badge.svg)](https://github.com/eliassjogreen/denon/actions)
 [![releases](https://img.shields.io/github/downloads/eliassjogreen/denon/total)](https://github.com/eliassjogreen/denon/releases/latest/)
-[![deno version](https://img.shields.io/badge/deno-1.0.0--rc1-success)](https://github.com/denoland/deno)
+[![deno version](https://img.shields.io/badge/deno-1.0.0-success)](https://github.com/denoland/deno)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/denon/mod.ts)
 
 Denon aims to be the [deno](https://deno.land/) replacement for [nodemon](https://nodemon.io/) providing a feature packed and easy to use experience.
@@ -28,7 +28,7 @@ Denon provides most of the features you would expect of a file watcher and more.
 
 To install denon simply enter the following into a terminal:
 
-`deno install --unstable --allow-read --allow-run -f https://deno.land/x/denon/denon.ts`
+`deno install -Af --unstable https://deno.land/x/denon/denon.ts`
 
 ## Usage
 
