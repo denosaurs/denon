@@ -49,8 +49,8 @@ if (import.meta.main) {
   }
 
   applyIfDefined(
-    config,
     flags,
+    config,
     [
       "deno_args",
       "extensions",
@@ -71,7 +71,7 @@ if (import.meta.main) {
     const cwd = Deno.cwd();
     debug(`Added watcher for "${cwd}" because of fmt or test config`);
     config.watch.push(cwd);
-  } else if (config.files.length < 1 && flags.files.length < 1) {
+  } else if (flags.files.length < 1) {
     fail(
       "Could not start denon because no file was provided, use -h for help",
     );
@@ -167,7 +167,7 @@ if (import.meta.main) {
 
       const executor = execute(
         ...cmds,
-        ...(binary === "deno" ? flags.deno_args : []),
+        ...(binary === "deno" ? config.deno_args : []),
         file,
         ...flags.runnerFlags,
       );
