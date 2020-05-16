@@ -1,5 +1,5 @@
 import { dirname, exists, extname, resolve, grant } from "./deps.ts";
-import { parseArgs, help, applyIfDefined } from "./cli.ts";
+import { Args, parseArgs, help, applyIfDefined } from "./cli.ts";
 import {
   DenonConfig,
   DenonConfigDefaults,
@@ -11,9 +11,7 @@ import Watcher from "./watcher.ts";
 export let config: DenonConfig = DenonConfigDefaults;
 setConfig(config);
 
-if (import.meta.main) {
-  const flags = parseArgs(Deno.args);
-
+export async function denon(flags: Args) {
   if (flags.debug) {
     config.debug = flags.debug;
     debug("Debug enabled!");
@@ -39,7 +37,10 @@ if (import.meta.main) {
 
   debug(`Read config: ${JSON.stringify(config)}`);
 
-  debug(`Args: ${Deno.args}`);
+  if (import.meta.main) {
+    debug(`Args: ${Deno.args}`);
+  }
+
   debug(`Flags: ${JSON.stringify(flags)}`);
 
   if (flags.help) {
@@ -210,4 +211,10 @@ if (import.meta.main) {
 
     executors.forEach((ex) => ex());
   }
+}
+
+if (import.meta.main) {
+  const flags = parseArgs(Deno.args);
+
+  await denon(flags);
 }
