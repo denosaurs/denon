@@ -1,7 +1,9 @@
-import { log, grant, red } from "./deps.ts";
+// Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
+
+import { log, grant } from "./deps.ts";
 
 import { WatcherEvent } from "./src/watcher.ts";
-import { DenonConfig, readConfig } from "./src/config.ts";
+import { readConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
