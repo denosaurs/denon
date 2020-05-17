@@ -11,6 +11,9 @@ const defaults = [
 
 /** The default denon configuration */
 export interface DenonConfig {
+  // make iterable
+  [key: string]: any;
+
   files: string[];
   quiet: boolean;
   debug: boolean;
@@ -26,8 +29,29 @@ export interface DenonConfig {
   test: boolean;
 }
 
+/**
+ * Reimplementation of Object.assign() that discards
+ * `undefined` values.
+ * @param target to witch assing
+ * @param sources to witch copy from
+ */
+const mergeConfig = (target: DenonConfig, ...sources: any): DenonConfig => {
+  for (const source of sources) {
+    for (const key of Object.keys(source)) {
+      const val = source[key];
+      if (val !== undefined) {
+        target[key] = val;
+      }
+    }
+  }
+  return target;
+};
+
 /** Reads the denon config from a file */
-export async function readConfig(file?: string): Promise<DenonConfig> {
+export async function readConfig(
+  file?: string,
+  args?: any,
+): Promise<DenonConfig> {
   if (file && !(await exists(file))) {
     log.error(`Could not find ${file}`);
   }
