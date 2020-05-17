@@ -23,7 +23,7 @@ const DEFAULT_HANDLER = "format_fn";
  * Deno logger, but slightly better.
  * @param logRecord passed by Deno, contains logging info
  */
-const formatter = (logRecord: LogRecord) => {
+function formatter(logRecord: LogRecord): string {
   let msg = `${TAG} ${reset(logRecord.msg)}`;
   logRecord.args.forEach((arg: any) => {
     if (arg instanceof Object) {
@@ -35,7 +35,7 @@ const formatter = (logRecord: LogRecord) => {
   return msg;
 };
 
-const logLevel = (config: DenonConfig): LogLevelName => {
+function logLevel(config: DenonConfig): LogLevelName {
   let level: LogLevelName = DEFAULT_LEVEL;
   if (config.debug) level = DEBUG_LEVEL;
   if (config.quiet) level = QUIET_LEVEL;
@@ -46,7 +46,7 @@ const logLevel = (config: DenonConfig): LogLevelName => {
  * Modify default deno logger.
  * @param config denom config
  */
-export const setupLog = async (config: DenonConfig) => {
+export async function setupLog(config: DenonConfig): Promise<void> {
   setColorEnabled(true);
 
   await log.setup({

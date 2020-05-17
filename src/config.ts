@@ -64,30 +64,25 @@ export interface DenonConfig {
   skip: string[];
 
   /**
-   * Map denon events to executeables
+   * Map denon events to executeable(s)
    */
-  events: { [event in DenonEventType]?: string[] };
+  events: { [event in DenonEventType]?: string | string[] };
 
   // Running
   /**
-   * Map extensions to executeables
-   * */
-  execute: { [extension: string]: string[] };
+   * Map extensions to executeable(s)
+   */
+  execute: { [extension: string]: string | string[] };
   /**
    * Enviornment to pass to the child process
-   * */
+   */
   env: { [key: string]: string };
   /**
    * Arguments to pass to the child process
-   * */
+   */
   args: string[];
 
   // Deno specific
-  /**
-   * Arguments that should be passed to deno
-   * such as permissions, --importmap or --lock
-   */
-  denoArgs: string[];
   /**
    * Enables deno format on reload if true and if specified only on the array of paths 
    */
@@ -118,7 +113,6 @@ export const DefaultDenonConfig: DenonConfig = {
   env: {},
   args: [],
 
-  denoArgs: [],
   fmt: false,
   test: false,
 };
@@ -159,7 +153,7 @@ export async function readConfig(
     for (const name of defaults) {
       if (await exists(name)) {
         if (file) {
-          log.warning("Multiple config files found, using:", file);
+          log.warning(`Multiple config files found, using: ${file}`);
           break;
         }
 
@@ -177,7 +171,7 @@ export async function readConfig(
       try {
         configFile = await JSON.parse(source);
       } catch (err) {
-        log.error("Could not parse json config: ", err.message);
+        log.error(`Could not parse json config: ${err.message}`);
       }
     } else if (extension === "yaml") {
       try {
@@ -186,7 +180,7 @@ export async function readConfig(
           json: true,
         });
       } catch (err) {
-        log.error("Could not parse yaml config: ", err.message);
+        log.error(`Could not parse yaml config: ${err.message}`);
       }
     } else {
       try {
