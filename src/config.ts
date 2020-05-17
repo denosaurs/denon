@@ -1,33 +1,127 @@
-import { exists, log, readFileStr } from "../deps.ts";
+import {
+  exists,
+  log,
+  readFileStr,
+  extname,
+  parseYaml,
+  JSON_SCHEMA,
+} from "../deps.ts";
 
-/** Possible file */
+import { DenonEventType } from "../denon.ts";
+import { Args } from "./args.ts";
+
+/**
+ * Possible defualt configuration files
+ */
 const defaults = [
+  "denon.json",
+  "denon.yaml",
   ".denon",
   ".denon.json",
+  ".denon.yaml",
   ".denonrc",
   ".denonrc.json",
-  "denon.json",
+  ".denonrc.yaml",
 ];
 
-/** The default denon configuration */
+/**
+ * The denon configuration format
+ */
 export interface DenonConfig {
-  // make iterable
+  // make indexable
   [key: string]: any;
 
-  files: string[];
+  // Logging
+  /**
+   * Disables logging
+   */
   quiet: boolean;
+  /**
+   * Enables debugging
+   */
   debug: boolean;
+  /**
+   * Clear the console on reload events
+   */
   fullscreen: boolean;
-  extensions: string[] | undefined;
-  match: string[] | undefined;
-  skip: string[] | undefined;
+
+  // Watching
+  /**
+   * Interval to debounce multiple watcher firings with
+   */
   interval: number;
+  /**
+   * Array of file extensions to watch for
+   */
+  extensions: string[];
+  /**
+   * An array of glob patterns to watch for
+   */
   watch: string[];
-  deno_args: string[];
+  /**
+   * An array of glob patterns to not watch for
+   */
+  skip: string[];
+
+  /**
+   * Map denon events to executeables
+   */
+  events: { [event in DenonEventType]?: string[] };
+
+  // Running
+  /**
+   * Map extensions to executeables
+   * */
   execute: { [extension: string]: string[] };
-  fmt: boolean;
-  test: boolean;
+  /**
+   * Enviornment to pass to the child process
+   * */
+  env: { [key: string]: string };
+  /**
+   * Arguments to pass to the child process
+   * */
+  args: string[];
+
+  // Deno specific
+  /**
+   * Arguments that should be passed to deno
+   * such as permissions, --importmap or --lock
+   */
+  denoArgs: string[];
+  /**
+   * Enables deno format on reload if true and if specified only on the array of paths 
+   */
+  fmt: boolean | string[];
+  /** 
+   * Enables deno test if true and if specified only on the array of globs
+   */
+  test: boolean | string[];
 }
+
+/** The default denon configuration */
+export const DefaultDenonConfig: DenonConfig = {
+  quiet: false,
+  debug: false,
+  fullscreen: false,
+
+  interval: 500,
+  extensions: ["js", "ts", "json"],
+  watch: ["*.*"],
+  skip: [],
+
+  events: {},
+
+  execute: {
+    "ts": ["deno", "run"],
+    "js": ["deno", "run"],
+  },
+  env: {},
+  args: [],
+
+  denoArgs: [],
+  fmt: false,
+  test: false,
+};
 
 /**
  * Reimplementation of Object.assign() that discards
@@ -35,7 +129,7 @@ export interface DenonConfig {
  * @param target to witch assing
  * @param sources to witch copy from
  */
-const mergeConfig = (target: DenonConfig, ...sources: any): DenonConfig => {
+function mergeConfig(target: DenonConfig, ...sources: any): DenonConfig {
   for (const source of sources) {
     for (const key of Object.keys(source)) {
       const val = source[key];
@@ -45,13 +139,18 @@ const mergeConfig = (target: DenonConfig, ...sources: any): DenonConfig => {
     }
   }
   return target;
-};
+}
 
-/** Reads the denon config from a file */
+/**
+ * Reads the denon config from a file
+ * @param args cli args from parseArgs()
+ * */
 export async function readConfig(
-  file?: string,
-  args?: any,
+  args?: Args,
 ): Promise<DenonConfig> {
+  let file = args?.config ?? undefined;
+  let config: DenonConfig = DefaultDenonConfig;
+
   if (file && !(await exists(file))) {
     log.error(`Could not find ${file}`);
   }
@@ -59,16 +158,57 @@ export async function readConfig(
   if (!file) {
     for (const name of defaults) {
       if (await exists(name)) {
+        if (file) {
+          log.warning("Multiple config files found, using:", file);
+          break;
+        }
+
         file = name;
       }
     }
   }
 
-  let json = {} as any;
-
   if (file) {
-    json = JSON.parse(await readFileStr(file));
+    const extension = extname(file);
+    const source = await readFileStr(file);
+    let configFile;
+
+    if (extension === "json") {
+      try {
+        configFile = await JSON.parse(source);
+      } catch (err) {
+        log.error("Could not parse json config: ", err.message);
+      }
+    } else if (extension === "yaml") {
+      try {
+        configFile = parseYaml(source, {
+          schema: JSON_SCHEMA,
+          json: true,
+        });
+      } catch (err) {
+        log.error("Could not parse yaml config: ", err.message);
+      }
+    } else {
+      try {
+        configFile = await JSON.parse(source);
+      } catch {
+        try {
+          configFile = parseYaml(source, {
+            schema: JSON_SCHEMA,
+            json: true,
+          });
+        } catch {
+          log.error("Could not parse json/yaml config");
+        }
+      }
+    }
+
+    if (configFile) {
+      config = mergeConfig(config, configFile, args);
+    } else {
+      config = mergeConfig(config, args);
+    }
   }
 
-  return { ...json } as DenonConfig;
+  return config;
 }
