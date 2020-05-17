@@ -81,9 +81,9 @@ export class Spawner {
     const options = {
       cmd: command,
       env: this.config.env,
-      stdin: this.config.stdin || 'inherit',
-      stdout: this.config.stdout || 'inherit',
-      stderr: this.config.stderr || 'inherit',
+      stdin: this.config.stdin || "inherit",
+      stdout: this.config.stdout || "inherit",
+      stderr: this.config.stderr || "inherit",
     };
     return new Execution(options);
   }
@@ -110,7 +110,7 @@ export interface ExecutionEventStatus {
 }
 
 class Execution implements AsyncIterable<ExecutionEvent> {
-  process: Deno.Process
+  process: Deno.Process;
 
   constructor(public options: Deno.RunOptions) {
     this.process = Deno.run(options);
@@ -118,20 +118,20 @@ class Execution implements AsyncIterable<ExecutionEvent> {
 
   close() {
     this.process.close();
-    if (this.options.stdin === 'piped' && this.process.stdin) {
-      this.process.stdin.close()
+    if (this.options.stdin === "piped" && this.process.stdin) {
+      this.process.stdin.close();
     }
   }
 
   async *iterate(): AsyncIterator<ExecutionEvent> {
-    if (this.options.stdout == 'piped') {
+    if (this.options.stdout == "piped") {
       const stdout = await this.process.output();
       yield { type: "stdout", stdout };
     }
-    if (this.options.stderr == 'piped') {
+    if (this.options.stderr == "piped") {
       const stderr = await this.process.stderrOutput();
       yield { type: "stderr", stderr };
-    } 
+    }
     const status = await this.process.status();
     yield { type: "status", status };
   }

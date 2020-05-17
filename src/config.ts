@@ -120,14 +120,14 @@ export const DEFAULT_DENON_CONFIG: DenonConfig = {
     js: ["deno", "run"],
   },
   exeArgs: [],
-  
+
   env: {},
 
   fmt: false,
   test: false,
 
   file: "",
-  fileArgs: []
+  fileArgs: [],
 };
 
 /**

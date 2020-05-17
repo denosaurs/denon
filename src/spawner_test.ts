@@ -37,7 +37,7 @@ Deno.test({
     );
 
     config.exe = {
-      "sh": ["sh", "${file}", "${file-args}"]
+      "sh": ["sh", "${file}", "${file-args}"],
     };
     config.exeArgs = ["SHOULD_NOT_SHOW_UP"];
     config.fileArgs = ["--dist", "win32"];
@@ -46,17 +46,5 @@ Deno.test({
       spawner.build(),
       ["sh", "start.sh", "--dist", "win32"],
     );
-
-    config.exe = {};
-    config.exeArgs = ["--allow-env"];
-    config.file = "testing/hello_world.js";
-    config.env = {
-      'SECRET_ENV_VARIABLE': 'shush'
-    }
-    const execution = spawner.execute()
-    for await (let event of execution) {
-      console.log(event);
-    }
-    execution.close()
   },
 });
