@@ -9,5 +9,17 @@ export interface FileChange {
   event: FileEvent;
 }
 
-export abstract class Watcher extends AsyncIterable<FileChange[]> {
+export abstract class Watcher implements AsyncIterable<FileChange[]> {
+  async *iterate(): AsyncIterator<FileChange[]> {
+    while (true) {
+      yield [{
+        event: "any",
+        path: "hello/world",
+      }];
+    }
+  }
+
+  [Symbol.asyncIterator](): AsyncIterator<FileChange[]> {
+    return this.iterate();
+  }
 }
