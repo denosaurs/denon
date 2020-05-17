@@ -8,7 +8,9 @@ export function template(
     if (values.key) {
       log.error(
         `Could not find key "${key}" in ${
-          JSON.stringify(values)
+          JSON.stringify(
+            values,
+          )
         } for template "${source}"`,
       );
     }

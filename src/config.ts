@@ -8,7 +8,10 @@ import {
 } from "../deps.ts";
 
 import { DenonEventType } from "../denon.ts";
+
 import { Args } from "./args.ts";
+import { WatcherOptions } from "./watcher.ts";
+import { SpawnerConfig } from "./spawner.ts";
 
 /**
  * Possible defualt configuration files
@@ -24,10 +27,16 @@ const defaults = [
   ".denonrc.yaml",
 ];
 
+export type DenonConfig =
+  & Args
+  & WatcherOptions
+  & SpawnerConfig
+  & { [key: string]: any };
+
 /**
  * The denon configuration format
  */
-export interface DenonConfig {
+export interface DenonConfigLegacy {
   // make indexable
   [key: string]: any;
 
@@ -84,17 +93,17 @@ export interface DenonConfig {
 
   // Deno specific
   /**
-   * Enables deno format on reload if true and if specified only on the array of paths 
+   * Enables deno format on reload if true and if specified only on the array of paths
    */
   fmt: boolean | string[];
-  /** 
+  /**
    * Enables deno test if true and if specified only on the array of globs
    */
   test: boolean | string[];
 }
 
 /** The default denon configuration */
-export const DefaultDenonConfig: DenonConfig = {
+export const DEFAULT_DENON_CONFIG: DenonConfig = {
   quiet: false,
   debug: false,
   fullscreen: false,
@@ -106,15 +115,19 @@ export const DefaultDenonConfig: DenonConfig = {
 
   events: {},
 
-  execute: {
-    "ts": ["deno", "run"],
-    "js": ["deno", "run"],
+  exe: {
+    ts: ["deno", "run"],
+    js: ["deno", "run"],
   },
+  exeArgs: [],
+  
   env: {},
-  args: [],
 
   fmt: false,
   test: false,
+
+  file: "",
+  fileArgs: []
 };
 
 /**
@@ -139,11 +152,9 @@ function mergeConfig(target: DenonConfig, ...sources: any): DenonConfig {
  * Reads the denon config from a file
  * @param args cli args from parseArgs()
  * */
-export async function readConfig(
-  args?: Args,
-): Promise<DenonConfig> {
+export async function readConfig(args?: Args): Promise<DenonConfig> {
   let file = args?.config ?? undefined;
-  let config: DenonConfig = DefaultDenonConfig;
+  let config: DenonConfig = DEFAULT_DENON_CONFIG;
 
   if (file && !(await exists(file))) {
     log.error(`Could not find ${file}`);
@@ -162,10 +173,10 @@ export async function readConfig(
     }
   }
 
+  let configFile;
   if (file) {
     const extension = extname(file);
     const source = await readFileStr(file);
-    let configFile;
 
     if (extension === "json") {
       try {
@@ -196,12 +207,12 @@ export async function readConfig(
         }
       }
     }
+  }
 
-    if (configFile) {
-      config = mergeConfig(config, configFile, args);
-    } else {
-      config = mergeConfig(config, args);
-    }
+  if (configFile) {
+    config = mergeConfig(config, configFile, args);
+  } else {
+    config = mergeConfig(config, args);
   }
 
   return config;

@@ -14,15 +14,15 @@ Denon aims to be the [deno](https://deno.land/) replacement for [nodemon](https:
 
 Denon provides most of the features you would expect of a file watcher and more.
 
-* Automatic restarting of deno application
-* Default support for `deno run` making it as easy as replacing `deno` with `denon` to run your code
-* Aliases for `deno run`, `deno fmt` and `deno test`
-* An extensive configuration file
-* Watching of specific directories
-* [Glob](https://en.wikipedia.org/wiki/Glob_(programming)) matching for watched files and directories
-* Watching of only certain extensions
-* Set interval matching for good performance and not spamming executors
-* Specific executors for specific file types (e.g. `denon file.py` would work with the right configuration)
+- Automatic restarting of deno application
+- Default support for `deno run` making it as easy as replacing `deno` with `denon` to run your code
+- Aliases for `deno run`, `deno fmt` and `deno test`
+- An extensive configuration file
+- Watching of specific directories
+- [Glob](<https://en.wikipedia.org/wiki/Glob_(programming)>) matching for watched files and directories
+- Watching of only certain extensions
+- Set interval matching for good performance and not spamming executors
+- Specific executors for specific file types (e.g. `denon file.py` would work with the right configuration)
 
 ## Install
 
@@ -62,7 +62,7 @@ DENO_ARGS: Arguments passed to Deno to run SCRIPT (like permisssions)
 
 ## Configuration
 
-Denon supports local configuration files. The default filenames for these are `.denon`, `.denon.json`, `.denonrc`, `.denonrc.json`  and
+Denon supports local configuration files. The default filenames for these are `.denon`, `.denon.json`, `.denonrc`, `.denonrc.json` and
 are written in json. They can also be specified by using the `--config <file>` flag. These configuration files allow for
 even more features then the command line flags although command line flags always overrides the configuration file
 options. All of the options in the configuration file are optional and will be set to their default if nothing else
@@ -70,36 +70,23 @@ is specified.
 
 Example configuration with all of the possible configuration values set to something:
 
-``` json
+```json
 {
-    "files": [
-        "main.ts"
-    ],
-    "quiet": false,
-    "debug": true,
-    "fullscreen": true,
-    "extensions": [
-        ".js",
-        ".ts",
-        ".py",
-        ".json"
-    ],
-    "interval": 500,
-    "watch": [
-        "source/",
-        "tools/"
-    ],
-    "deno_args":[
-        "--allow-net",
-        "--import-map=import-map.json"
-    ],
-    "execute": {
-        ".js": ["deno", "run"],
-        ".ts": ["deno", "run"],
-        ".py": ["python"]
-    },
-    "fmt": false,
-    "test": true
+  "files": ["main.ts"],
+  "quiet": false,
+  "debug": true,
+  "fullscreen": true,
+  "extensions": [".js", ".ts", ".py", ".json"],
+  "interval": 500,
+  "watch": ["source/", "tools/"],
+  "deno_args": ["--allow-net", "--import-map=import-map.json"],
+  "execute": {
+    ".js": ["deno", "run"],
+    ".ts": ["deno", "run"],
+    ".py": ["python"]
+  },
+  "fmt": false,
+  "test": true
 }
 ```
 

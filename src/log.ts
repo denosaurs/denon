@@ -33,34 +33,33 @@ function formatter(logRecord: LogRecord): string {
     }
   });
   return msg;
-};
+}
 
 function logLevel(config: DenonConfig): LogLevelName {
   let level: LogLevelName = DEFAULT_LEVEL;
   if (config.debug) level = DEBUG_LEVEL;
   if (config.quiet) level = QUIET_LEVEL;
   return level;
-};
+}
 
 /**
  * Modify default deno logger.
  * @param config denom config
  */
-export async function setupLog(config: DenonConfig): Promise<void> {
+export async function setupLog(config?: DenonConfig): Promise<void> {
+  const level = config ? logLevel(config) : DEBUG_LEVEL;
   setColorEnabled(true);
-
   await log.setup({
     handlers: {
-      [DEFAULT_HANDLER]: new log.handlers.ConsoleHandler(
-        DEBUG_LEVEL,
-        { formatter },
-      ),
+      [DEFAULT_HANDLER]: new log.handlers.ConsoleHandler(DEBUG_LEVEL, {
+        formatter,
+      }),
     },
     loggers: {
       default: {
-        level: logLevel(config),
+        level: level,
         handlers: [DEFAULT_HANDLER],
       },
     },
   });
-};
+}

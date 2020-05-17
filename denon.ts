@@ -1,32 +1,60 @@
-import { log } from "./deps.ts";
+import { log, grant, red } from "./deps.ts";
 
-import { FileChange } from "./src/watcher.ts";
-import { DenonConfig } from "./src/config.ts";
+import { WatcherEvent } from "./src/watcher.ts";
+import { DenonConfig, readConfig } from "./src/config.ts";
+import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
-export type DenonEventType =
+const VERSION = "v2.0.0";
+
+// TODO: explain permission usage in detail for transparency
+const PERMISSIONS: Deno.PermissionDescriptor[] = [
+  { name: "read" },
+  { name: "run" },
+];
+
+export declare type DenonEventType =
   | "start"
   | "reload"
   | "crash"
   | "success"
   | "exit";
 
-export interface DenonEvent {
-  type: DenonEventType;
+export declare type DenonEvent =
+  | DenonReloadEvent
+  | DenonCrashEvent
+  | DenonSuccessEvent
+  | DenonExitEvent;
+
+export declare interface DenonReloadEvent {
+  type: "reload";
+  change: WatcherEvent[];
 }
 
-export interface DenonReloadEvent extends DenonEvent {
-  type: "reload";
-  change: FileChange[];
+export declare interface DenonCrashEvent {
+  type: "crash";
+  status: Deno.ProcessStatus;
+}
+
+export declare interface DenonSuccessEvent {
+  type: "success";
+  status: Deno.ProcessStatus;
+}
+
+export declare interface DenonExitEvent {
+  type: "exit";
 }
 
 export class Denon implements AsyncIterable<DenonEvent> {
   async *iterate(): AsyncIterator<DenonEvent> {
-    while (true) {
-      yield {
-        type: "success",
-      };
-    }
+    yield {
+      type: "success",
+      status: {
+        success: true,
+        code: 0,
+        signal: undefined,
+      },
+    };
   }
 
   [Symbol.asyncIterator](): AsyncIterator<DenonEvent> {
@@ -34,24 +62,32 @@ export class Denon implements AsyncIterable<DenonEvent> {
   }
 }
 
-export async function denon(config: DenonConfig) {
-  await setupLog(config);
-}
-
 if (import.meta.main) {
-  await denon({
-    files: [],
-    quiet: false,
-    debug: false,
-    fullscreen: false,
-    extensions: [],
-    match: [],
-    skip: [],
-    interval: 400,
-    watch: [],
-    deno_args: [],
-    execute: {},
-    fmt: false,
-    test: false,
-  });
+  await setupLog();
+
+  const permissions = await grant(PERMISSIONS);
+  if (!permissions || permissions.length < 2) {
+    log.critical("Required permissions `read` and `run` not granted");
+    Deno.exit(1);
+  }
+
+  log.debug("Required permissions `read` and `run` granted");
+
+  const args = parseArgs(Deno.args);
+  let config = await readConfig(args);
+  await setupLog(config);
+
+  // show help message
+  if (args.help) {
+    console.log("PLAIN TEXT WITH COLORS HERE");
+    Deno.exit(0);
+  }
+
+  log.warning(VERSION);
+  if (args.version) Deno.exit(0);
+
+  const denon = new Denon();
+  for await (let event of denon) {
+    // console.log(event);
+  }
 }
