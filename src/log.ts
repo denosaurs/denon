@@ -10,6 +10,21 @@ import {
 
 import { DenonConfig } from "./config.ts";
 
+export interface LogConfig {
+  /**
+   * Disables logging
+   */
+  quiet: boolean;
+  /**
+   * Enables debugging
+   */
+  debug: boolean;
+  /**
+   * Clear the console on reload events
+   */
+  fullscreen: boolean;
+}
+
 /**
  * Logger tag
  */

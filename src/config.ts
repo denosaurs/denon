@@ -14,6 +14,7 @@ import { DenonEventType } from "../denon.ts";
 import { Args } from "./args.ts";
 import { WatcherConfig } from "./watcher.ts";
 import { SpawnerConfig } from "./spawner.ts";
+import { LogConfig } from "./log.ts";
 
 /**
  * Possible defualt configuration files
@@ -29,51 +30,19 @@ const defaults = [
   ".denonrc.yaml",
 ];
 
+/**
+ * The denon configuration format
+ */
 export type DenonConfig =
   & Args
   & WatcherConfig
   & SpawnerConfig
+  & LogConfig
+  // make indexable
   & { [key: string]: any };
 
-/**
- * The denon configuration format
- */
+
 export interface DenonConfigLegacy {
-  // make indexable
-  [key: string]: any;
-
-  // Logging
-  /**
-   * Disables logging
-   */
-  quiet: boolean;
-  /**
-   * Enables debugging
-   */
-  debug: boolean;
-  /**
-   * Clear the console on reload events
-   */
-  fullscreen: boolean;
-
-  // Watching
-  /**
-   * Interval to debounce multiple watcher firings with
-   */
-  interval: number;
-  /**
-   * Array of file extensions to watch for
-   */
-  extensions: string[];
-  /**
-   * An array of glob patterns to watch for
-   */
-  watch: string[];
-  /**
-   * An array of glob patterns to not watch for
-   */
-  skip: string[];
-
   /**
    * Map denon events to executeable(s)
    */
