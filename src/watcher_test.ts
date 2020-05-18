@@ -8,7 +8,7 @@ import { setupLog } from "./log.ts";
 Deno.test({
   name: "watcher:isWatched",
   async fn(): Promise<void> {
-    await setupLog()
+    await setupLog();
     const config: WatcherConfig = {
       exts: ["json"],
       skip: [],
@@ -16,23 +16,35 @@ Deno.test({
     };
 
     const watcher = new Watcher([Deno.cwd()], config);
-    assert(!watcher.isWatched("src/args.ts"), 'should not match because of extension');
+    assert(
+      !watcher.isWatched("src/args.ts"),
+      "should not match because of extension",
+    );
 
-    config.exts = []
-    config.skip = ["src/*"]
-    watcher.reload()
-    assert(!watcher.isWatched("src/args.ts"), 'should not match because parent dir is skipped');
-    
-    config.exts = []
-    config.skip = []
-    config.match = ["lib/*"]
-    watcher.reload()
-    assert(!watcher.isWatched("src/args.ts"), 'should not match because parent dir is not matched');
+    config.exts = [];
+    config.skip = ["src/*"];
+    watcher.reload();
+    assert(
+      !watcher.isWatched("src/args.ts"),
+      "should not match because parent dir is skipped",
+    );
 
-    config.exts = [".ts"]
-    config.skip = []
-    config.match = ["*.*"]
-    watcher.reload()
-    assert(watcher.isWatched("src/args.ts"), 'should match because of extensions');
+    config.exts = [];
+    config.skip = [];
+    config.match = ["lib/*"];
+    watcher.reload();
+    assert(
+      !watcher.isWatched("src/args.ts"),
+      "should not match because parent dir is not matched",
+    );
+
+    config.exts = [".ts"];
+    config.skip = [];
+    config.match = ["*.*"];
+    watcher.reload();
+    assert(
+      watcher.isWatched("src/args.ts"),
+      "should match because of extensions",
+    );
   },
 });

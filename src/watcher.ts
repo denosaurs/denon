@@ -51,12 +51,12 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
     private config: WatcherConfig = {},
   ) {
     this.paths = paths;
-    this.reload()
+    this.reload();
   }
 
   reload() {
     this.interval = this.config.interval || this.interval;
-    this.recursive = this.config.recursive || this.recursive
+    this.recursive = this.config.recursive || this.recursive;
     this.exts = this.config.exts?.map((e) => e.startsWith(".") ? e : `.${e}`);
     this.match = this.config.match?.map((s) =>
       globToRegExp(s, { extended: true, globstar: false })
@@ -85,8 +85,11 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
     path: string,
   ): boolean {
     path = this.verifyPath(path);
-    log.debug(`evaluating path ${path}`)
-    if (extname(path) && this.exts?.length && this.exts?.every((ext) => !path.endsWith(ext))) {
+    log.debug(`evaluating path ${path}`);
+    if (
+      extname(path) && this.exts?.length &&
+      this.exts?.every((ext) => !path.endsWith(ext))
+    ) {
       log.debug(`path ${path} does not have right extension`);
       return false;
     } else if (this.skip && this.skip?.some((skip) => path.match(skip))) {
