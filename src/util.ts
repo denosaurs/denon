@@ -30,7 +30,7 @@ export function template(
         if (value === undefined) {
           continue;
         }
-        
+
         if (value instanceof Array) {
           output = output.concat(value);
         } else {

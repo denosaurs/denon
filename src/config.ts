@@ -41,7 +41,6 @@ export type DenonConfig =
   // make indexable
   & { [key: string]: any };
 
-
 export interface DenonConfigLegacy {
   /**
    * Map denon events to executeable(s)

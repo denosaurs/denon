@@ -31,7 +31,8 @@ Deno.test({
     );
 
     config.exe = {
-      "ts": "deno run FIXED_EXE_ARG ${exe-args} ${file} FIXED_FILE_ARG ${file-args}"
+      "ts":
+        "deno run FIXED_EXE_ARG ${exe-args} ${file} FIXED_FILE_ARG ${file-args}",
     };
     assertEquals(
       spawner.build(),
