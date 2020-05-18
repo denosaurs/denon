@@ -56,7 +56,7 @@ export class Denon implements AsyncIterable<DenonEvent> {
 
   async *iterate(): AsyncIterator<DenonEvent> {
     for await (const events of this.watcher) {
-      console.log('DENON CLASS', events);
+      console.log("DENON CLASS", events);
     }
     yield {
       type: "success",
