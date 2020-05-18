@@ -66,9 +66,9 @@ export class Spawner {
     const options = {
       cmd: command,
       env: this.config.env,
-      stdin: this.config.stdin || "inherit",
-      stdout: this.config.stdout || "inherit",
-      stderr: this.config.stderr || "inherit",
+      stdin: this.config.stdin ?? "inherit",
+      stdout: this.config.stdout ?? "inherit",
+      stderr: this.config.stderr ?? "inherit",
     };
     return new Execution(options);
   }

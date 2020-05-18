@@ -19,6 +19,7 @@ export interface WatcherEvent {
 
 /** All of the options for the `watch` generator */
 export interface WatcherConfig {
+  /** An array of paths to watch */
   paths?: string[];
   /** The number of milliseconds after the last change */
   interval?: number;
@@ -54,9 +55,9 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
   }
 
   reload() {
-    this.paths = this.config.paths || [Deno.cwd()];
-    this.interval = this.config.interval || this.interval;
-    this.recursive = this.config.recursive || this.recursive;
+    this.paths = this.config.paths ?? [Deno.cwd()];
+    this.interval = this.config.interval ?? this.interval;
+    this.recursive = this.config.recursive ?? this.recursive;
     if (this.config.exts) {
       this.exts = this.config.exts.map((e) => e.startsWith(".") ? e : `.${e}`);
     }
