@@ -42,13 +42,15 @@ const DEFAULT_HANDLER = "format_fn";
  */
 function formatter(logRecord: LogRecord): string {
   let msg = `${TAG} ${reset(logRecord.msg)}`;
-  logRecord.args.forEach((arg: any) => {
+
+  for (const arg of logRecord.args) {
     if (arg instanceof Object) {
       msg += ` ${JSON.stringify(arg)}`;
     } else {
       msg += ` ${String(arg)}`;
     }
-  });
+  }
+
   return msg;
 }
 
@@ -65,7 +67,7 @@ function logLevel(config: DenonConfig): LogLevelName {
  */
 export async function setupLog(config?: DenonConfig): Promise<void> {
   const level = config ? logLevel(config) : DEBUG_LEVEL;
-  setColorEnabled(true);
+  setColorEnabled(Deno.noColor);
   await log.setup({
     handlers: {
       [DEFAULT_HANDLER]: new log.handlers.ConsoleHandler(DEBUG_LEVEL, {

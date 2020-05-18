@@ -1,7 +1,7 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 import { Spawner, SpawnerConfig } from "./spawner.ts";
-import { assertEquals } from "https://deno.land/std@0.51.0/testing/asserts.ts";
+import { assertEquals } from "../test_deps.ts";
 
 Deno.test({
   name: "spawner:build",

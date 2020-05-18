@@ -7,9 +7,6 @@ export { LevelName as LogLevelName } from "https://deno.land/std@0.51.0/log/leve
 
 export {
   setColorEnabled,
-  green,
-  red,
-  yellow,
   reset,
 } from "https://deno.land/std@v0.51.0/fmt/mod.ts";
 

@@ -89,12 +89,14 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
   }
 
   verifyPath(path: string): string {
-    this.paths?.forEach((directory) => {
-      const rel = relative(directory, path);
-      if (rel && !rel.startsWith("..")) {
-        path = relative(directory, path);
+    if (this.paths) {
+      for (const directory of this.paths) {
+        const rel = relative(directory, path);
+        if (rel && !rel.startsWith("..")) {
+          path = relative(directory, path);
+        }
       }
-    });
+    }
     return path;
   }
 
@@ -149,12 +151,12 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
       const event of Deno.watchFs(this.paths, { recursive: this.recursive })
     ) {
       const { kind, paths } = event;
-      paths.forEach((path) => {
+      for (const path of paths) {
         if (this.isWatched(path)) {
           this.changes[path] = kind;
           debounce();
         }
-      });
+      }
     }
   }
 

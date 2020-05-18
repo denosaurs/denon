@@ -1,6 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { assert } from "https://deno.land/std@0.51.0/testing/asserts.ts";
+import { assert } from "../test_deps.ts";
 
 import { Watcher, WatcherConfig } from "./watcher.ts";
 import { setupLog } from "./log.ts";

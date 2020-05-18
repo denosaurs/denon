@@ -47,3 +47,11 @@ export function applyTemplates(
 
   return output;
 }
+
+/**
+ * Checks if string is valid positive integer
+ * @param num String to check
+ */
+export function isPositiveInteger(num: string): boolean {
+  return (num as unknown as number) >>> 0 === parseFloat(num);
+}

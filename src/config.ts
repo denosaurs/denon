@@ -127,7 +127,7 @@ export async function readConfig(args?: Args): Promise<DenonConfig> {
   let config: DenonConfig = DEFAULT_DENON_CONFIG;
 
   if (file && !(await exists(file))) {
-    log.error(`Could not find ${file}`);
+    log.error(`Could not find config ${file}`);
   }
 
   if (!file) {
