@@ -7,15 +7,10 @@ import { log } from "../deps.ts";
  * @param source The source string to apply the values to
  * @param values An object from where the values originate
  */
-export function template(
-  source: string | string[],
+export function applyTemplates(
+  source: string[],
   values: { [key: string]: undefined | string | string[] },
 ): string[] {
-  if (typeof source === "string") {
-    source = source.trim().replace(/\s\s+/g, " ");
-    source = source.split(" ");
-  }
-
   let output: string[] = [];
 
   for (const part of source) {

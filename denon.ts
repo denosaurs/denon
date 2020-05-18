@@ -2,8 +2,8 @@
 
 import { log, grant } from "./deps.ts";
 
-import { WatcherEvent } from "./src/watcher.ts";
-import { readConfig } from "./src/config.ts";
+import { Watcher, WatcherEvent } from "./src/watcher.ts";
+import { readConfig, DenonConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
@@ -48,13 +48,21 @@ export declare interface DenonExitEvent {
 }
 
 export class Denon implements AsyncIterable<DenonEvent> {
+  watcher: Watcher;
+
+  constructor(private config?: DenonConfig) {
+    this.watcher = new Watcher(config);
+  }
+
   async *iterate(): AsyncIterator<DenonEvent> {
+    for await (const events of this.watcher) {
+      console.log('DENON CLASS', events);
+    }
     yield {
       type: "success",
       status: {
-        success: true,
         code: 0,
-        signal: undefined,
+        success: true,
       },
     };
   }
@@ -88,8 +96,17 @@ if (import.meta.main) {
   log.warning(VERSION);
   if (args.version) Deno.exit(0);
 
-  const denon = new Denon();
+  const denon = new Denon({
+    legacy: false,
+    exe: {
+      "ts": ["deno", "run", "${exe-args}", "${file}"],
+    },
+    file: "ciao",
+    quiet: false,
+    debug: false,
+    fullscreen: true,
+  });
   for await (let event of denon) {
-    // console.log(event);
+    console.log(event);
   }
 }

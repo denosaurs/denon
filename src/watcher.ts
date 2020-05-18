@@ -1,6 +1,14 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { log, deferred, globToRegExp, extname, relative } from "../deps.ts";
+import {
+  log,
+  deferred,
+  globToRegExp,
+  extname,
+  relative,
+  walk,
+  delay,
+} from "../deps.ts";
 
 type FileEvent =
   | "any"
@@ -31,6 +39,8 @@ export interface WatcherConfig {
   match?: string[];
   /** The globs that it will not scan for */
   skip?: string[];
+  /** Use the legacy file monitoring algorithm */
+  legacy?: boolean;
 }
 
 /**
@@ -43,14 +53,13 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
   private changes: { [key: string]: FileEvent } = {};
   private interval: number = 500;
   private recursive: boolean = true;
-  private exts: string[] = [];
-  private match: RegExp[] = [];
-  private skip: RegExp[] = [];
+  private exts?: string[] = undefined;
+  private match?: RegExp[] = undefined;
+  private skip?: RegExp[] = undefined;
   private paths: string[] = [];
+  private watch: Function = this.denoWatch;
 
-  constructor(
-    private config: WatcherConfig = {},
-  ) {
+  constructor(private config: WatcherConfig = {}) {
     this.reload();
   }
 
@@ -58,6 +67,7 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
     this.paths = this.config.paths ?? [Deno.cwd()];
     this.interval = this.config.interval ?? this.interval;
     this.recursive = this.config.recursive ?? this.recursive;
+    this.watch = this.config.legacy ? this.legacyWatch : this.denoWatch;
     if (this.config.exts) {
       this.exts = this.config.exts.map((e) => e.startsWith(".") ? e : `.${e}`);
     }
@@ -88,24 +98,22 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
     return path;
   }
 
-  isWatched(
-    path: string,
-  ): boolean {
+  isWatched(path: string): boolean {
     path = this.verifyPath(path);
     log.debug(`evaluating path ${path}`);
     if (
-      extname(path) && this.exts.length &&
+      extname(path) && this.exts?.length &&
       this.exts?.every((ext) => !path.endsWith(ext))
     ) {
       log.debug(`path ${path} does not have right extension`);
       return false;
     } else if (
-      this.skip.length && this.skip?.some((skip) => path.match(skip))
+      this.skip?.length && this.skip?.some((skip) => path.match(skip))
     ) {
       log.debug(`path ${path} is skipped`);
       return false;
     } else if (
-      this.match.length && this.match?.every((match) => !path.match(match))
+      this.match?.length && this.match?.every((match) => !path.match(match))
     ) {
       log.debug(`path ${path} is not matched`);
       return false;
@@ -114,7 +122,23 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
     return true;
   }
 
-  async watch() {
+  async *iterate(): AsyncIterator<WatcherEvent[]> {
+    this.watch();
+    while (true) {
+      await this.signal;
+      yield Object.entries(this.changes).map(([
+        path,
+        event,
+      ]) => ({ path, event }));
+      this.reset();
+    }
+  }
+
+  [Symbol.asyncIterator](): AsyncIterator<WatcherEvent[]> {
+    return this.iterate();
+  }
+
+  async denoWatch() {
     let timer = 0;
     const debounce = () => {
       clearTimeout(timer);
@@ -134,19 +158,62 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
     }
   }
 
-  async *iterate(): AsyncIterator<WatcherEvent[]> {
-    this.watch();
-    while (true) {
-      await this.signal;
-      yield Object.entries(this.changes).map(([
-        path,
-        event,
-      ]) => ({ path, event }));
-      this.reset();
-    }
-  }
+  async legacyWatch() {
+    let timer = 0;
+    const debounce = () => {
+      clearTimeout(timer);
+      timer = setTimeout(this.signal.resolve, this.interval);
+    };
 
-  [Symbol.asyncIterator](): AsyncIterator<WatcherEvent[]> {
-    return this.iterate();
+    const walkPaths = async () => {
+      const tree: { [path: string]: Date | null } = {};
+      for (let i in this.paths) {
+        const action = walk(this.paths[i], {
+          maxDepth: Infinity,
+          includeDirs: false,
+          followSymlinks: false,
+          exts: this.exts,
+          match: this.match,
+          skip: this.skip,
+        });
+        for await (const { path } of action) {
+          if (this.isWatched(path)) {
+            const stat = await Deno.stat(path);
+            tree[path] = stat.mtime;
+          }
+        }
+      }
+      return tree;
+    };
+
+    let previous = await walkPaths();
+
+    while (true) {
+      const current = await walkPaths();
+
+      for (const path in previous) {
+        const pre = previous[path];
+        const post = current[path];
+        if (pre && !post) {
+          this.changes[path] = "remove";
+        } else if (
+          pre &&
+          post &&
+          pre.getTime() !== post.getTime()
+        ) {
+          this.changes[path] = "modify";
+        }
+      }
+
+      for (const path in current) {
+        if (!previous[path] && current[path]) {
+          this.changes[path] = "create";
+        }
+      }
+
+      previous = current;
+      debounce();
+      await delay(this.interval);
+    }
   }
 }

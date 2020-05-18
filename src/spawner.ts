@@ -1,7 +1,7 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 import { log, extname } from "../deps.ts";
-import { template } from "./util.ts";
+import { applyTemplates } from "./util.ts";
 
 type Command = string[];
 type StdFile = "inherit" | "piped" | "null" | number;
@@ -47,13 +47,13 @@ export class Spawner {
       ];
     }
 
-    let templateValues = {
+    let templates = {
       "exe-args": this.config.exeArgs,
       "file-args": this.config.fileArgs,
       "file": this.config.file,
     };
 
-    return template(exe, templateValues);
+    return applyTemplates(exe, templates);
   }
 
   /**
