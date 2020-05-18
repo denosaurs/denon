@@ -15,7 +15,7 @@ Deno.test({
       match: [],
     };
 
-    const watcher = new Watcher([Deno.cwd()], config);
+    const watcher = new Watcher(config);
     assert(
       !watcher.isWatched("src/args.ts"),
       "should not match because of extension",

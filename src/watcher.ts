@@ -19,6 +19,7 @@ export interface WatcherEvent {
 
 /** All of the options for the `watch` generator */
 export interface WatcherConfig {
+  paths?: string[];
   /** The number of milliseconds after the last change */
   interval?: number;
   /** Scan for files if in folders of `paths` */
@@ -41,29 +42,34 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
   private changes: { [key: string]: FileEvent } = {};
   private interval: number = 500;
   private recursive: boolean = true;
-  private exts?: string[];
-  private match?: RegExp[];
-  private skip?: RegExp[];
-  private paths: string[];
+  private exts: string[] = [];
+  private match: RegExp[] = [];
+  private skip: RegExp[] = [];
+  private paths: string[] = [];
 
   constructor(
-    paths: string[],
     private config: WatcherConfig = {},
   ) {
-    this.paths = paths;
     this.reload();
   }
 
   reload() {
+    this.paths = this.config.paths || [Deno.cwd()];
     this.interval = this.config.interval || this.interval;
     this.recursive = this.config.recursive || this.recursive;
-    this.exts = this.config.exts?.map((e) => e.startsWith(".") ? e : `.${e}`);
-    this.match = this.config.match?.map((s) =>
-      globToRegExp(s, { extended: true, globstar: false })
-    );
-    this.skip = this.config.skip?.map((s) =>
-      globToRegExp(s, { extended: true, globstar: false })
-    );
+    if (this.config.exts) {
+      this.exts = this.config.exts.map((e) => e.startsWith(".") ? e : `.${e}`);
+    }
+    if (this.config.match) {
+      this.match = this.config.match.map((s) =>
+        globToRegExp(s, { extended: true, globstar: false })
+      );
+    }
+    if (this.config.skip) {
+      this.skip = this.config.skip.map((s) =>
+        globToRegExp(s, { extended: true, globstar: false })
+      );
+    }
   }
 
   reset() {
@@ -72,7 +78,7 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
   }
 
   verifyPath(path: string): string {
-    this.paths.forEach((directory) => {
+    this.paths?.forEach((directory) => {
       const rel = relative(directory, path);
       if (rel && !rel.startsWith("..")) {
         path = relative(directory, path);
@@ -87,15 +93,19 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
     path = this.verifyPath(path);
     log.debug(`evaluating path ${path}`);
     if (
-      extname(path) && this.exts?.length &&
+      extname(path) && this.exts.length &&
       this.exts?.every((ext) => !path.endsWith(ext))
     ) {
       log.debug(`path ${path} does not have right extension`);
       return false;
-    } else if (this.skip && this.skip?.some((skip) => path.match(skip))) {
+    } else if (
+      this.skip.length && this.skip?.some((skip) => path.match(skip))
+    ) {
       log.debug(`path ${path} is skipped`);
       return false;
-    } else if (this.match && this.match?.every((match) => !path.match(match))) {
+    } else if (
+      this.match.length && this.match?.every((match) => !path.match(match))
+    ) {
       log.debug(`path ${path} is not matched`);
       return false;
     }
