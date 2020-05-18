@@ -1,6 +1,7 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 import { log, extname } from "../deps.ts";
+import { template } from "./util.ts";
 
 type Command = string[];
 type StdFile = "inherit" | "piped" | "null" | number;
@@ -52,25 +53,13 @@ export class Spawner {
       ];
     }
 
-    let command: Command = [];
+    let templateValues = {
+      "exe-args": this.config.exeArgs,
+      "file-args": this.config.fileArgs,
+      "file": this.config.file,
+    };
 
-    exe.forEach((arg) => {
-      switch (arg) {
-        case Placeholder.EXE_ARGS:
-          command = command.concat(this.config.exeArgs || []);
-          break;
-        case Placeholder.FILE_ARGS:
-          command = command.concat(this.config.fileArgs || []);
-          break;
-        case Placeholder.FILE:
-          command.push(this.config.file);
-          break;
-        default:
-          command.push(arg);
-      }
-    });
-
-    return command;
+    return template(exe, templateValues);
   }
 
   /**
