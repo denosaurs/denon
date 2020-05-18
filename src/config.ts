@@ -12,7 +12,7 @@ import {
 import { DenonEventType } from "../denon.ts";
 
 import { Args } from "./args.ts";
-import { WatcherOptions } from "./watcher.ts";
+import { WatcherConfig } from "./watcher.ts";
 import { SpawnerConfig } from "./spawner.ts";
 
 /**
@@ -31,7 +31,7 @@ const defaults = [
 
 export type DenonConfig =
   & Args
-  & WatcherOptions
+  & WatcherConfig
   & SpawnerConfig
   & { [key: string]: any };
 

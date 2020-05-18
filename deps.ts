@@ -23,6 +23,7 @@ export {
 } from "https://deno.land/std@0.51.0/encoding/yaml.ts";
 
 export {
+  relative,
   dirname,
   extname,
   globToRegExp,

@@ -4,7 +4,7 @@ import { Spawner, SpawnerConfig } from "./spawner.ts";
 import { assertEquals } from "https://deno.land/std@0.51.0/testing/asserts.ts";
 
 Deno.test({
-  name: "spawner",
+  name: "spawner:build",
   async fn(): Promise<void> {
     const config: SpawnerConfig = {
       exe: {},

@@ -1,6 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { deferred, globToRegExp } from "../deps.ts";
+import { log, deferred, globToRegExp, extname, relative } from "../deps.ts";
 
 type FileEvent =
   | "any"
@@ -18,7 +18,7 @@ export interface WatcherEvent {
 }
 
 /** All of the options for the `watch` generator */
-export interface WatcherOptions {
+export interface WatcherConfig {
   /** The number of milliseconds after the last change */
   interval?: number;
   /** Scan for files if in folders of `paths` */
@@ -36,37 +36,34 @@ export interface WatcherOptions {
  * each time one or more changes are detected. It is debounced by `interval`.
  * `recursive`, `exts`, `match` and `skip` are filtering the files wich will yield a change
  */
-export default class Watcher implements AsyncIterable<WatcherEvent[]> {
-  // private events: AsyncIterableIterator<Deno.FsEvent>;
+export class Watcher implements AsyncIterable<WatcherEvent[]> {
   private signal = deferred();
   private changes: { [key: string]: FileEvent } = {};
-  private interval: number;
+  private interval: number = 500;
+  private recursive: boolean = true;
   private exts?: string[];
   private match?: RegExp[];
   private skip?: RegExp[];
-  private recursive: boolean;
   private paths: string[];
 
   constructor(
     paths: string[],
-    {
-      interval = 500,
-      recursive = true,
-      exts = undefined,
-      match = undefined,
-      skip = undefined,
-    }: WatcherOptions = {},
+    private config: WatcherConfig = {},
   ) {
-    this.paths = paths.map((p) => resolve(p));
-    this.interval = interval;
-    this.exts = exts?.map((e) => e.startsWith(".") ? e : `.${e}`);
-    this.match = match?.map((s) =>
+    this.paths = paths;
+    this.reload()
+  }
+
+  reload() {
+    this.interval = this.config.interval || this.interval;
+    this.recursive = this.config.recursive || this.recursive
+    this.exts = this.config.exts?.map((e) => e.startsWith(".") ? e : `.${e}`);
+    this.match = this.config.match?.map((s) =>
       globToRegExp(s, { extended: true, globstar: false })
     );
-    this.skip = skip?.map((s) =>
+    this.skip = this.config.skip?.map((s) =>
       globToRegExp(s, { extended: true, globstar: false })
     );
-    this.recursive = recursive ?? true;
   }
 
   reset() {
@@ -74,16 +71,32 @@ export default class Watcher implements AsyncIterable<WatcherEvent[]> {
     this.signal = deferred();
   }
 
+  verifyPath(path: string): string {
+    this.paths.forEach((directory) => {
+      const rel = relative(directory, path);
+      if (rel && !rel.startsWith("..")) {
+        path = relative(directory, path);
+      }
+    });
+    return path;
+  }
+
   isWatched(
     path: string,
   ): boolean {
-    if (this.exts?.every((ext) => !path.endsWith(ext))) {
+    path = this.verifyPath(path);
+    log.debug(`evaluating path ${path}`)
+    if (extname(path) && this.exts?.length && this.exts?.every((ext) => !path.endsWith(ext))) {
+      log.debug(`path ${path} does not have right extension`);
       return false;
-    } else if (this.skip?.some((skip) => path.match(skip))) {
+    } else if (this.skip && this.skip?.some((skip) => path.match(skip))) {
+      log.debug(`path ${path} is skipped`);
       return false;
-    } else if (this.match?.every((match) => !path.match(match))) {
+    } else if (this.match && this.match?.every((match) => !path.match(match))) {
+      log.debug(`path ${path} is not matched`);
       return false;
     }
+    log.debug(`path ${path} is matched`);
     return true;
   }
 
