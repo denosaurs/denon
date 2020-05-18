@@ -10,7 +10,7 @@ import {
 
 import { DenonConfig } from "./config.ts";
 
-export interface LogConfig {
+export declare interface LogConfig {
   /**
    * Disables logging
    */
@@ -74,7 +74,7 @@ export async function setupLog(config?: DenonConfig): Promise<void> {
     },
     loggers: {
       default: {
-        level: level,
+        level,
         handlers: [DEFAULT_HANDLER],
       },
     },

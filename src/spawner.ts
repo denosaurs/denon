@@ -6,12 +6,6 @@ import { template } from "./util.ts";
 type Command = string[];
 type StdFile = "inherit" | "piped" | "null" | number;
 
-enum Placeholder {
-  EXE_ARGS = "${exe-args}",
-  FILE_ARGS = "${file-args}",
-  FILE = "${file}",
-}
-
 export interface SpawnerConfig {
   exe: { [extension: string]: string | string[] };
   exeArgs?: string[];
@@ -47,9 +41,9 @@ export class Spawner {
       exe = [
         "deno",
         "run",
-        Placeholder.EXE_ARGS,
-        Placeholder.FILE,
-        Placeholder.FILE_ARGS,
+        "${exe-args}",
+        "${file}",
+        "${file-args}",
       ];
     }
 
