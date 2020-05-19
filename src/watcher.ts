@@ -10,7 +10,7 @@ import {
   delay,
 } from "../deps.ts";
 
-type FileEvent =
+type FileAction =
   | "any"
   | "access"
   | "create"
@@ -18,21 +18,19 @@ type FileEvent =
   | "remove";
 
 /** A file that was changed, created or removed */
-export interface WatcherEvent {
+export interface FileEvent {
   /** The path of the changed file */
   path: string;
   /** The type of change that occurred */
-  event: FileEvent;
+  type: FileAction;
 }
 
 /** All of the options for the `watch` generator */
 export interface WatcherConfig {
   /** An array of paths to watch */
-  paths?: string[];
+  paths: string[];
   /** The number of milliseconds after the last change */
-  interval?: number;
-  /** Scan for files if in folders of `paths` */
-  recursive?: boolean;
+  interval: number;
   /** The file extensions that it will scan for */
   exts?: string[];
   /** The globs that it will scan for */
@@ -48,25 +46,19 @@ export interface WatcherConfig {
  * each time one or more changes are detected. It is debounced by `interval`.
  * `recursive`, `exts`, `match` and `skip` are filtering the files wich will yield a change
  */
-export class Watcher implements AsyncIterable<WatcherEvent[]> {
+export class Watcher implements AsyncIterable<FileEvent[]> {
   private signal = deferred();
-  private changes: { [key: string]: FileEvent } = {};
-  private interval: number = 500;
-  private recursive: boolean = true;
+  private changes: { [key: string]: FileAction } = {};
   private exts?: string[] = undefined;
   private match?: RegExp[] = undefined;
   private skip?: RegExp[] = undefined;
-  private paths: string[] = [];
   private watch: Function = this.denoWatch;
 
-  constructor(private config: WatcherConfig = {}) {
+  constructor(private config: WatcherConfig) {
     this.reload();
   }
 
   reload() {
-    this.paths = this.config.paths ?? [Deno.cwd()];
-    this.interval = this.config.interval ?? this.interval;
-    this.recursive = this.config.recursive ?? this.recursive;
     this.watch = this.config.legacy ? this.legacyWatch : this.denoWatch;
     if (this.config.exts) {
       this.exts = this.config.exts.map((e) => e.startsWith(".") ? e : `.${e}`);
@@ -81,23 +73,6 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
         globToRegExp(s, { extended: true, globstar: false })
       );
     }
-  }
-
-  reset() {
-    this.changes = {};
-    this.signal = deferred();
-  }
-
-  verifyPath(path: string): string {
-    if (this.paths) {
-      for (const directory of this.paths) {
-        const rel = relative(directory, path);
-        if (rel && !rel.startsWith("..")) {
-          path = relative(directory, path);
-        }
-      }
-    }
-    return path;
   }
 
   isWatched(path: string): boolean {
@@ -124,53 +99,75 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
     return true;
   }
 
-  async *iterate(): AsyncIterator<WatcherEvent[]> {
+  private reset() {
+    this.changes = {};
+    this.signal = deferred();
+  }
+
+  private verifyPath(path: string): string {
+    for (const directory of this.config.paths) {
+      const rel = relative(directory, path);
+      if (rel && !rel.startsWith("..")) {
+        path = relative(directory, path);
+      }
+    }
+    return path;
+  }
+
+  async *iterate(): AsyncIterator<FileEvent[]> {
     this.watch();
     while (true) {
       await this.signal;
       yield Object.entries(this.changes).map(([
         path,
-        event,
-      ]) => ({ path, event }));
+        type,
+      ]) => ({ path, type }));
       this.reset();
     }
   }
 
-  [Symbol.asyncIterator](): AsyncIterator<WatcherEvent[]> {
+  [Symbol.asyncIterator](): AsyncIterator<FileEvent[]> {
     return this.iterate();
   }
 
-  async denoWatch() {
+  private async denoWatch() {
     let timer = 0;
     const debounce = () => {
       clearTimeout(timer);
-      timer = setTimeout(this.signal.resolve, this.interval);
+      timer = setTimeout(this.signal.resolve, this.config.interval);
     };
 
-    for await (
-      const event of Deno.watchFs(this.paths, { recursive: this.recursive })
-    ) {
-      const { kind, paths } = event;
-      for (const path of paths) {
-        if (this.isWatched(path)) {
-          this.changes[path] = kind;
-          debounce();
+    const run = async () => {
+      for await (
+        const event of Deno.watchFs(this.config.paths)
+      ) {
+        const { kind, paths } = event;
+        for (const path of paths) {
+          if (this.isWatched(path)) {
+            this.changes[path] = kind;
+            debounce();
+          }
         }
       }
+    };
+    run();
+    while (true) {
+      debounce();
+      await delay(this.config.interval);
     }
   }
 
-  async legacyWatch() {
+  private async legacyWatch() {
     let timer = 0;
     const debounce = () => {
       clearTimeout(timer);
-      timer = setTimeout(this.signal.resolve, this.interval);
+      timer = setTimeout(this.signal.resolve, this.config.interval);
     };
 
     const walkPaths = async () => {
       const tree: { [path: string]: Date | null } = {};
-      for (let i in this.paths) {
-        const action = walk(this.paths[i], {
+      for (let i in this.config.paths) {
+        const action = walk(this.config.paths[i], {
           maxDepth: Infinity,
           includeDirs: false,
           followSymlinks: false,
@@ -215,7 +212,7 @@ export class Watcher implements AsyncIterable<WatcherEvent[]> {
 
       previous = current;
       debounce();
-      await delay(this.interval);
+      await delay(this.config.interval);
     }
   }
 }

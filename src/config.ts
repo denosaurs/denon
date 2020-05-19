@@ -1,45 +1,46 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 import {
-  exists,
-  log,
+  existsSync,
   readFileStr,
+  readJson,
   extname,
   parseYaml,
   JSON_SCHEMA,
+  log,
 } from "../deps.ts";
 
 import { DenonEventType } from "../denon.ts";
 
-import { Args } from "./args.ts";
 import { WatcherConfig } from "./watcher.ts";
-import { SpawnerConfig } from "./spawner.ts";
+import { RunnerConfig } from "./runner.ts";
 import { LogConfig } from "./log.ts";
 
+import { merge } from "./merge.ts";
+
 /**
- * Possible defualt configuration files
+ * Possible defualt configuration files.
  */
-const defaults = [
-  "denon.json",
+const configs = [
   "denon.yaml",
-  ".denon",
-  ".denon.json",
+  "denon.yml",
+  "denon.json",
   ".denon.yaml",
-  ".denonrc",
-  ".denonrc.json",
+  ".denon.yml",
+  ".denon.json",
   ".denonrc.yaml",
+  ".denonrc.yml",
+  ".denonrc.json",
 ];
 
 /**
  * The denon configuration format
  */
-export type DenonConfig =
-  & Args
-  & WatcherConfig
-  & SpawnerConfig
-  & LogConfig
-  // make indexable
-  & { [key: string]: any };
+export interface DenonConfig extends RunnerConfig {
+  [key: string]: any;
+  watcher: WatcherConfig;
+  logger: LogConfig;
+}
 
 export interface DenonConfigLegacy {
   /**
@@ -74,115 +75,42 @@ export interface DenonConfigLegacy {
 
 /** The default denon configuration */
 export const DEFAULT_DENON_CONFIG: DenonConfig = {
-  quiet: false,
-  debug: false,
-  fullscreen: false,
-
-  interval: 500,
-  extensions: ["js", "ts", "json"],
-  watch: ["*.*"],
-  skip: [],
-
-  events: {},
-
-  exe: {
-    ts: ["deno", "run"],
-    js: ["deno", "run"],
+  scripts: {},
+  watcher: {
+    interval: 350,
+    paths: [Deno.cwd()],
   },
-  exeArgs: [],
-
-  env: {},
-
-  fmt: false,
-  test: false,
-
-  file: "",
-  fileArgs: [],
+  logger: {},
 };
-
-/**
- * Reimplementation of Object.assign() that discards
- * `undefined` values.
- * @param target to witch assing
- * @param sources to witch copy from
- */
-function mergeConfig(target: DenonConfig, ...sources: any): DenonConfig {
-  for (const source of sources) {
-    for (const key of Object.keys(source)) {
-      const val = source[key];
-      if (val !== undefined) {
-        target[key] = val;
-      }
-    }
-  }
-  return target;
-}
 
 /**
  * Reads the denon config from a file
  * @param args cli args from parseArgs()
  * */
-export async function readConfig(args?: Args): Promise<DenonConfig> {
-  let file = args?.config ?? undefined;
+export async function readConfig(): Promise<DenonConfig> {
   let config: DenonConfig = DEFAULT_DENON_CONFIG;
 
-  if (file && !(await exists(file))) {
-    log.error(`Could not find config ${file}`);
-  }
+  let file = configs.find((filename) => {
+    return existsSync(filename);
+  });
 
-  if (!file) {
-    for (const name of defaults) {
-      if (await exists(name)) {
-        if (file) {
-          log.warning(`Multiple config files found, using: ${file}`);
-          break;
-        }
-
-        file = name;
-      }
-    }
-  }
-
-  let configFile;
   if (file) {
-    const extension = extname(file);
-    const source = await readFileStr(file);
-
-    if (extension === "json") {
-      try {
-        configFile = await JSON.parse(source);
-      } catch (err) {
-        log.error(`Could not parse json config: ${err.message}`);
-      }
-    } else if (extension === "yaml") {
-      try {
-        configFile = parseYaml(source, {
+    try {
+      const extension = extname(file);
+      if (/^ya?ml$/.test(extension)) {
+        const source = await readFileStr(file);
+        const parsed = parseYaml(source, {
           schema: JSON_SCHEMA,
           json: true,
         });
-      } catch (err) {
-        log.error(`Could not parse yaml config: ${err.message}`);
+        config = merge(config, parsed);
+      } else if (/^json$/.test(extension)) {
+        const parsed = readJson(file);
+        config = merge(config, parsed);
       }
-    } else {
-      try {
-        configFile = await JSON.parse(source);
-      } catch {
-        try {
-          configFile = parseYaml(source, {
-            schema: JSON_SCHEMA,
-            json: true,
-          });
-        } catch {
-          log.error("Could not parse json/yaml config");
-        }
-      }
+    } catch (e) {
+      log.warning(`unsupported configuration \`${file}\``);
     }
-  }
-
-  if (configFile) {
-    config = mergeConfig(config, configFile, args);
-  } else {
-    config = mergeConfig(config, args);
   }
 
   return config;

@@ -13,7 +13,7 @@ export {
 export { parse as parseFlags } from "https://deno.land/std@v0.51.0/flags/mod.ts";
 
 export {
-  exists,
+  existsSync,
   readFileStr,
   walk,
 } from "https://deno.land/std@v0.51.0/fs/mod.ts";
@@ -29,6 +29,8 @@ export {
   extname,
   globToRegExp,
 } from "https://deno.land/std@v0.51.0/path/mod.ts";
+
+export { readJson } from "https://deno.land/std@v0.42.0/fs/read_json.ts";
 
 export { deferred, delay } from "https://deno.land/std@v0.51.0/async/mod.ts";
 

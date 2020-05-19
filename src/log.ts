@@ -14,15 +14,15 @@ export declare interface LogConfig {
   /**
    * Disables logging
    */
-  quiet: boolean;
+  quiet?: boolean;
   /**
    * Enables debugging
    */
-  debug: boolean;
+  debug?: boolean;
   /**
    * Clear the console on reload events
    */
-  fullscreen: boolean;
+  fullscreen?: boolean;
 }
 
 /**

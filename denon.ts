@@ -2,11 +2,13 @@
 
 import { log, grant } from "./deps.ts";
 
-import { Watcher, WatcherEvent } from "./src/watcher.ts";
+import { Watcher, FileEvent } from "./src/watcher.ts";
+import { Runner, ExecutionEvent, Execution } from "./src/runner.ts";
+
 import { readConfig, DenonConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
-
+import { timestamp } from "https://deno.land/std@0.51.0/encoding/_yaml/type/timestamp.ts";
 const VERSION = "v2.0.0";
 
 // TODO: explain permission usage in detail for transparency
@@ -30,7 +32,7 @@ export declare type DenonEvent =
 
 export declare interface DenonReloadEvent {
   type: "reload";
-  change: WatcherEvent[];
+  change: FileEvent[];
 }
 
 export declare interface DenonCrashEvent {
@@ -49,22 +51,40 @@ export declare interface DenonExitEvent {
 
 export class Denon implements AsyncIterable<DenonEvent> {
   watcher: Watcher;
+  runner: Runner;
+  current?: Execution;
 
-  constructor(private config?: DenonConfig) {
-    this.watcher = new Watcher(config);
+  constructor(private script: string, private config: DenonConfig) {
+    this.watcher = new Watcher(config.watcher);
+    this.runner = new Runner(config);
   }
 
   async *iterate(): AsyncIterator<DenonEvent> {
-    for await (const events of this.watcher) {
-      console.log("DENON CLASS", events);
+    this.current = this.runner.execute(this.script);
+    for await (const watchE of this.watcher) {
+      if (watchE.some((_) => _.type === "modify")) {
+        if (this.current) {
+          this.current.process.kill(Deno.Signal.SIGUSR2);
+        }
+        this.current = this.runner.execute(this.script);
+      }
+      if (this.current) {
+        for await (const exeE of this.current) {
+          if (exeE.type == "alive") break;
+          if (exeE.type == "status") {
+            if (exeE.status.success) {
+              log.info("clean exit - waiting for changes before restart");
+            } else {
+              log.info(
+                "app crashed - waiting for file changes before starting ...",
+              );
+            }
+            this.current = undefined;
+            break;
+          }
+        }
+      }
     }
-    yield {
-      type: "success",
-      status: {
-        code: 0,
-        success: true,
-      },
-    };
   }
 
   [Symbol.asyncIterator](): AsyncIterator<DenonEvent> {
@@ -81,10 +101,8 @@ if (import.meta.main) {
     Deno.exit(1);
   }
 
-  log.debug("Required permissions `read` and `run` granted");
-
   const args = parseArgs(Deno.args);
-  let config = await readConfig(args);
+  let config = await readConfig();
   await setupLog(config);
 
   // show help message
@@ -93,19 +111,17 @@ if (import.meta.main) {
     Deno.exit(0);
   }
 
+  // show help message
   log.warning(VERSION);
   if (args.version) Deno.exit(0);
 
-  const denon = new Denon({
-    legacy: false,
-    exe: {
-      "ts": ["deno", "run", "${exe-args}", "${file}"],
-    },
-    file: "ciao",
-    quiet: false,
-    debug: false,
-    fullscreen: true,
-  });
+  if (args.cmd.length == 0) {
+    console.log("CLEAR COMMAND");
+    Deno.exit(0);
+  }
+
+  const script = args.cmd[0];
+  const denon = new Denon(script, config);
   for await (let event of denon) {
     console.log(event);
   }

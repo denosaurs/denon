@@ -6,10 +6,12 @@ import { Watcher, WatcherConfig } from "./watcher.ts";
 import { setupLog } from "./log.ts";
 
 Deno.test({
-  name: "watcher:isWatched",
+  name: "watcher:exts",
   async fn(): Promise<void> {
     await setupLog();
     const config: WatcherConfig = {
+      paths: [Deno.cwd()],
+      interval: 350,
       exts: ["json"],
       skip: [],
       match: [],
@@ -45,6 +47,26 @@ Deno.test({
     assert(
       watcher.isWatched("src/args.ts"),
       "should match because of extensions",
+    );
+  },
+});
+
+Deno.test({
+  name: "watcher:skip",
+  async fn(): Promise<void> {
+    await setupLog();
+    const config: WatcherConfig = {
+      paths: [Deno.cwd()],
+      interval: 350,
+      exts: [],
+      skip: ["src/*"],
+      match: [],
+    };
+
+    const watcher = new Watcher(config);
+    assert(
+      !watcher.isWatched("src/args.ts"),
+      "should not match because parent dir is skipped",
     );
   },
 });
