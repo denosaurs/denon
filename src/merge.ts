@@ -1,23 +1,34 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 /**
- * Reimplementation of Object.assign() that discards
- * `undefined` values.
- * @param target to witch assing
- * @param sources to witch copy from
+ * Performs a deep merge of `source` into `target`.
+ * Mutates `target` only but not its objects and arrays.
+ *
+ * @author inspired by [jhildenbiddle](https://stackoverflow.com/a/48218209).
  */
 export function merge<T extends Record<string, any>>(
   target: T,
-  ...sources: any
+  source: any,
 ): T {
   const t = target as Record<string, any>;
-  for (const source of sources) {
-    for (const key of Object.keys(source)) {
-      const val = source[key];
-      if (val !== undefined) {
-        t[key] = val;
-      }
-    }
+  const isObject = (obj: any) => obj && typeof obj === "object";
+
+  if (!isObject(target) || !isObject(source)) {
+    return source;
   }
+
+  Object.keys(source).forEach((key) => {
+    const targetValue = target[key];
+    const sourceValue = source[key];
+
+    if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+      t[key] = targetValue.concat(sourceValue);
+    } else if (isObject(targetValue) && isObject(sourceValue)) {
+      t[key] = merge(Object.assign({}, targetValue), sourceValue);
+    } else {
+      t[key] = sourceValue;
+    }
+  });
+
   return t as T;
 }

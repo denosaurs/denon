@@ -13,6 +13,9 @@ export interface FlagsObject {
   [key: string]: unknown;
 }
 
+/**
+ * This 
+ */
 export interface EnvironmentVariables {
   [key: string]: string;
 }
@@ -48,7 +51,7 @@ export interface ScriptOptions {
    * 
    * **Note** This currently requires the `--unstable` flag
    */
-  imap?: string;
+  importmap?: string;
   /**
    * The path to an _existing_ lockfile,
    * passed to deno cli's `--lock` option.
@@ -81,6 +84,10 @@ export interface ScriptOptions {
    */
   inspectBrk?: string;
   /**
+   * Same as `inspect`, but breaks at start of user script.
+   */
+  unstable?: boolean;
+  /**
    * Standard i/o/err, to be passed directly to Deno.run.
    */
   stdin?: "inherit" | "piped" | "null" | number;
@@ -101,9 +108,9 @@ export function buildFlags(options: ScriptOptions): string[] {
       });
     }
   }
-  if (options.imap) {
+  if (options.importmap) {
     flags.push("--importmap");
-    flags.push(options.imap);
+    flags.push(options.importmap);
   }
   if (options.lock) {
     flags.push("--lock");
@@ -130,6 +137,9 @@ export function buildFlags(options: ScriptOptions): string[] {
   }
   if (options.inspectBrk) {
     flags.push(`--inspect-brk=${options.inspectBrk}}`);
+  }
+  if (options.unstable) {
+    flags.push("--unstable");
   }
   return flags;
 }

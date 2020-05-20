@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "start": "hello_world.js"
+  },
+  "allow": [
+    "read",
+    "run",
+    "env"
+  ],
+  "watcher": {
+    "watch": ["*.*"],
+    "skip": ["super_duper_secret/*"],
+    "ext": [".js", ".ini"]
+  },
+  "unstable": true
+}

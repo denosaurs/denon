@@ -56,8 +56,16 @@ export class Runner {
     // it does not have ScriptOptions
     if (typeof s == "string") {
       let out: string[] = [];
-      if (reCompact.test(s)) {
+      let denoAction = reDenoAction.exec(s);
+      if (denoAction && denoAction.length == 3) {
+        const action = denoAction[1];
+        const args = denoAction[2];
+        out = out.concat(stdCmd(action));
+        out = out.concat(buildFlags(g));
+        out = out.concat(stdCmd(args));
+      } else if (reCompact.test(s)) {
         out = ["deno", "run"];
+        out = out.concat(buildFlags(g));
         out = out.concat(stdCmd(s));
       } else {
         out = stdCmd(s);
@@ -69,7 +77,7 @@ export class Runner {
     }
 
     // it does have ScriptOptions
-    const o = merge({}, g, s) as ScriptOptions;
+    const o = Object.assign({}, merge(g, s));
     let out: string[] = [];
     const cmd = s.cmd;
 

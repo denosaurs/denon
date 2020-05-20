@@ -3,4 +3,4 @@
 export * from "./denon.ts";
 export * from "./src/config.ts";
 export * from "./src/watcher.ts";
-export * from "./src/spawner.ts";
+export * from "./src/runner.ts";

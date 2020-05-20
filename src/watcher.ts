@@ -10,6 +10,9 @@ import {
   delay,
 } from "../deps.ts";
 
+/**
+ * Should reflect the Deno.FsEvent
+ */
 type FileAction =
   | "any"
   | "access"

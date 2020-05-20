@@ -5,6 +5,8 @@ import { parseFlags } from "../deps.ts";
 export interface Args {
   help: boolean;
   version: boolean;
+  init: boolean;
+
   cmd: string[];
 }
 
@@ -23,16 +25,19 @@ export function parseArgs(args: string[] = Deno.args): Args {
     boolean: [
       "help",
       "version",
+      "init",
     ],
     alias: {
       help: "h",
       version: "v",
+      init: "i",
     },
   });
 
   return {
     help: flags.help ?? false,
     version: flags.version ?? false,
+    init: flags.init ?? false,
     cmd: flags._.map((_) => _.toString()),
   };
 }

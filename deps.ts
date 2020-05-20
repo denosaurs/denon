@@ -31,6 +31,7 @@ export {
 } from "https://deno.land/std@v0.51.0/path/mod.ts";
 
 export { readJson } from "https://deno.land/std@v0.42.0/fs/read_json.ts";
+export { writeJson } from "https://deno.land/std@v0.42.0/fs/write_json.ts";
 
 export { deferred, delay } from "https://deno.land/std@v0.51.0/async/mod.ts";
 
