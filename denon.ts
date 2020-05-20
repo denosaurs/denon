@@ -47,10 +47,15 @@ export declare type DenonEventType =
   | "exit";
 
 export declare type DenonEvent =
+  | DenonStartEvent
   | DenonReloadEvent
   | DenonCrashEvent
   | DenonSuccessEvent
   | DenonExitEvent;
+
+export declare interface DenonStartEvent {
+  type: "start";
+}
 
 export declare interface DenonReloadEvent {
   type: "reload";
@@ -76,9 +81,16 @@ export class Daemon implements AsyncIterable<DenonEvent> {
   constructor(private denon: Denon, private script: string) {}
 
   async *iterate(): AsyncIterator<DenonEvent> {
+    yield {
+      type: "start",
+    };
     this.current = this.denon.runner.execute(this.script);
     for await (const watchE of this.denon.watcher) {
       if (watchE.some((_) => _.type === "modify")) {
+        yield {
+          type: "reload",
+          change: watchE,
+        };
         if (this.current) {
           this.current.process.kill(Deno.Signal.SIGUSR2);
         }
@@ -97,10 +109,18 @@ export class Daemon implements AsyncIterable<DenonEvent> {
           if (exeE.type == "status") {
             if (exeE.status.success) {
               log.info("clean exit - waiting for changes before restart");
+              yield {
+                type: "success",
+                status: exeE.status,
+              };
             } else {
               log.info(
                 "app crashed - waiting for file changes before starting ...",
               );
+              yield {
+                type: "crash",
+                status: exeE.status,
+              };
             }
             this.current = undefined;
             break;
@@ -108,6 +128,9 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         }
       }
     }
+    yield {
+      type: "exit",
+    };
   }
 
   [Symbol.asyncIterator](): AsyncIterator<DenonEvent> {
