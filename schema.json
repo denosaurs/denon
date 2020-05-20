@@ -3,10 +3,7 @@
   "$id": "denosaurs/denon.json",
   "definitions": {
     "script": {
-      "type": [
-        "string",
-        "object"
-      ],
+      "type": ["string", "object"],
       "anyOf": [
         {
           "$ref": "#/definitions/script_object"
@@ -91,18 +88,11 @@
       }
     },
     "stdfile": {
-      "type": [
-        "string",
-        "number"
-      ],
+      "type": ["string", "number"],
       "anyOf": [
         {
           "type": "string",
-          "enum": [
-            "inherit",
-            "piped",
-            "null"
-          ]
+          "enum": ["inherit", "piped", "null"]
         },
         {
           "type": "number"
@@ -116,10 +106,7 @@
       }
     },
     "flags": {
-      "type": [
-        "array",
-        "object"
-      ],
+      "type": ["array", "object"],
       "anyOf": [
         {
           "type": "array",
