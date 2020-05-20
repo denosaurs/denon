@@ -1,27 +1,61 @@
+/**
+ * Map of declared scripts,
+ * Used by `Runner`.
+ */
 export interface Scripts {
   [key: string]: Script;
 }
 
+/**
+ * A runnable script.
+ * Can be as simple as a string:
+ * ```json
+ * {
+ *   "start": "deno run app.ts"
+ * }
+ * ```
+ * or as a complex `ScriptObject`:
+ * ```json
+ * {
+ *   "start": {
+ *      "cmd": "deno run app.ts",
+ *      "desc": "run main application",
+ *      "allow": [ "env", "read" ]
+ *   }
+ * }
+ * ```
+ */
 export type Script = string | ScriptObject;
 
+/**
+ * Most complete rapresentation of a script. Can
+ * be configured in details as it extends `ScriptOptions`
+ * and can also contain a `desc` that is displayed along
+ * script name when`denon` is run without any arguments .
+ */
 export interface ScriptObject extends ScriptOptions {
   cmd: string;
   desc?: string;
 }
 
+/**
+ * Deno CLI flags in a map.
+ * `{ allow: [ run, env ]}` -> `[--allow-run, --allow-env]`
+ */
 export interface FlagsObject {
   [key: string]: unknown;
 }
 
 /**
- * This 
+ * Environment variables in a map.
+ * `{ TOKEN: "SECRET!" }` -> `TOKEN=SECRET`
  */
 export interface EnvironmentVariables {
   [key: string]: string;
 }
 
 /**
- * Additional script options
+ * Additional script options.
  * 
  * These can be applied both in `ScriptObject`s and at top-level
  * in which case they're applied to all the scripts defined in the file
@@ -34,15 +68,6 @@ export interface ScriptOptions {
   /**
    * A list of boolean `--allow-*` deno cli options or
    * a map of option names to values
-   * 
-   * ```yaml
-   * # scripts.yaml
-   * scripts:
-   *  start: deno run server.ts
-   *  allow:
-   *    - net
-   *    - read
-   * ```
    */
   allow?: string[] | FlagsObject;
   /**

@@ -58,7 +58,6 @@ export const DEFAULT_DENON_CONFIG: DenonConfig = {
 
 /**
  * Reads the denon config from a file
- * @param args cli args from parseArgs()
  * */
 export async function readConfig(): Promise<DenonConfig> {
   let config: DenonConfig = DEFAULT_DENON_CONFIG;
@@ -91,7 +90,6 @@ export async function readConfig(): Promise<DenonConfig> {
 
 /**
  * Reads the denon config from a file
- * @param args cli args from parseArgs()
  * */
 export async function writeConfig(file: string) {
   let config = {

@@ -2,6 +2,10 @@
 
 import { parseFlags, setColorEnabled, blue, yellow, gray } from "../deps.ts";
 
+/**
+ * Map of supported flags that modify
+ * `denon` behaviour.
+ */
 export interface Args {
   help: boolean;
   version: boolean;
@@ -10,6 +14,10 @@ export interface Args {
   cmd: string[];
 }
 
+/**
+ * Help message to be shown if `denon`
+ * is run with `--help` flag.
+ */
 export function help(version: string): string {
   setColorEnabled(true);
   return `
@@ -33,9 +41,8 @@ Options:
 }
 
 /**
- * Parse Deno.args into a compiled and compatible Config subset (Args).
- * @param args Deno.args or other input source.
- * @returns compiled Args interface.
+ * Parse Deno.args into a flag map (`Args`) 
+ * to be handled by th CLI.
  */
 export function parseArgs(args: string[] = Deno.args): Args {
   if (args[0] === "--") {

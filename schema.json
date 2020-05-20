@@ -15,14 +15,6 @@
     },
     "script_object": {
       "type": "object",
-      "properties": {
-        "cmd": {
-          "type": "string"
-        },
-        "desc": {
-          "type": "string"
-        }
-      },
       "allOf": [
         {
           "$ref": "#/definitions/script_options"
@@ -38,8 +30,7 @@
           }
         }
       ],
-      "required": ["cmd"],
-      "additionalProperties": false
+      "required": ["cmd"]
     },
     "script_options": {
       "type": "object",

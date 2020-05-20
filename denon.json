@@ -2,7 +2,8 @@
   "scripts": {
     "formatting": {
       "cmd": "deno fmt",
-      "desc": "Daemonize formatting"
+      "desc": "Daemonize formatting",
+      "cert": "hello"
     }
   },
   "logger": {

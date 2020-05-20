@@ -1,16 +1,17 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { log, deferred } from "../deps.ts";
+import { log } from "../deps.ts";
 
 import { Scripts, ScriptOptions, buildFlags } from "./scripts.ts";
 
 import { merge } from "./merge.ts";
 
-interface Command {
-  cmd: string[];
-  options: ScriptOptions;
-}
-
+/**
+ * `Runner` configuration.
+ * This configuration is, in contrast to other, extended
+ * by `Denon` config as scripts has to be a top level
+ * parameter.
+ */
 export interface RunnerConfig extends ScriptOptions {
   scripts: Scripts;
 }
@@ -21,13 +22,20 @@ const reCompact = new RegExp(
 );
 const reCliCompact = new RegExp(/^(run|test|fmt) +(.*)$/);
 
-function stdCmd(cmd: string): string[] {
-  return cmd.trim().replace(/\s\s+/g, " ").split(" ");
-}
-
+/**
+ * Handle all the things related to process management.
+ * Scripts are built into executable commands that are
+ * executed by `Deno.run()` and managed in an `Executable`
+ * objecto to make available process events.
+ */
 export class Runner {
   constructor(private config: RunnerConfig) {}
 
+  /**
+   * Build the script, in whatever form it is declared in,
+   * to be compatible with `Deno.run()`.
+   * This function add flags, arguments and actions.
+   */
   build(script: string): Command {
     // global options
     const g = Object.assign({}, this.config);
@@ -87,8 +95,8 @@ export class Runner {
   }
 
   /**
-   * Execute process command.
-   * @returns process spawned
+   * Create an `Execution` object to handle the lifetime
+   * of the process that is executed.
    */
   execute(script: string): Execution {
     const command = this.build(script);
@@ -104,6 +112,10 @@ export class Runner {
   }
 }
 
+/**
+ * Represents a process event.
+ * Should reflect the lifetime of a process.
+ */
 export type ExecutionEvent =
   | ExecutionEventStdout
   | ExecutionEventStderr
@@ -129,8 +141,12 @@ export interface ExecutionEventAlive {
   type: "alive";
 }
 
+/**
+ * Handle lifetime events of a process,
+ * capturing if possible any output and 
+ * success status.
+ */
 export class Execution implements AsyncIterable<ExecutionEvent> {
-  private signal = deferred();
   process: Deno.Process;
 
   status?: Deno.ProcessStatus;
@@ -191,4 +207,13 @@ export class Execution implements AsyncIterable<ExecutionEvent> {
   [Symbol.asyncIterator](): AsyncIterator<ExecutionEvent> {
     return this.iterate();
   }
+}
+
+function stdCmd(cmd: string): string[] {
+  return cmd.trim().replace(/\s\s+/g, " ").split(" ");
+}
+
+interface Command {
+  cmd: string[];
+  options: ScriptOptions;
 }

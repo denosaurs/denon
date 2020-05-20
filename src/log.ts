@@ -37,7 +37,6 @@ const DEFAULT_HANDLER = "format_fn";
 
 /**
  * Deno logger, but slightly better.
- * @param logRecord passed by Deno, contains logging info
  */
 function formatter(record: LogRecord): string {
   let msg = `${TAG} ${reset(record.msg)}`;

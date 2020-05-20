@@ -9,7 +9,7 @@ import { readConfig, writeConfig, DenonConfig } from "./src/config.ts";
 import { parseArgs, help } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
-const VERSION = "v1.9.0";
+const VERSION = "v0.9.0";
 
 /**
  * These are the permissions required for a clean run
@@ -37,7 +37,14 @@ const PERMISSION_OPTIONAL: { [key: string]: Deno.PermissionDescriptor[] } = {
 };
 
 /**
- * 
+ * Events you can listen to when creating a `denon`
+ * instance as module:
+ * ```typescript
+ * const denon = new Denon(config);
+ * for await (let event of denon.run(script)) {
+ *   // event handling here
+ * }
+ * ```
  */
 export declare type DenonEventType =
   | "start"
@@ -76,6 +83,12 @@ export declare interface DenonExitEvent {
   type: "exit";
 }
 
+/**
+ * Daemon instance. 
+ * Returned by Denon instance when
+ * `start(script)` is called. It can be used in a for
+ * loop to listen to DenonEvents.
+ */
 export class Daemon implements AsyncIterable<DenonEvent> {
   private current?: Execution;
   constructor(private denon: Denon, private script: string) {}
@@ -138,6 +151,11 @@ export class Daemon implements AsyncIterable<DenonEvent> {
   }
 }
 
+/**
+ * Denon instance.
+ * Holds loaded configuration and handles creation
+ * of daemons with the `start(script)` method.
+ */
 export class Denon {
   watcher: Watcher;
   runner: Runner;

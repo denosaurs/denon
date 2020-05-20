@@ -46,9 +46,11 @@ export interface WatcherConfig {
 }
 
 /**
- * Watches for file changes in `paths` path yielding an array of all of the changes
- * each time one or more changes are detected. It is debounced by `interval`.
- * `recursive`, `exts`, `match` and `skip` are filtering the files wich will yield a change
+ * Watches for file changes in `paths` path 
+ * yielding an array of all of the changes
+ * each time one or more changes are detected. 
+ * It is debounced by `interval`, `recursive`, `exts`,
+ * `match` and `skip` are filtering the files wich will yield a change
  */
 export class Watcher implements AsyncIterable<FileEvent[]> {
   private signal = deferred();
