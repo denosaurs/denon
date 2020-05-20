@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "formatting": {
+      "cmd": "deno fmt",
+      "desc": "Daemonize formatting"
+    }
+  },
+  "logger": {
+    "fullscreen": true
+  }
+}

@@ -57,13 +57,13 @@ export class Runner {
     let cmd: string;
 
     if (typeof s == "string") {
-      o = g
-      cmd = s
+      o = g;
+      cmd = s;
     } else {
       o = Object.assign({}, merge(g, s));
-      cmd = s.cmd
+      cmd = s.cmd;
     }
-    
+
     let out: string[] = [];
 
     let denoAction = reDenoAction.exec(cmd);
