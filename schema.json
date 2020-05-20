@@ -1,3 +1,209 @@
 {
-  "$schema": "http://json-schema.org/schema#"
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "denosaurs/denon.json",
+  "definitions": {
+    "script": {
+      "type": [
+        "string",
+        "object"
+      ],
+      "anyOf": [
+        {
+          "$ref": "#/definitions/script_object"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "script_object": {
+      "type": "object",
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/script_options"
+        },
+        {
+          "properties": {
+            "cmd": {
+              "type": "string"
+            },
+            "desc": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "required": ["cmd"],
+      "additionalProperties": false
+    },
+    "script_options": {
+      "type": "object",
+      "properties": {
+        "env": {
+          "$ref": "#/definitions/env",
+          "description": "Attach a comment after all non-user injected code."
+        },
+        "allow": {
+          "$ref": "#/definitions/flags"
+        },
+        "importmap": {
+          "type": "string"
+        },
+        "lock": {
+          "type": "string"
+        },
+        "log": {
+          "type": "string"
+        },
+        "tsconfig": {
+          "type": "string"
+        },
+        "cert": {
+          "type": "string"
+        },
+        "inspect": {
+          "type": "string"
+        },
+        "inspectBrk": {
+          "type": "string"
+        },
+        "unstable": {
+          "type": "boolean"
+        },
+        "stdin": {
+          "$ref": "#/definitions/stdfile"
+        },
+        "stdout": {
+          "$ref": "#/definitions/stdfile"
+        },
+        "stderr": {
+          "$ref": "#/definitions/stdfile"
+        },
+        "additionalProperties": false
+      }
+    },
+    "stdfile": {
+      "type": [
+        "string",
+        "number"
+      ],
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "inherit",
+            "piped",
+            "null"
+          ]
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "env": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "flags": {
+      "type": [
+        "array",
+        "object"
+      ],
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "watcher": {
+      "type": "object",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "interval": {
+          "type": "number"
+        },
+        "exts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "match": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skip": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "legacy": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "logger": {
+      "type": "object",
+      "properties": {
+        "quiet": {
+          "type": "boolean"
+        },
+        "debug": {
+          "type": "boolean"
+        },
+        "fullscreen": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "#/definitions/script_options"
+    },
+    {
+      "properties": {
+        "scripts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/script"
+          }
+        },
+        "watcher": { "$ref": "#/definitions/watcher" },
+        "logger": { "$ref": "#/definitions/logger" }
+      }
+    }
+  ],
+  "required": ["scripts"]
 }

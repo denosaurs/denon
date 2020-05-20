@@ -1,16 +1,20 @@
 {
+  "$schema": "../schema.json",
   "scripts": {
-    "start": "hello_world.js"
+    "start": "hello_world.js",
+    "hello": {
+      "cmd": "deno run hello",
+      "desc": "hello"
+    }
   },
   "allow": [
-    "read",
-    "run",
-    "env"
+    "dev"
   ],
   "watcher": {
-    "watch": ["*.*"],
+    "match": ["*.*"],
     "skip": ["super_duper_secret/*"],
-    "ext": [".js", ".ini"]
+    "exts": [".js", ".ini"]
   },
-  "unstable": true
+  "unstable": true,
+  "stdin": "inherit"
 }
