@@ -1,7 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 import {
-  setColorEnabled,
   log,
   reset,
   LogRecord,
@@ -40,20 +39,23 @@ const DEFAULT_HANDLER = "format_fn";
  * Deno logger, but slightly better.
  * @param logRecord passed by Deno, contains logging info
  */
-function formatter(logRecord: LogRecord): string {
-  let msg = `${TAG} ${reset(logRecord.msg)}`;
+function formatter(record: LogRecord): string {
+  let msg = `${TAG} ${reset(record.msg)}`;
 
-  for (const arg of logRecord.args) {
+  for (const arg of record.args) {
     if (arg instanceof Object) {
       msg += ` ${JSON.stringify(arg)}`;
     } else {
       msg += ` ${String(arg)}`;
     }
   }
-
   return msg;
 }
 
+/**
+ * Determines the log level based on configuration
+ * preferences.
+ */
 function logLevel(config: DenonConfig): LogLevelName {
   let level: LogLevelName = DEFAULT_LEVEL;
   if (config.debug) level = DEBUG_LEVEL;
@@ -62,12 +64,11 @@ function logLevel(config: DenonConfig): LogLevelName {
 }
 
 /**
- * Modify default deno logger.
- * @param config denom config
+ * Modify default deno logger with configurable
+ * log level.
  */
 export async function setupLog(config?: DenonConfig): Promise<void> {
   const level = config ? logLevel(config) : DEBUG_LEVEL;
-  setColorEnabled(Deno.noColor);
   await log.setup({
     handlers: {
       [DEFAULT_HANDLER]: new log.handlers.ConsoleHandler(DEBUG_LEVEL, {

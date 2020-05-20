@@ -53,33 +53,18 @@ export class Runner {
       };
     }
 
-    // it does not have ScriptOptions
-    if (typeof s == "string") {
-      let out: string[] = [];
-      let denoAction = reDenoAction.exec(s);
-      if (denoAction && denoAction.length == 3) {
-        const action = denoAction[1];
-        const args = denoAction[2];
-        out = out.concat(stdCmd(action));
-        out = out.concat(buildFlags(g));
-        out = out.concat(stdCmd(args));
-      } else if (reCompact.test(s)) {
-        out = ["deno", "run"];
-        out = out.concat(buildFlags(g));
-        out = out.concat(stdCmd(s));
-      } else {
-        out = stdCmd(s);
-      }
-      return {
-        cmd: out,
-        options: g,
-      };
-    }
+    let o: ScriptOptions;
+    let cmd: string;
 
-    // it does have ScriptOptions
-    const o = Object.assign({}, merge(g, s));
+    if (typeof s == "string") {
+      o = g
+      cmd = s
+    } else {
+      o = Object.assign({}, merge(g, s));
+      cmd = s.cmd
+    }
+    
     let out: string[] = [];
-    const cmd = s.cmd;
 
     let denoAction = reDenoAction.exec(cmd);
     if (denoAction && denoAction.length == 3) {
@@ -160,6 +145,9 @@ export class Execution implements AsyncIterable<ExecutionEvent> {
     this.process.close();
     if (this.options.stdin === "piped" && this.process.stdin) {
       this.process.stdin.close();
+    }
+    if (this.options.stderr === "piped" && this.process.stderr) {
+      this.process.stderr.close();
     }
   }
 

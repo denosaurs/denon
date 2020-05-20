@@ -8,11 +8,16 @@ export { LevelName as LogLevelName } from "https://deno.land/std@0.51.0/log/leve
 export {
   setColorEnabled,
   reset,
+  blue,
+  yellow,
+  gray,
+  bold,
 } from "https://deno.land/std@v0.51.0/fmt/mod.ts";
 
 export { parse as parseFlags } from "https://deno.land/std@v0.51.0/flags/mod.ts";
 
 export {
+  exists,
   existsSync,
   readFileStr,
   walk,

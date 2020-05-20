@@ -11,7 +11,8 @@ import {
 } from "../deps.ts";
 
 /**
- * Should reflect the Deno.FsEvent
+ * Represents a change in the filesystem.
+ * Should reflect the Deno.FsEvent.
  */
 type FileAction =
   | "any"
@@ -35,11 +36,11 @@ export interface WatcherConfig {
   /** The number of milliseconds after the last change */
   interval: number;
   /** The file extensions that it will scan for */
-  exts?: string[];
+  exts: string[];
   /** The globs that it will scan for */
-  match?: string[];
+  match: string[];
   /** The globs that it will not scan for */
-  skip?: string[];
+  skip: string[];
   /** Use the legacy file monitoring algorithm */
   legacy?: boolean;
 }

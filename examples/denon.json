@@ -1,20 +1,11 @@
 {
-  "$schema": "../schema.json",
   "scripts": {
-    "start": "hello_world.js",
-    "hello": {
-      "cmd": "deno run hello",
-      "desc": "hello"
+    "formatting": {
+      "cmd": "deno fmt",
+      "desc": "Daemonize formatting"
     }
   },
-  "allow": [
-    "dev"
-  ],
-  "watcher": {
-    "match": ["*.*"],
-    "skip": ["super_duper_secret/*"],
-    "exts": [".js", ".ini"]
-  },
-  "unstable": true,
-  "stdin": "inherit"
+  "logger": {
+    "fullscreen": true
+  }
 }

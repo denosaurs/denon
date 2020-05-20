@@ -49,6 +49,9 @@ export const DEFAULT_DENON_CONFIG: DenonConfig = {
   watcher: {
     interval: 350,
     paths: [Deno.cwd()],
+    exts: [".ts", ".js", ".json"],
+    match: ["*.*"],
+    skip: ["**/.git/**"],
   },
   logger: {},
 };
@@ -90,11 +93,11 @@ export async function readConfig(): Promise<DenonConfig> {
  * Reads the denon config from a file
  * @param args cli args from parseArgs()
  * */
-export async function writeConfig() {
+export async function writeConfig(file: string) {
   let config = {
     scripts: {
       "start": "app.ts",
     },
   };
-  await writeJson("denon.json", config, { spaces: 2 });
+  await writeJson(file, config, { spaces: 2 });
 }

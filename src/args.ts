@@ -1,6 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { parseFlags } from "../deps.ts";
+import { parseFlags, setColorEnabled, blue, yellow, gray } from "../deps.ts";
 
 export interface Args {
   help: boolean;
@@ -8,6 +8,28 @@ export interface Args {
   init: boolean;
 
   cmd: string[];
+}
+
+export function help(version: string): string {
+  setColorEnabled(true);
+  return `
+${blue("DENON")} - ${version}
+Monitor any changes in your Deno application and automatically restart.
+
+Usage:
+    ${blue("denon")} ${yellow("<script name>")}     ${
+    gray("-- eg: denon start")
+  }
+    ${blue("denon")} ${yellow("<command>")}         ${
+    gray("-- eg: denon run helloworld.ts")
+  }
+    ${blue("denon")} [options]         ${gray("-- eg: denon --help")}
+
+Options:
+    -h --help          Show this screen.
+    -v --version       Show version.
+    -i --init          Create config file in current working dir.
+`;
 }
 
 /**

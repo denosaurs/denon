@@ -1,6 +1,6 @@
 on: [push, pull_request]
 
-name: test
+name: deno test
 
 jobs:
   test:

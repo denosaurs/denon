@@ -95,6 +95,10 @@ export interface ScriptOptions {
   stderr?: "inherit" | "piped" | "null" | number;
 }
 
+/**
+ * Build deno flags from ScriptOptions.
+ * `{ allow: [ run, env ]}` -> `[--allow-run, --allow-env]`
+ */
 export function buildFlags(options: ScriptOptions): string[] {
   let flags: string[] = [];
   if (options.allow) {
