@@ -20,7 +20,7 @@ const reDenoAction = new RegExp(/^(deno +\w+) +(.*)$/);
 const reCompact = new RegExp(
   /^'(?:\\'|.)*?\.(ts|js)'|^"(?:\\"|.)*?\.(ts|js)"|^(?:\\\ |\S)+\.(ts|js)$/,
 );
-const reCliCompact = new RegExp(/^(run|test|fmt) +(.*)$/);
+const reCliCompact = new RegExp(/^(run|test|fmt) *(.*)$/);
 
 /**
  * Handle all the things related to process management.
@@ -49,6 +49,7 @@ export class Runner {
 
     if (!s) {
       const cmd = Deno.args.join(" ");
+      console.log(cmd);
       let out: string[] = [];
       if (reCompact.test(cmd)) {
         out = ["deno", "run"];
