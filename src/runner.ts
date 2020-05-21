@@ -102,7 +102,7 @@ export class Runner {
    * Create an `Execution` object to handle the lifetime
    * of the process that is executed.
    */
-  execute(script: string): Execution {
+  execute(script: string): Deno.Process {
     const command = this.build(script);
     log.info(`starting \`${command.cmd.join(" ")}\``);
     const options = {
@@ -112,104 +112,7 @@ export class Runner {
       stdout: command.options.stdout ?? "inherit",
       stderr: command.options.stderr ?? "inherit",
     };
-    return new Execution(options);
-  }
-}
-
-/**
- * Represents a process event.
- * Should reflect the lifetime of a process.
- */
-export type ExecutionEvent =
-  | ExecutionEventStdout
-  | ExecutionEventStderr
-  | ExecutionEventStatus
-  | ExecutionEventAlive;
-
-export interface ExecutionEventStdout {
-  type: "stdout";
-  stdout: Uint8Array;
-}
-
-export interface ExecutionEventStderr {
-  type: "stderr";
-  stderr: Uint8Array;
-}
-
-export interface ExecutionEventStatus {
-  type: "status";
-  status: Deno.ProcessStatus;
-}
-
-export interface ExecutionEventAlive {
-  type: "alive";
-}
-
-/**
- * Handle lifetime events of a process,
- * capturing if possible any output and 
- * success status.
- */
-export class Execution implements AsyncIterable<ExecutionEvent> {
-  public process: Deno.Process;
-
-  status?: Deno.ProcessStatus;
-  stdout?: Uint8Array;
-  stderr?: Uint8Array;
-
-  constructor(public options: Deno.RunOptions) {
-    this.process = Deno.run(options);
-  }
-
-  close() {
-    this.process.close();
-    if (this.options.stdin === "piped" && this.process.stdin) {
-      this.process.stdin.close();
-    }
-    if (this.options.stderr === "piped" && this.process.stderr) {
-      this.process.stderr.close();
-    }
-  }
-
-  private async watch() {
-    if (this.options.stdout == "piped") {
-      this.stdout = await this.process.output();
-    }
-    if (this.options.stderr == "piped") {
-      this.stderr = await this.process.stderrOutput();
-    }
-    this.status = await this.process.status();
-  }
-
-  async *iterate(): AsyncIterator<ExecutionEvent> {
-    this.watch();
-    while (true) {
-      if (this.status) {
-        yield {
-          type: "status",
-          status: this.status,
-        };
-        break;
-      } else if (this.stderr) {
-        yield {
-          type: "stderr",
-          stderr: this.stderr,
-        };
-      } else if (this.stdout) {
-        yield {
-          type: "stdout",
-          stdout: this.stdout,
-        };
-      } else {
-        yield {
-          type: "alive",
-        };
-      }
-    }
-  }
-
-  [Symbol.asyncIterator](): AsyncIterator<ExecutionEvent> {
-    return this.iterate();
+    return Deno.run(options);
   }
 }
 

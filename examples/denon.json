@@ -14,5 +14,8 @@
   "watcher": {
     "exts": ["js", "json", "ini"],
     "skip": ["super_duper_secret/*"]
+  },
+  "env": {
+    "SECRET_ENV_VARIABLE": "shh!"
   }
 }

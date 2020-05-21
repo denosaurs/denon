@@ -10,32 +10,32 @@ Deno.test({
       help: false,
       version: false,
       init: false,
-    
-      cmd: []
+
+      cmd: [],
     });
 
     assertEquals(parseArgs(["-h", "-v", "-i"]), {
       help: true,
       version: true,
       init: true,
-    
-      cmd: []
+
+      cmd: [],
     });
 
     assertEquals(parseArgs(["--help", "--version", "--init"]), {
       help: true,
       version: true,
       init: true,
-    
-      cmd: []
+
+      cmd: [],
     });
 
     assertEquals(parseArgs(["a", "b", "-c", "d", "--e"]), {
       help: false,
       version: false,
       init: false,
-    
-      cmd: ["a", "b"]
+
+      cmd: ["a", "b"],
     });
-  }
+  },
 });
