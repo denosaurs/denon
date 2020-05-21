@@ -108,7 +108,7 @@ if (import.meta.main) {
   }
 
   // show version number.
-  log.warning(VERSION);
+  log.info(VERSION);
   if (args.version) Deno.exit(0);
 
   // create configuration file.
@@ -128,8 +128,8 @@ if (import.meta.main) {
   const denon = new Denon(config);
 
   if (config.logger.fullscreen) console.clear();
-  log.warning(`watching path(s): ${config.watcher.match.join(" ")}`);
-  log.warning(`watching extensions: ${config.watcher.exts.join(",")}`);
+  log.info(`watching path(s): ${config.watcher.match.join(" ")}`);
+  log.info(`watching extensions: ${config.watcher.exts.join(",")}`);
 
   for await (let _ of denon.run(script)) {}
 }

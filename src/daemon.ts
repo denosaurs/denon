@@ -27,9 +27,13 @@ export class Daemon implements AsyncIterable<DenonEvent> {
    * Restart current process.
    */
   private async reload() {
-    if (this.#config.logger.fullscreen) console.clear();
-    log.warning(`watching path(s): ${this.#config.watcher.match.join(" ")}`);
-    log.warning(`watching extensions: ${this.#config.watcher.exts.join(",")}`);
+    if (this.#config.logger.fullscreen) {
+      log.debug("Clearing screen");
+      console.clear();
+    }
+
+    log.info(`watching path(s): ${this.#config.watcher.match.join(" ")}`);
+    log.info(`watching extensions: ${this.#config.watcher.exts.join(",")}`);
     log.info("restarting due to changes...");
 
     // kill all processes spawned
@@ -38,11 +42,14 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     for (let id in pcopy) {
       const p = pcopy[id];
       if (Deno.build.os === "windows") {
+        log.debug(`Closing process with pid ${p.pid}`);
         p.close();
       } else {
+        log.debug(`Killing process with pid ${p.pid}`);
         p.kill(Deno.Signal.SIGUSR2);
       }
     }
+    
     await this.start();
   }
 

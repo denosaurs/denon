@@ -105,6 +105,7 @@ export class Runner {
   execute(script: string): Deno.Process {
     const command = this.build(script);
     log.info(`starting \`${command.cmd.join(" ")}\``);
+    log.debug(`using options`)
     const options = {
       cmd: command.cmd,
       env: command.options.env ?? {},
