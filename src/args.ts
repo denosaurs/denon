@@ -1,6 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { parseFlags, setColorEnabled, blue, yellow, gray } from "../deps.ts";
+import { parseFlags } from "../deps.ts";
 
 /**
  * Map of supported flags that modify
@@ -41,6 +41,6 @@ export function parseArgs(args: string[] = Deno.args): Args {
     help: flags.help ?? false,
     version: flags.version ?? false,
     init: flags.init ?? false,
-    cmd: flags._.map((_) => _.toString()),
+    cmd: flags._.map((_: any) => _.toString()),
   };
 }
