@@ -133,7 +133,11 @@ export function buildFlags(options: ScriptOptions): string[] {
       });
     } else if (typeof options.allow == "object") {
       Object.entries(options.allow).map(([flag, value]) => {
-        flags.push(`--allow-${flag}=${value}`);
+        if (!value || (typeof value == 'boolean' && value)) {
+          flags.push(`--allow-${flag}`);
+        } else {
+          flags.push(`--allow-${flag}=${value}`);
+        }
       });
     }
   }
