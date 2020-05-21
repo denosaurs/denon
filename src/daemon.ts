@@ -49,7 +49,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         p.kill(Deno.Signal.SIGUSR2);
       }
     }
-    
+
     await this.start();
   }
 
