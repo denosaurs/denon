@@ -114,7 +114,7 @@ if (import.meta.main) {
   // create configuration file.
   // TODO: should be made interactive.
   if (args.init) {
-    initializeConfig();
+    await initializeConfig();
     Deno.exit(0);
   }
 
