@@ -85,12 +85,12 @@ export function cleanConfig(
 /**
  * Reads the denon config from a file
  */
-export async function readConfig(): Promise<DenonConfig> {
-  let config: DenonConfig = DEFAULT_DENON_CONFIG;
-
-  let file = configs.find((filename) => {
+export async function readConfig(
+  file: string | undefined = configs.find((filename) => {
     return existsSync(filename);
-  });
+  }),
+): Promise<DenonConfig> {
+  let config: DenonConfig = DEFAULT_DENON_CONFIG;
 
   if (file) {
     try {

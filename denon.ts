@@ -96,7 +96,7 @@ if (import.meta.main) {
   await grantPermissions();
 
   const args = parseArgs(Deno.args);
-  const config = await readConfig();
+  const config = await readConfig(args.config);
   await setupLog(config);
 
   config.args = args;

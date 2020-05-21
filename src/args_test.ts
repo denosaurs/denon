@@ -10,30 +10,37 @@ Deno.test({
       help: false,
       version: false,
       init: false,
+      config: undefined,
 
       cmd: [],
     });
 
-    assertEquals(parseArgs(["-h", "-v", "-i"]), {
+    assertEquals(parseArgs(["-h", "-v", "-i", "-c", "config"]), {
       help: true,
       version: true,
       init: true,
+      config: "config",
 
       cmd: [],
     });
 
-    assertEquals(parseArgs(["--help", "--version", "--init"]), {
-      help: true,
-      version: true,
-      init: true,
+    assertEquals(
+      parseArgs(["--help", "--version", "--init", "--config=config"]),
+      {
+        help: true,
+        version: true,
+        init: true,
+        config: "config",
 
-      cmd: [],
-    });
+        cmd: [],
+      },
+    );
 
-    assertEquals(parseArgs(["a", "b", "-c", "d", "--e"]), {
+    assertEquals(parseArgs(["a", "b", "-d", "e", "--f"]), {
       help: false,
       version: false,
       init: false,
+      config: undefined,
 
       cmd: ["a", "b"],
     });
