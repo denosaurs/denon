@@ -49,7 +49,6 @@ export class Runner {
 
     if (!s) {
       const cmd = Deno.args.join(" ");
-      console.log(cmd);
       let out: string[] = [];
       if (reCompact.test(cmd)) {
         out = ["deno", "run"];
