@@ -8,5 +8,16 @@
       ],
       "url": "./schema.json"
     }
+  ],
+  "cSpell.words": [
+    "Deno",
+    "denon",
+    "denonrc",
+    "denosaurs",
+    "exts",
+    "globstar",
+    "helloworld",
+    "importmap",
+    "oneliner"
   ]
 }

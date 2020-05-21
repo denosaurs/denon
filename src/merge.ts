@@ -3,8 +3,6 @@
 /**
  * Performs a deep merge of `source` into `target`.
  * Mutates `target` only but not its objects and arrays.
- *
- * @author inspired by [jhildenbiddle](https://stackoverflow.com/a/48218209).
  */
 export function merge<T extends Record<string, any>>(
   target: T,

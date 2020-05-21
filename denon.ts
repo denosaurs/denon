@@ -198,7 +198,7 @@ if (import.meta.main) {
     Deno.exit(0);
   }
 
-  // show version nunber.
+  // show version number.
   log.warning(VERSION);
   if (args.version) Deno.exit(0);
 

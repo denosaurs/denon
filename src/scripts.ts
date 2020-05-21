@@ -28,7 +28,7 @@ export interface Scripts {
 export type Script = string | ScriptObject;
 
 /**
- * Most complete rapresentation of a script. Can
+ * Most complete representation of a script. Can
  * be configured in details as it extends `ScriptOptions`
  * and can also contain a `desc` that is displayed along
  * script name when`denon` is run without any arguments .

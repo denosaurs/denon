@@ -4,7 +4,7 @@ import { parseFlags, setColorEnabled, blue, yellow, gray } from "../deps.ts";
 
 /**
  * Map of supported flags that modify
- * `denon` behaviour.
+ * `denon` behavior.
  */
 export interface Args {
   help: boolean;

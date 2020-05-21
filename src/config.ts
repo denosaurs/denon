@@ -19,7 +19,7 @@ import { merge } from "./merge.ts";
 import { Args } from "./args.ts";
 
 /**
- * Possible defualt configuration files.
+ * Possible default configuration files.
  */
 const configs = [
   "denon.yaml",

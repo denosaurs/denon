@@ -3,6 +3,7 @@
   "$id": "denosaurs/denon.json",
   "definitions": {
     "script": {
+      "title": "A script representation",
       "type": ["string", "object"],
       "anyOf": [
         {

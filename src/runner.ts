@@ -26,7 +26,7 @@ const reCliCompact = new RegExp(/^(run|test|fmt) +(.*)$/);
  * Handle all the things related to process management.
  * Scripts are built into executable commands that are
  * executed by `Deno.run()` and managed in an `Executable`
- * objecto to make available process events.
+ * object to make available process events.
  */
 export class Runner {
   constructor(private config: RunnerConfig) {}
