@@ -15,7 +15,7 @@ export function merge<T extends Record<string, any>>(
     return source;
   }
 
-  Object.keys(source).forEach((key) => {
+  for (const key of Object.keys(source)) {
     const targetValue = target[key];
     const sourceValue = source[key];
 
@@ -26,7 +26,7 @@ export function merge<T extends Record<string, any>>(
     } else {
       t[key] = sourceValue;
     }
-  });
+  }
 
   return t as T;
 }

@@ -130,9 +130,7 @@ export function buildFlags(options: ScriptOptions): string[] {
   let flags: string[] = [];
   if (options.allow) {
     if (Array.isArray(options.allow)) {
-      options.allow.forEach((flag) => {
-        flags.push(`--allow-${flag}`);
-      });
+      options.allow.forEach((flag) => flags.push(`--allow-${flag}`));
     } else if (typeof options.allow == "object") {
       Object.entries(options.allow).map(([flag, value]) => {
         if (!value || (typeof value == "boolean" && value)) {

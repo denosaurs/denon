@@ -13,33 +13,41 @@ import { Execution } from "./runner.ts";
  * loop to listen to DenonEvents.
  */
 export class Daemon implements AsyncIterable<DenonEvent> {
-  private current?: Execution;
-  private config: DenonConfig;
+  #denon: Denon;
+  #script: string;
+  #current?: Execution;
+  #config: DenonConfig;
 
-  constructor(private denon: Denon, private script: string) {
-    this.config = denon.config; // just as a shortcut
+  constructor(denon: Denon, script: string) {
+    this.#denon = denon;
+    this.#script = script;
+    this.#config = denon.config; // just as a shortcut
   }
 
   /**
    * Restart current process.
    */
   private async reload() {
-    if (this.current) {
-      this.current.process.kill(Deno.Signal.SIGUSR2);
+    if (this.#current) {
+      if (Deno.build.os === "windows") {
+        this.#current.process.close();
+      } else {
+        this.#current.process.kill(Deno.Signal.SIGUSR2);
+      }
     }
-    if (this.config.logger.fullscreen) console.clear();
-    log.warning(`watching path(s): ${this.config.watcher.match.join(" ")}`);
-    log.warning(`watching extensions: ${this.config.watcher.exts.join(",")}`);
+    if (this.#config.logger.fullscreen) console.clear();
+    log.warning(`watching path(s): ${this.#config.watcher.match.join(" ")}`);
+    log.warning(`watching extensions: ${this.#config.watcher.exts.join(",")}`);
     log.info("restarting due to changes...");
-    this.current = this.denon.runner.execute(this.script);
+    this.#current = this.#denon.runner.execute(this.#script);
   }
 
   async *iterate(): AsyncIterator<DenonEvent> {
     yield {
       type: "start",
     };
-    this.current = this.denon.runner.execute(this.script);
-    for await (const watchE of this.denon.watcher) {
+    this.#current = this.#denon.runner.execute(this.#script);
+    for await (const watchE of this.#denon.watcher) {
       if (watchE.some((_) => _.type === "modify")) {
         yield {
           type: "reload",
@@ -47,8 +55,8 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         };
         await this.reload();
       }
-      if (this.current) {
-        for await (const exeE of this.current) {
+      if (this.#current) {
+        for await (const exeE of this.#current) {
           if (exeE.type == "alive") break;
           if (exeE.type == "status") {
             if (exeE.status.success) {
@@ -66,7 +74,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
                 status: exeE.status,
               };
             }
-            this.current = undefined;
+            this.#current = undefined;
             break;
           }
         }

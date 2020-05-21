@@ -54,29 +54,34 @@ export interface WatcherConfig {
  * will yield a change
  */
 export class Watcher implements AsyncIterable<FileEvent[]> {
-  private signal = deferred();
-  private changes: { [key: string]: FileAction } = {};
-  private exts?: string[] = undefined;
-  private match?: RegExp[] = undefined;
-  private skip?: RegExp[] = undefined;
-  private watch: Function = this.denoWatch;
+  #signal = deferred();
+  #changes: { [key: string]: FileAction } = {};
+  #exts?: string[] = undefined;
+  #match?: RegExp[] = undefined;
+  #skip?: RegExp[] = undefined;
+  #watch: Function = this.denoWatch;
+  #config: WatcherConfig;
 
-  constructor(private config: WatcherConfig) {
+  constructor(config: WatcherConfig) {
+    this.#config = config;
+
     this.reload();
   }
 
   reload() {
-    this.watch = this.config.legacy ? this.legacyWatch : this.denoWatch;
-    if (this.config.exts) {
-      this.exts = this.config.exts.map((_) => _.startsWith(".") ? _ : `.${_}`);
+    this.#watch = this.#config.legacy ? this.legacyWatch : this.denoWatch;
+    if (this.#config.exts) {
+      this.#exts = this.#config.exts.map((_) =>
+        _.startsWith(".") ? _ : `.${_}`
+      );
     }
-    if (this.config.match) {
-      this.match = this.config.match.map((_) =>
+    if (this.#config.match) {
+      this.#match = this.#config.match.map((_) =>
         globToRegExp(_, { extended: true, globstar: false })
       );
     }
-    if (this.config.skip) {
-      this.skip = this.config.skip.map((_) =>
+    if (this.#config.skip) {
+      this.#skip = this.#config.skip.map((_) =>
         globToRegExp(_, { extended: true, globstar: false })
       );
     }
@@ -86,18 +91,18 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     path = this.verifyPath(path);
     log.debug(`evaluating path ${path}`);
     if (
-      extname(path) && this.exts?.length &&
-      this.exts?.every((ext) => !path.endsWith(ext))
+      extname(path) && this.#exts?.length &&
+      this.#exts?.every((ext) => !path.endsWith(ext))
     ) {
       log.debug(`path ${path} does not have right extension`);
       return false;
     } else if (
-      this.skip?.length && this.skip?.some((skip) => path.match(skip))
+      this.#skip?.length && this.#skip?.some((skip) => path.match(skip))
     ) {
       log.debug(`path ${path} is skipped`);
       return false;
     } else if (
-      this.match?.length && this.match?.every((match) => !path.match(match))
+      this.#match?.length && this.#match?.every((match) => !path.match(match))
     ) {
       log.debug(`path ${path} is not matched`);
       return false;
@@ -107,12 +112,12 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
   }
 
   private reset() {
-    this.changes = {};
-    this.signal = deferred();
+    this.#changes = {};
+    this.#signal = deferred();
   }
 
   private verifyPath(path: string): string {
-    for (const directory of this.config.paths) {
+    for (const directory of this.#config.paths) {
       const rel = relative(directory, path);
       if (rel && !rel.startsWith("..")) {
         path = relative(directory, path);
@@ -122,10 +127,10 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
   }
 
   async *iterate(): AsyncIterator<FileEvent[]> {
-    this.watch();
+    this.#watch();
     while (true) {
-      await this.signal;
-      yield Object.entries(this.changes).map(([
+      await this.#signal;
+      yield Object.entries(this.#changes).map(([
         path,
         type,
       ]) => ({ path, type }));
@@ -141,17 +146,17 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     let timer = 0;
     const debounce = () => {
       clearTimeout(timer);
-      timer = setTimeout(this.signal.resolve, this.config.interval);
+      timer = setTimeout(this.#signal.resolve, this.#config.interval);
     };
 
     const run = async () => {
       for await (
-        const event of Deno.watchFs(this.config.paths)
+        const event of Deno.watchFs(this.#config.paths)
       ) {
         const { kind, paths } = event;
         for (const path of paths) {
           if (this.isWatched(path)) {
-            this.changes[path] = kind;
+            this.#changes[path] = kind;
             debounce();
           }
         }
@@ -160,7 +165,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     run();
     while (true) {
       debounce();
-      await delay(this.config.interval);
+      await delay(this.#config.interval);
     }
   }
 
@@ -168,19 +173,19 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     let timer = 0;
     const debounce = () => {
       clearTimeout(timer);
-      timer = setTimeout(this.signal.resolve, this.config.interval);
+      timer = setTimeout(this.#signal.resolve, this.#config.interval);
     };
 
     const walkPaths = async () => {
       const tree: { [path: string]: Date | null } = {};
-      for (let i in this.config.paths) {
-        const action = walk(this.config.paths[i], {
+      for (let i in this.#config.paths) {
+        const action = walk(this.#config.paths[i], {
           maxDepth: Infinity,
           includeDirs: false,
           followSymlinks: false,
-          exts: this.exts,
-          match: this.match,
-          skip: this.skip,
+          exts: this.#exts,
+          match: this.#match,
+          skip: this.#skip,
         });
         for await (const { path } of action) {
           if (this.isWatched(path)) {
@@ -201,25 +206,25 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
         const pre = previous[path];
         const post = current[path];
         if (pre && !post) {
-          this.changes[path] = "remove";
+          this.#changes[path] = "remove";
         } else if (
           pre &&
           post &&
           pre.getTime() !== post.getTime()
         ) {
-          this.changes[path] = "modify";
+          this.#changes[path] = "modify";
         }
       }
 
       for (const path in current) {
         if (!previous[path] && current[path]) {
-          this.changes[path] = "create";
+          this.#changes[path] = "create";
         }
       }
 
       previous = current;
       debounce();
-      await delay(this.config.interval);
+      await delay(this.#config.interval);
     }
   }
 }

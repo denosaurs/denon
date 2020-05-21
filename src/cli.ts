@@ -80,7 +80,7 @@ export function printAvailableScripts(config: DenonConfig) {
   if (Object.keys(config.scripts).length) {
     log.info("available scripts:");
     const runner = new Runner(config);
-    Object.keys(config.scripts).forEach((name) => {
+    for (const name of Object.keys(config.scripts)) {
       const script = config.scripts[name];
       console.log();
       console.log(` - ${yellow(bold(name))}`);
@@ -90,7 +90,7 @@ export function printAvailableScripts(config: DenonConfig) {
       }
 
       console.log(gray(`   $ ${runner.build(name).cmd.join(" ")}`));
-    });
+    }
     console.log();
     console.log(
       `You can run scripts with \`${blue("denon")} ${yellow("<script>")}\``,

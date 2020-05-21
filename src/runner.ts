@@ -29,7 +29,11 @@ const reCliCompact = new RegExp(/^(run|test|fmt) +(.*)$/);
  * object to make available process events.
  */
 export class Runner {
-  constructor(private config: RunnerConfig) {}
+  #config: RunnerConfig;
+
+  constructor(config: RunnerConfig) {
+    this.#config = config;
+  }
 
   /**
    * Build the script, in whatever form it is declared in,
@@ -38,10 +42,10 @@ export class Runner {
    */
   build(script: string): Command {
     // global options
-    const g = Object.assign({}, this.config);
+    const g = Object.assign({}, this.#config);
     delete g.scripts;
 
-    const s = this.config.scripts[script];
+    const s = this.#config.scripts[script];
 
     if (!s) {
       const cmd = Deno.args.join(" ");
@@ -147,7 +151,7 @@ export interface ExecutionEventAlive {
  * success status.
  */
 export class Execution implements AsyncIterable<ExecutionEvent> {
-  process: Deno.Process;
+  public process: Deno.Process;
 
   status?: Deno.ProcessStatus;
   stdout?: Uint8Array;
