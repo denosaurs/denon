@@ -1,40 +1,22 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { log, grant, exists, blue, gray, bold, yellow } from "./deps.ts";
+import { log } from "./deps.ts";
 
 import { Watcher, FileEvent } from "./src/watcher.ts";
-import { Runner, Execution } from "./src/runner.ts";
+import { Runner } from "./src/runner.ts";
+import { Daemon } from "./src/daemon.ts";
 
-import { readConfig, writeConfig, DenonConfig } from "./src/config.ts";
-import { parseArgs, help } from "./src/args.ts";
+import {
+  printAvailableScripts,
+  printHelp,
+  initializeConfig,
+  grantPermissions,
+} from "./src/cli.ts";
+import { readConfig, DenonConfig } from "./src/config.ts";
+import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
 const VERSION = "v0.9.0";
-
-/**
- * These are the permissions required for a clean run
- * of `denon`. If not provided through installation they 
- * will be asked on every run by the `grant()` std function.
- * 
- * The permissions required are:
- * - *read*, used to correctly load a configuration file and
- * to monitor for filesystem changes in the directory `denon`
- * is executed to reload scripts.
- * - *run*, used to run scripts as child processes.
- */
-const PERMISSIONS: Deno.PermissionDescriptor[] = [
-  { name: "read" },
-  { name: "run" },
-];
-
-/**
- * These permissions are required on specific situations,
- * `denon` should not be installed with this permissions
- * but you should be granting them when they are required.
- */
-const PERMISSION_OPTIONAL: { [key: string]: Deno.PermissionDescriptor[] } = {
-  write: [{ name: "write" }],
-};
 
 /**
  * Events you can listen to when creating a `denon`
@@ -84,74 +66,6 @@ export declare interface DenonExitEvent {
 }
 
 /**
- * Daemon instance. 
- * Returned by Denon instance when
- * `start(script)` is called. It can be used in a for
- * loop to listen to DenonEvents.
- */
-export class Daemon implements AsyncIterable<DenonEvent> {
-  private current?: Execution;
-  constructor(private denon: Denon, private script: string) {}
-
-  async *iterate(): AsyncIterator<DenonEvent> {
-    yield {
-      type: "start",
-    };
-    this.current = this.denon.runner.execute(this.script);
-    for await (const watchE of this.denon.watcher) {
-      if (watchE.some((_) => _.type === "modify")) {
-        yield {
-          type: "reload",
-          change: watchE,
-        };
-        if (this.current) {
-          this.current.process.kill(Deno.Signal.SIGUSR2);
-        }
-        if (this.denon.config.logger.fullscreen) console.clear();
-        log.warning(
-          `watching path(s): ${this.denon.config.watcher.match.join(" ")}`,
-        );
-        log.warning(
-          `watching extensions: ${this.denon.config.watcher.exts.join(" ")}`,
-        );
-        this.current = this.denon.runner.execute(this.script);
-      }
-      if (this.current) {
-        for await (const exeE of this.current) {
-          if (exeE.type == "alive") break;
-          if (exeE.type == "status") {
-            if (exeE.status.success) {
-              log.info("clean exit - waiting for changes before restart");
-              yield {
-                type: "success",
-                status: exeE.status,
-              };
-            } else {
-              log.info(
-                "app crashed - waiting for file changes before starting ...",
-              );
-              yield {
-                type: "crash",
-                status: exeE.status,
-              };
-            }
-            this.current = undefined;
-            break;
-          }
-        }
-      }
-    }
-    yield {
-      type: "exit",
-    };
-  }
-
-  [Symbol.asyncIterator](): AsyncIterator<DenonEvent> {
-    return this.iterate();
-  }
-}
-
-/**
  * Denon instance.
  * Holds loaded configuration and handles creation
  * of daemons with the `start(script)` method.
@@ -179,12 +93,7 @@ export class Denon {
 if (import.meta.main) {
   await setupLog();
 
-  // @see PERMISSIONS .
-  let permissions = await grant(PERMISSIONS);
-  if (!permissions || permissions.length < 2) {
-    log.critical("Required permissions `read` and `run` not granted");
-    Deno.exit(1);
-  }
+  await grantPermissions();
 
   const args = parseArgs(Deno.args);
   const config = await readConfig();
@@ -194,7 +103,7 @@ if (import.meta.main) {
 
   // show help message.
   if (args.help) {
-    console.log(help(VERSION));
+    printHelp(VERSION);
     Deno.exit(0);
   }
 
@@ -205,43 +114,13 @@ if (import.meta.main) {
   // create configuration file.
   // TODO: should be made interactive.
   if (args.init) {
-    let permissions = await grant(PERMISSION_OPTIONAL.write);
-    if (!permissions || permissions.length < 1) {
-      log.critical("Required permissions `write` not granted");
-      Deno.exit(1);
-    }
-    const file = "denon.json";
-    if (!await exists(file)) {
-      log.info("creating json configuration...");
-      await writeConfig(file);
-      log.info("`denon.json` created correctly in root dir");
-    } else {
-      log.error("`denon.json` already exists in root dir");
-    }
+    initializeConfig();
     Deno.exit(0);
   }
 
   // show all available scripts.
   if (args.cmd.length == 0) {
-    if (Object.keys(config.scripts).length) {
-      log.info("available scripts:");
-      const runner = new Runner(config);
-      Object.keys(config.scripts).forEach((name) => {
-        const script = config.scripts[name];
-        console.log();
-        console.log(` - ${yellow(bold(name))}`);
-
-        if (typeof script === "object" && script.desc) {
-          console.log(`   ${script.desc}`);
-        }
-
-        console.log(gray(`   $ ${runner.build(name).cmd.join(" ")}`));
-      });
-      console.log();
-      console.log(
-        `You can run scripts with \`${blue("denon")} ${yellow("<script>")}\``,
-      );
-    }
+    printAvailableScripts(config);
     Deno.exit(0);
   }
 
@@ -250,7 +129,7 @@ if (import.meta.main) {
 
   if (config.logger.fullscreen) console.clear();
   log.warning(`watching path(s): ${config.watcher.match.join(" ")}`);
-  log.warning(`watching extensions: ${config.watcher.exts.join(" ")}`);
+  log.warning(`watching extensions: ${config.watcher.exts.join(",")}`);
 
   for await (let _ of denon.run(script)) {}
 }

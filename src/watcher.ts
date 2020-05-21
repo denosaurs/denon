@@ -68,16 +68,16 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
   reload() {
     this.watch = this.config.legacy ? this.legacyWatch : this.denoWatch;
     if (this.config.exts) {
-      this.exts = this.config.exts.map((e) => e.startsWith(".") ? e : `.${e}`);
+      this.exts = this.config.exts.map((_) => _.startsWith(".") ? _ : `.${_}`);
     }
     if (this.config.match) {
-      this.match = this.config.match.map((s) =>
-        globToRegExp(s, { extended: true, globstar: false })
+      this.match = this.config.match.map((_) =>
+        globToRegExp(_, { extended: true, globstar: false })
       );
     }
     if (this.config.skip) {
-      this.skip = this.config.skip.map((s) =>
-        globToRegExp(s, { extended: true, globstar: false })
+      this.skip = this.config.skip.map((_) =>
+        globToRegExp(_, { extended: true, globstar: false })
       );
     }
   }

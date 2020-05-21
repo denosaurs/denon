@@ -20,7 +20,7 @@ export function merge<T extends Record<string, any>>(
     const sourceValue = source[key];
 
     if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
-      t[key] = targetValue.concat(sourceValue);
+      t[key] = sourceValue;
     } else if (isObject(targetValue) && isObject(sourceValue)) {
       t[key] = merge(Object.assign({}, targetValue), sourceValue);
     } else {

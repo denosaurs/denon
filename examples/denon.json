@@ -1,11 +1,18 @@
 {
   "scripts": {
-    "formatting": {
-      "cmd": "deno fmt",
-      "desc": "Daemonize formatting"
+    "hello": {
+      "cmd": "hello_world.js",
+      "desc": "Run main app",
+      "allow": [
+        "env"
+      ]
     }
   },
   "logger": {
     "fullscreen": true
+  },
+  "watcher": {
+    "exts": ["js", "json", "ini"],
+    "skip": ["super_duper_secret/*"]
   }
 }

@@ -49,12 +49,23 @@ export const DEFAULT_DENON_CONFIG: DenonConfig = {
   watcher: {
     interval: 350,
     paths: [Deno.cwd()],
-    exts: [".ts", ".js", ".json"],
+    exts: ["ts", "js", "json"],
     match: ["*.*"],
     skip: ["**/.git/**"],
   },
   logger: {},
 };
+
+export function cleanConfig(
+  config: Partial<DenonConfig>,
+): Partial<DenonConfig> {
+  if (config.watcher?.exts) {
+    config.watcher.exts = config.watcher.exts.map((_) =>
+      _.startsWith(".") ? _.substr(0) : _
+    );
+  }
+  return config;
+}
 
 /**
  * Reads the denon config from a file
@@ -75,10 +86,10 @@ export async function readConfig(): Promise<DenonConfig> {
           schema: JSON_SCHEMA,
           json: true,
         });
-        config = merge(config, parsed);
+        config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
       } else if (/^\.json$/.test(extension)) {
         const parsed = await readJson(file);
-        config = merge(config, parsed);
+        config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
       }
     } catch (e) {
       log.warning(`unsupported configuration \`${file}\``);
