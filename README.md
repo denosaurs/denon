@@ -10,9 +10,9 @@
 
 denon is the [deno](https://deno.land/) replacement for [nodemon](https://nodemon.io/) providing a feature packed and easy to use experience.
 
-denon does **not** require *any* additional changes to your code or method of development. `denon` is a replacement wrapper for `deno`. To use `denon`, replace the word `deno` on the command line when executing your script.
+denon does **not** require *any* additional changes to your code or method of development. `denon` is a replacement wrapper for `deno`. To use `denon`,replace the word `deno` on the command line when executing your script.
 
-# Features
+## Features
 
 Denon provides most of the features you would expect of a file watcher and more.
 
@@ -23,7 +23,7 @@ Denon provides most of the features you would expect of a file watcher and more.
 - Ignoring specific files or directories with [glob](<https://en.wikipedia.org/wiki/Glob_(programming)>) patterns
 - Not limited to deno projects with a powerful script configuration
 
-# Install
+## Install
 
 To install denon simply enter the following into a terminal:
 
@@ -31,7 +31,7 @@ To install denon simply enter the following into a terminal:
 $ deno install -Af --unstable https://deno.land/x/denon/denon.ts
 ```
 
-# Usage
+## Usage
 
 denon wraps your application, so you can pass all the arguments you would normally pass to your app:
 
@@ -69,9 +69,9 @@ to see what else you can do with deno CLI use the help flag:
 $ denon --help
 ```
 
-# Configuration
+## Configuration
 
-denon is designed to be simple but also extremely configurable to fit your project needs. 
+denon is designed to be simple but also extremely configurable to fit your project needs. It supports both json and yaml for the configuration file. The configuration options in yaml is the same as json making it compatible.
 
 to create a basic configuration in the root directory of your project file you can run:
 
@@ -89,11 +89,11 @@ this will create a basic `denon.json` file:
 }
 ```
 
-## Available options
+### Available options
 
 denon takes inspiration from the awesome `velociraptor` module in the way it handles scripts
 
-### Scripts
+#### Scripts
 
 Scripts are declared inside the `scripts` object and are identified by a name:
 
@@ -105,7 +105,7 @@ Scripts are declared inside the `scripts` object and are identified by a name:
     // OR
     "start": "run app.ts",
     // OR
-    "start": "deno run app.ts" 
+    "start": "deno run app.ts"
   }
 }
 ```
@@ -118,14 +118,14 @@ Scripts can also be defined by a complex object:
     "start": {
       "cmd": "deno run app.ts",
       // with an optional description that
-      // is shown when you run `denon` to list 
+      // is shown when you run `denon` to list
       // all the scripts
       "desc": "Run the main server.",
 
       // available options...
       // they are described in the next paragraph
       "allow": [
-        "env", 
+        "env",
         "watch",
       ],
       "unstable": true
@@ -137,11 +137,11 @@ Scripts can also be defined by a complex object:
 }
 ```
 
-## Script Options
+### Script Options
 
 Options can be script specific or be declared as global in the root of the config file. Script options are greatly inspired by the [velociraptor](https://github.com/umbopepato/velociraptor).
 
-### Environment variables
+#### Environment variables
 
 Environment variables can be provided as an object and are passed directly to the child process.
 
@@ -165,7 +165,7 @@ Environment variables can be provided as an object and are passed directly to th
 }
 ```
 
-### Permissions
+#### Permissions
 
 Permission can be granted to child processes.
 
@@ -191,7 +191,7 @@ Permission can be granted to child processes.
 }
 ```
 
-### Import Map
+#### Import Map
 
 ```jsonc
 {
@@ -206,7 +206,7 @@ Permission can be granted to child processes.
 }
 ```
 
-### TS config
+#### TS config
 
 ```jsonc
 {
@@ -221,7 +221,7 @@ Permission can be granted to child processes.
 }
 ```
 
-### Inspect and InspectBrk
+#### Inspect and InspectBrk
 
 ```jsonc
 {
@@ -238,7 +238,7 @@ Permission can be granted to child processes.
 }
 ```
 
-### Lockfile
+#### Lockfile
 
 ```jsonc
 {
@@ -253,7 +253,7 @@ Permission can be granted to child processes.
 }
 ```
 
-### Log
+#### Log
 
 ```jsonc
 {
@@ -268,7 +268,7 @@ Permission can be granted to child processes.
 }
 ```
 
-### Cert
+#### Cert
 
 ```jsonc
 {
@@ -283,7 +283,7 @@ Permission can be granted to child processes.
 }
 ```
 
-## Watcher
+### Watcher
 
 ```jsonc
 {
@@ -304,7 +304,7 @@ Permission can be granted to child processes.
 }
 ```
 
-## Config
+### Config
 
 ```jsonc
 {
@@ -321,12 +321,12 @@ Permission can be granted to child processes.
 }
 ```
 
-# Other
+## Other
 
-## Contribution
+### Contribution
 
 Pull request, issues and feedback are very welcome. Code style is formatted with `deno fmt`.
 
-## Licence
+### Licence
 
 Copyright 2020-present, the denosaurs team. All rights reserved. MIT license.
