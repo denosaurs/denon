@@ -53,7 +53,7 @@ export class Runner {
       if (reCompact.test(cmd)) {
         out = ["deno", "run"];
         out = out.concat(stdCmd(cmd));
-      } else if (reCliCompact) {
+      } else if (reCliCompact.test(cmd)) {
         out = ["deno"];
         out = out.concat(stdCmd(cmd));
       } else {
