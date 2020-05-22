@@ -113,9 +113,17 @@ if (import.meta.main) {
 
   // update denon to latest release
   if (args.upgrade) {
-    log.info("Running \`deno install -Af --unstable https://deno.land/x/denon/denon.ts\`");
+    log.info(
+      "Running \`deno install -Af --unstable https://deno.land/x/denon/denon.ts\`",
+    );
     Deno.run({
-      cmd: ["deno", "install", "-Af", "--unstable", "https://deno.land/x/denon/denon.ts"]
+      cmd: [
+        "deno",
+        "install",
+        "-Af",
+        "--unstable",
+        "https://deno.land/x/denon/denon.ts",
+      ],
     });
     Deno.exit(0);
   }
