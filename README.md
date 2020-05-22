@@ -1,12 +1,14 @@
+![denom](https://raw.githubusercontent.com/denosaurs/denon/master/.assets/denom.svg)
+
 # denon
 
-[![license](https://img.shields.io/github/license/denosaurs/denon)](https://github.com/denosaurs/denon/blob/master/LICENSE)
 [![stars](https://img.shields.io/github/stars/denosaurs/denon)](https://github.com/denosaurs/denon/stargazers)
 [![issues](https://img.shields.io/github/issues/denosaurs/denon)](https://github.com/denosaurs/denon/issues)
-[![ci](https://github.com/denosaurs/denon/workflows/test/badge.svg)](https://github.com/denosaurs/denon/actions)
-[![releases](https://img.shields.io/github/downloads/denosaurs/denon/total)](https://github.com/denosaurs/denon/releases/latest/)
-[![deno version](https://img.shields.io/badge/deno-1.0.1-informational)](https://github.com/denoland/deno)
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/denon/mod.ts)
+[![workflow](https://img.shields.io/github/workflow/status/denosaurs/denon/test)](https://github.com/denosaurs/denon/actions)
+[![releases](https://img.shields.io/github/v/release/denosaurs/denon)](https://github.com/denosaurs/denon/releases/latest/)
+[![deno version](https://img.shields.io/badge/deno-1.0.1-informational)](https://github.com/denoland/deno) 
+[![deno doc](https://img.shields.io/badge/deno-doc-informational)](https://doc.deno.land/https/deno.land/x/denon/mod.ts)
+[![license](https://img.shields.io/github/license/denosaurs/denon)](https://github.com/denosaurs/denon/blob/master/LICENSE)
 
 denon is the [deno](https://deno.land/) replacement for [nodemon](https://nodemon.io/) providing a feature packed and easy to use experience.
 
@@ -28,7 +30,7 @@ Denon provides most of the features you would expect of a file watcher and more.
 To install denon simply enter the following into a terminal:
 
 ```bash
-$ deno install -Af --unstable https://deno.land/x/denon/denon.ts
+$ deno install --allow-read --allow-run --allow-write -f --unstable https://deno.land/x/denon/denon.ts
 ```
 
 ## Usage
@@ -89,9 +91,22 @@ this will create a basic `denon.json` file:
 }
 ```
 
+### JSON Schema
+
+You can use a JSON schema to have type checking on your configuration. Simply add:
+
+```jsonc
+{
+  "$schema": "https://deno.land/x/denon/schema.json",
+  "scripts": { /* */ }
+}
+```
+
+> ⚠️ This feature going under development, so it might change
+
 ### Available options
 
-denon takes inspiration from the awesome `velociraptor` module in the way it handles scripts
+denon takes inspiration from the awesome [velociraptor](https://github.com/umbopepato/velociraptor) module in the way it handles scripts.
 
 #### Scripts
 
@@ -139,7 +154,7 @@ Scripts can also be defined by a complex object:
 
 ### Script Options
 
-Options can be script specific or be declared as global in the root of the config file. Script options are greatly inspired by the [velociraptor](https://github.com/umbopepato/velociraptor).
+Options can be script specific or be declared as global in the root of the config file.
 
 #### Environment variables
 
@@ -193,6 +208,10 @@ Permission can be granted to child processes.
 
 #### Import Map
 
+Load import map file. Take a look a at the [official docs](https://deno.land/manual/linking_to_external_code/import_maps) for additional info.
+
+> ⚠️ This feature in unstable in the current version of the deno executable.
+
 ```jsonc
 {
   "scripts": {
@@ -208,6 +227,8 @@ Permission can be granted to child processes.
 
 #### TS config
 
+Load tsconfig.json configuration file.
+
 ```jsonc
 {
   "scripts": {
@@ -222,6 +243,8 @@ Permission can be granted to child processes.
 ```
 
 #### Inspect and InspectBrk
+
+Activate inspector on `host:port`. If `inspectBrk` is used the executions breaks at the start of the user script.
 
 ```jsonc
 {
@@ -240,6 +263,8 @@ Permission can be granted to child processes.
 
 #### Lockfile
 
+Check the specified lock file.
+
 ```jsonc
 {
   "scripts": {
@@ -254,6 +279,8 @@ Permission can be granted to child processes.
 ```
 
 #### Log
+
+Set log level. (possible values: `debug`, `info`)
 
 ```jsonc
 {
@@ -270,6 +297,8 @@ Permission can be granted to child processes.
 
 #### Cert
 
+Load certificate authority from PEM encoded file.
+
 ```jsonc
 {
   "scripts": {
@@ -285,6 +314,8 @@ Permission can be granted to child processes.
 
 ### Watcher
 
+File watcher options.
+
 ```jsonc
 {
   "scripts": { /* */ },
@@ -299,12 +330,14 @@ Permission can be granted to child processes.
     // The globs that it will not scan for.
     "skip": ["*/.git/*"],
     // Use the legacy file monitoring algorithm. (walking)
-    "legacy": false;
+    "legacy": false
   }
 }
 ```
 
 ### Logger
+
+Internal logger options.
 
 ```jsonc
 {
