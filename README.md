@@ -1,10 +1,10 @@
 # denon
 
-[![license](https://img.shields.io/github/license/eliassjogreen/denon)](https://github.com/eliassjogreen/denon/blob/master/LICENSE)
-[![stars](https://img.shields.io/github/stars/eliassjogreen/denon)](https://github.com/eliassjogreen/denon/stargazers)
-[![issues](https://img.shields.io/github/issues/eliassjogreen/denon)](https://github.com/eliassjogreen/denon/issues)
-[![ci](https://github.com/eliassjogreen/denon/workflows/test/badge.svg)](https://github.com/eliassjogreen/denon/actions)
-[![releases](https://img.shields.io/github/downloads/eliassjogreen/denon/total)](https://github.com/eliassjogreen/denon/releases/latest/)
+[![license](https://img.shields.io/github/license/denosaurs/denon)](https://github.com/denosaurs/denon/blob/master/LICENSE)
+[![stars](https://img.shields.io/github/stars/denosaurs/denon)](https://github.com/denosaurs/denon/stargazers)
+[![issues](https://img.shields.io/github/issues/denosaurs/denon)](https://github.com/denosaurs/denon/issues)
+[![ci](https://github.com/denosaurs/denon/workflows/test/badge.svg)](https://github.com/denosaurs/denon/actions)
+[![releases](https://img.shields.io/github/downloads/denosaurs/denon/total)](https://github.com/denosaurs/denon/releases/latest/)
 [![deno version](https://img.shields.io/badge/deno-1.0.1-informational)](https://github.com/denoland/deno)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/denon/mod.ts)
 
