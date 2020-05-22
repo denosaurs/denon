@@ -33,6 +33,8 @@ To install denon simply enter the following into a terminal:
 $ deno install --allow-read --allow-run --allow-write -f --unstable https://deno.land/x/denon/denon.ts
 ```
 
+> ⚠️ Make sure you are using `deno` version `^1.0.1` to install this executable. You can upgrade running `deno upgrade`.
+
 ## Usage
 
 denon wraps your application, so you can pass all the arguments you would normally pass to your app:
