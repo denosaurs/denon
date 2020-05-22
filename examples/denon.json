@@ -1,18 +1,30 @@
 {
+  "$schema": "https://deno.land/x/denon/schema.json",
   "scripts": {
     "hello": {
-      "cmd": "hello_world.js",
+      "cmd": "simple.ts",
       "desc": "Run main app",
       "allow": [
         "env"
       ]
+    },
+    "oak": {
+      "cmd": "oak.ts",
+      "desc": "Run oak instance",
+      "allow": [
+        "env",
+        "net"
+      ],
+      "env": {
+        "PORT": "9001"
+      }
     }
   },
   "logger": {
     "fullscreen": true
   },
   "watcher": {
-    "exts": ["js", "json", "ini"],
+    "exts": ["ts", "json", "ini"],
     "skip": ["super_duper_secret/*"]
   },
   "env": {
