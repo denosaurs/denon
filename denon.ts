@@ -11,6 +11,7 @@ import {
   printHelp,
   initializeConfig,
   grantPermissions,
+  upgrade,
 } from "./src/cli.ts";
 import { readConfig, DenonConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
@@ -113,18 +114,7 @@ if (import.meta.main) {
 
   // update denon to latest release
   if (args.upgrade) {
-    log.info(
-      "Running \`deno install -Af --unstable https://deno.land/x/denon/denon.ts\`",
-    );
-    Deno.run({
-      cmd: [
-        "deno",
-        "install",
-        "-Af",
-        "--unstable",
-        "https://deno.land/x/denon/denon.ts",
-      ],
-    });
+    await upgrade();
     Deno.exit(0);
   }
 

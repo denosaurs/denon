@@ -74,6 +74,25 @@ export async function initializeConfig() {
 }
 
 /**
+ * Grab a fresh copy of denon
+ */
+export async function upgrade() {
+  log.info(
+    "Running \`deno install -Af --unstable https://deno.land/x/denon/denon.ts\`",
+  );
+  await Deno.run({
+    cmd: [
+      "deno",
+      "install",
+      "-Af",
+      "--unstable",
+      "https://deno.land/x/denon/denon.ts",
+    ],
+  }).status();
+  Deno.exit(0);
+}
+
+/**
  * List all available scripts declared in the config file.
  * // TODO: make it interactive
  */
