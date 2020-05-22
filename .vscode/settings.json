@@ -1,4 +1,23 @@
 {
   "deno.enable": true,
-  "deno.unstable": true
+  "deno.unstable": true,
+  "json.schemas": [
+    {
+      "fileMatch": [
+          "/denon.json"
+      ],
+      "url": "./schema.json"
+    }
+  ],
+  "cSpell.words": [
+    "Deno",
+    "denon",
+    "denonrc",
+    "denosaurs",
+    "exts",
+    "globstar",
+    "helloworld",
+    "importmap",
+    "oneliner"
+  ]
 }

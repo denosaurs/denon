@@ -1,2 +1,6 @@
-export * from "./watcher.ts";
+// Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
+
 export * from "./denon.ts";
+export * from "./src/config.ts";
+export * from "./src/watcher.ts";
+export * from "./src/runner.ts";

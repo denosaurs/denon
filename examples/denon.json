@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "hello": {
+      "cmd": "hello_world.js",
+      "desc": "Run main app",
+      "allow": [
+        "env"
+      ]
+    }
+  },
+  "logger": {
+    "fullscreen": true
+  },
+  "watcher": {
+    "exts": ["js", "json", "ini"],
+    "skip": ["super_duper_secret/*"]
+  },
+  "env": {
+    "SECRET_ENV_VARIABLE": "shh!"
+  }
+}
