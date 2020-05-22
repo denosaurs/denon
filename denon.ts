@@ -111,6 +111,15 @@ if (import.meta.main) {
   log.info(VERSION);
   if (args.version) Deno.exit(0);
 
+  // update denon to latest release
+  if (args.upgrade) {
+    log.info("Running \`deno install -Af --unstable https://deno.land/x/denon/denon.ts\`");
+    Deno.run({
+      cmd: ["deno", "install", "-Af", "--unstable", "https://deno.land/x/denon/denon.ts"]
+    });
+    Deno.exit(0);
+  }
+
   // create configuration file.
   // TODO: should be made interactive.
   if (args.init) {

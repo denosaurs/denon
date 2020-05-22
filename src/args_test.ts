@@ -10,6 +10,7 @@ Deno.test({
       help: false,
       version: false,
       init: false,
+      upgrade: false,
       config: undefined,
 
       cmd: [],
@@ -19,6 +20,7 @@ Deno.test({
       help: true,
       version: true,
       init: true,
+      upgrade: false,
       config: "config",
 
       cmd: [],
@@ -30,6 +32,7 @@ Deno.test({
         help: true,
         version: true,
         init: true,
+        upgrade: false,
         config: "config",
 
         cmd: [],
@@ -40,9 +43,20 @@ Deno.test({
       help: false,
       version: false,
       init: false,
+      upgrade: false,
       config: undefined,
 
       cmd: ["a", "b"],
+    });
+
+    assertEquals(parseArgs(["--upgrade"]), {
+      help: false,
+      version: false,
+      init: false,
+      upgrade: true,
+      config: undefined,
+
+      cmd: [],
     });
   },
 });

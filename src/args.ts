@@ -10,6 +10,8 @@ export interface Args {
   help: boolean;
   version: boolean;
   init: boolean;
+  upgrade: boolean;
+
   config?: string;
 
   cmd: string[];
@@ -32,6 +34,7 @@ export function parseArgs(args: string[] = Deno.args): Args {
       "help",
       "version",
       "init",
+      "upgrade",
     ],
     alias: {
       help: "h",
@@ -45,7 +48,10 @@ export function parseArgs(args: string[] = Deno.args): Args {
     help: flags.help ?? false,
     version: flags.version ?? false,
     init: flags.init ?? false,
+    upgrade: flags.upgrade ?? false,
+
     config: flags.config,
+
     cmd: flags._.map((_: any) => _.toString()),
   };
 }
