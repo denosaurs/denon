@@ -1,1 +1,5 @@
+# testing directory
 testing/
+
+# macOS files
+.DS_Store
