@@ -18,6 +18,7 @@
     "globstar",
     "helloworld",
     "importmap",
-    "oneliner"
+    "oneliner",
+    "stdlib"
   ]
 }
