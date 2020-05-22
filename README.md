@@ -227,7 +227,7 @@ Load import map file. Take a look a at the [official docs](https://deno.land/man
 
 #### TS config
 
-Load tsconfig.json configuration file.
+Load tsconfig.json configuration file:
 
 ```jsonc
 {
@@ -243,7 +243,7 @@ Load tsconfig.json configuration file.
 ```
 #### Unstable
 
-Enable if the script is using unstable features of deno stdlib.
+Enable if the script is using unstable features of deno stdlib:
 
 ```jsonc
 {
@@ -260,7 +260,7 @@ Enable if the script is using unstable features of deno stdlib.
 
 #### Inspect and InspectBrk
 
-Activate inspector on `host:port`. If `inspectBrk` is used the executions breaks at the start of the user script.
+Activate inspector on `host:port`. If `inspectBrk` is used the executions breaks at the start of the user script:
 
 ```jsonc
 {
@@ -279,7 +279,7 @@ Activate inspector on `host:port`. If `inspectBrk` is used the executions breaks
 
 #### Lockfile
 
-Check the specified lock file.
+Check the specified lock file:
 
 ```jsonc
 {
@@ -294,26 +294,9 @@ Check the specified lock file.
 }
 ```
 
-#### Log
-
-Set log level. (possible values: `debug`, `info`)
-
-```jsonc
-{
-  "scripts": {
-    "start": {
-      "cmd": "deno run app.ts",
-      "desc": "Run the main server.",
-
-      "log": "debug" // or "info"
-    }
-  }
-}
-```
-
 #### Cert
 
-Load certificate authority from PEM encoded file.
+Load certificate authority from PEM encoded file:
 
 ```jsonc
 {
@@ -328,9 +311,26 @@ Load certificate authority from PEM encoded file.
 }
 ```
 
+#### Log
+
+Set log level: (possible values: `debug`, `info`)
+
+```jsonc
+{
+  "scripts": {
+    "start": {
+      "cmd": "deno run app.ts",
+      "desc": "Run the main server.",
+
+      "log": "debug" // or "info"
+    }
+  }
+}
+```
+
 ### Watcher
 
-File watcher options.
+File watcher options:
 
 ```jsonc
 {
@@ -353,7 +353,7 @@ File watcher options.
 
 ### Logger
 
-Internal logger options.
+Internal logger options:
 
 ```jsonc
 {
@@ -374,7 +374,7 @@ Internal logger options.
 
 ### Contribution
 
-Pull request, issues and feedback are very welcome. Code style is formatted with `deno fmt`.
+Pull request, issues and feedback are very welcome. Code style is formatted with `deno fmt` and commit messages are done following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) spec.
 
 ### Licence
 
