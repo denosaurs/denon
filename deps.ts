@@ -12,16 +12,16 @@ export {
   yellow,
   gray,
   bold,
-} from "https://deno.land/std@v0.52.0/fmt/mod.ts";
+} from "https://deno.land/std@0.52.0/fmt/mod.ts";
 
-export { parse as parseFlags } from "https://deno.land/std@v0.52.0/flags/mod.ts";
+export { parse as parseFlags } from "https://deno.land/std@0.52.0/flags/mod.ts";
 
 export {
   exists,
   existsSync,
   readFileStr,
   walk,
-} from "https://deno.land/std@v0.52.0/fs/mod.ts";
+} from "https://deno.land/std@0.52.0/fs/mod.ts";
 
 export {
   JSON_SCHEMA,
@@ -33,11 +33,11 @@ export {
   dirname,
   extname,
   globToRegExp,
-} from "https://deno.land/std@v0.52.0/path/mod.ts";
+} from "https://deno.land/std@0.52.0/path/mod.ts";
 
-export { readJson } from "https://deno.land/std@v0.52.0/fs/read_json.ts";
-export { writeJson } from "https://deno.land/std@v0.52.0/fs/write_json.ts";
+export { readJson } from "https://deno.land/std@0.52.0/fs/read_json.ts";
+export { writeJson } from "https://deno.land/std@0.52.0/fs/write_json.ts";
 
-export { deferred, delay } from "https://deno.land/std@v0.52.0/async/mod.ts";
+export { deferred, delay } from "https://deno.land/std@0.52.0/async/mod.ts";
 
-export { grant } from "https://deno.land/std@v0.52.0/permissions/mod.ts";
+export { grant } from "https://deno.land/std@0.52.0/permissions/mod.ts";
