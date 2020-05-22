@@ -6,12 +6,13 @@ import {
   bold,
   gray,
   blue,
+  reset,
   setColorEnabled,
   grant,
   exists,
 } from "../deps.ts";
 
-import { DenonConfig, writeConfig } from "./config.ts";
+import { DenonConfig, writeConfig, getConfigFilename } from "./config.ts";
 import { Runner } from "./runner.ts";
 
 /**
@@ -41,7 +42,7 @@ const PERMISSION_OPTIONAL: { [key: string]: Deno.PermissionDescriptor[] } = {
 
 export async function grantPermissions() {
   // @see PERMISSIONS .
-  let permissions = await grant(PERMISSIONS);
+  let permissions = await grant([...PERMISSIONS]);
   if (!permissions || permissions.length < 2) {
     log.critical("Required permissions `read` and `run` not granted");
     Deno.exit(1);
@@ -95,6 +96,20 @@ export function printAvailableScripts(config: DenonConfig) {
     console.log(
       `You can run scripts with \`${blue("denon")} ${yellow("<script>")}\``,
     );
+  } else {
+    log.error("It looks like you don't have any scripts...");
+    const config = getConfigFilename();
+    if (config) {
+      log.info(
+        `You can add scripts to your \`${config}\` file. Check the docs.`,
+      );
+    } else {
+      log.info(
+        `You can create a config to add scripts to with \`${blue("denon")} ${
+          yellow("--init")
+        }${reset("\`.")}`,
+      );
+    }
   }
 }
 

@@ -53,7 +53,7 @@ export const DEFAULT_DENON_CONFIG: DenonConfig = {
   scripts: {},
   watcher: {
     interval: 350,
-    paths: [Deno.cwd()],
+    paths: [],
     exts: ["ts", "js", "json"],
     match: ["*.*"],
     skip: ["**/.git/**"],
@@ -83,14 +83,22 @@ export function cleanConfig(
 }
 
 /**
+ * Returns, if exists, the config filename
+ */
+export function getConfigFilename(): string | undefined {
+  return configs.find((filename) => {
+    return existsSync(filename);
+  });
+}
+
+/**
  * Reads the denon config from a file
  */
 export async function readConfig(
-  file: string | undefined = configs.find((filename) => {
-    return existsSync(filename);
-  }),
+  file: string | undefined = getConfigFilename(),
 ): Promise<DenonConfig> {
   let config: DenonConfig = DEFAULT_DENON_CONFIG;
+  config.watcher.paths.push(Deno.cwd());
 
   if (file) {
     try {
