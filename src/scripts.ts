@@ -161,10 +161,6 @@ export function buildFlags(options: ScriptOptions): string[] {
     flags.push("--cert");
     flags.push(options.cert);
   }
-  if (options.cert) {
-    flags.push("--cert");
-    flags.push(options.cert);
-  }
   if (options.inspect) {
     flags.push(`--inspect=${options.inspect}}`);
   }
