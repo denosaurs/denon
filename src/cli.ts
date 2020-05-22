@@ -152,9 +152,11 @@ Usage:
     ${blue("denon")} [options]         ${gray("-- eg: denon --help")}
 
 Options:
-    -h --help          Show this screen.
-    -v --version       Show version.
-    -i --init          Create config file in current working dir.
+    -h --help            Show this screen.
+    -v --version         Show version.
+    -i --init            Create config file in current working dir.
+    -u --upgrade         Upgrade to latest version.
+    -c --config <file>   Use specific file as configuration.
 `,
   );
 }
