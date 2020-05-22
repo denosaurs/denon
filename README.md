@@ -241,6 +241,22 @@ Load tsconfig.json configuration file.
   }
 }
 ```
+#### Unstable
+
+Enable if the script is using unstable features of deno stdlib.
+
+```jsonc
+{
+  "scripts": {
+    "start": {
+      "cmd": "deno run app.ts",
+      "desc": "Run the main server.",
+
+      "unstable": true
+    }
+  }
+}
+```
 
 #### Inspect and InspectBrk
 

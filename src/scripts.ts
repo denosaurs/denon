@@ -80,27 +80,16 @@ export interface ScriptOptions {
    */
   importmap?: string;
   /**
-   * The path to an _existing_ lockfile,
-   * passed to deno cli's `--lock` option.
-   * 
-   * **Note** This doesn't create the lockfile, use `--lock-write` manually
-   * when appropriate
-   */
-  lock?: string;
-  /**
-   * The log level, passed to deno cli's `--log-level` option.
-   */
-  log?: string;
-  /**
    * The path to a tsconfig json file,
    * passed to deno cli's `--tsconfig` option.
    */
   tsconfig?: string;
   /**
-   * The path to a PEM certificate file,
-   * passed to deno cli's `--cert` option.
+   * If the code that has to be run is using unstable features
+   * from deno standard library this option should be set to
+   * `true` so that `--unstable` option is passed to deno cli's.
    */
-  cert?: string;
+  unstable?: boolean;
   /**
    * The hostname and port where to start the inspector,
    * passed to deno cli's `--inspect` option.
@@ -111,9 +100,22 @@ export interface ScriptOptions {
    */
   inspectBrk?: string;
   /**
-   * Same as `inspect`, but breaks at start of user script.
+   * The path to an _existing_ lockfile,
+   * passed to deno cli's `--lock` option.
+   * 
+   * **Note** This doesn't create the lockfile, use `--lock-write` manually
+   * when appropriate
    */
-  unstable?: boolean;
+  lock?: string;
+  /**
+   * The path to a PEM certificate file,
+   * passed to deno cli's `--cert` option.
+   */
+  cert?: string;
+  /**
+   * The log level, passed to deno cli's `--log-level` option.
+   */
+  log?: string;
   /**
    * Standard i/o/err, to be passed directly to Deno.run.
    */
