@@ -131,6 +131,7 @@ export async function readConfig(
  */
 export async function writeConfig(file: string) {
   let config = {
+    "$schema": "https://deno.land/x/denon/schema.json",
     scripts: {
       "start": "app.ts",
     },
