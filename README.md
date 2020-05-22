@@ -304,7 +304,7 @@ Permission can be granted to child processes.
 }
 ```
 
-### Config
+### Logger
 
 ```jsonc
 {
