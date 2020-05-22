@@ -3,7 +3,7 @@
   "$id": "denosaurs/denon.json",
   "definitions": {
     "script": {
-      "title": "A script representation",
+      "description": "A script representation.",
       "type": ["string", "object"],
       "anyOf": [
         {
@@ -16,6 +16,7 @@
     },
     "script_object": {
       "type": "object",
+      "description": "A complex script representation.",
       "allOf": [
         {
           "$ref": "#/definitions/script_options"
@@ -23,9 +24,11 @@
         {
           "properties": {
             "cmd": {
+              "description": "The command that has to be executed (can be in compact form).",
               "type": "string"
             },
             "desc": {
+              "description": "Shown when listing all available scripts.",
               "type": "string"
             }
           }
@@ -37,44 +40,68 @@
       "type": "object",
       "properties": {
         "env": {
-          "$ref": "#/definitions/env",
-          "description": "Attach a comment after all non-user injected code."
+          "description": "Environment variables passed to the script.",
+          "$ref": "#/definitions/env"
         },
         "allow": {
+          "description": "Permissions that are granted to the script.",
           "$ref": "#/definitions/flags"
         },
         "importmap": {
-          "type": "string"
-        },
-        "lock": {
-          "type": "string"
-        },
-        "log": {
-          "type": "string"
+          "description": "Load import map file.",
+          "type": "string",
+          "default": "importmap.json"
         },
         "tsconfig": {
-          "type": "string"
-        },
-        "cert": {
-          "type": "string"
-        },
-        "inspect": {
-          "type": "string"
-        },
-        "inspectBrk": {
-          "type": "string"
+          "description": "Load tsconfig.json configuration file.",
+          "type": "string",
+          "default": "tsconfig.json"
         },
         "unstable": {
-          "type": "boolean"
+          "description": "Script is using unstable features of deno stdlib.",
+          "type": "boolean",
+          "default": false
+        },
+        "inspect": {
+          "description": "Activate inspector on host:port",
+          "type": "string",
+          "default": "localhost:9229"
+        },
+        "inspectBrk": {
+          "description": "Activate inspector on host:port, and break on first line of script.",
+          "type": "string",
+          "default": "localhost:9229"
+        },
+        "lock": {
+          "description": "Check specified lockfile.",
+          "type": "string",
+          "default": "lock.json"
+        },
+        "cert": {
+          "description": "Load certificate authority from PEM encoded file.",
+          "type": "string",
+          "default": "cert.pem"
+        },
+        "log": {
+          "description": "Set log level.",
+          "type": "string",
+          "enum": [ "debug", "info" ],
+          "default": "info"
         },
         "stdin": {
-          "$ref": "#/definitions/stdfile"
+          "description": "Set stdin file type.",
+          "$ref": "#/definitions/stdfile",
+          "default": "inherit"
         },
         "stdout": {
-          "$ref": "#/definitions/stdfile"
+          "description": "Set stdout file type.",
+          "$ref": "#/definitions/stdfile",
+          "default": "inherit"
         },
         "stderr": {
-          "$ref": "#/definitions/stdfile"
+          "description": "Set stderr file type.",
+          "$ref": "#/definitions/stdfile",
+          "default": "inherit"
         },
         "additionalProperties": false
       }
@@ -94,6 +121,7 @@
     "env": {
       "type": "object",
       "additionalProperties": {
+        "description": "Environment variable.",
         "type": "string"
       }
     },
@@ -101,6 +129,7 @@
       "type": ["array", "object"],
       "anyOf": [
         {
+          "description": "Flag.",
           "type": "array",
           "items": {
             "type": "string"
@@ -108,6 +137,7 @@
         },
         {
           "type": "object",
+          "description": "Flag key.",
           "additionalProperties": {
             "type": "string"
           }
@@ -124,28 +154,38 @@
           }
         },
         "interval": {
-          "type": "number"
+          "description": "Number of milliseconds after the last change.",
+          "type": "number",
+          "default": 350
         },
         "exts": {
+          "description": "The file extensions that watcher will scan for.",
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "default": ["js", "ts", "json"]
         },
         "match": {
+          "description": "The globs that the watcher will scan for.",
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "default": ["*.*"]
         },
         "skip": {
+          "description": "The globs that the watcher will skip.",
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "default": ["*/.git/*"]
         },
         "legacy": {
-          "type": "boolean"
+          "description": "Use the legacy file monitoring algorithm. (walking)",
+          "type": "boolean",
+          "default": false
         }
       },
       "additionalProperties": false
@@ -154,13 +194,19 @@
       "type": "object",
       "properties": {
         "quiet": {
-          "type": "boolean"
+          "description": "Output only errors",
+          "type": "boolean",
+          "default": false
         },
         "debug": {
-          "type": "boolean"
+          "description": "Output debug messages",
+          "type": "boolean",
+          "default": false
         },
         "fullscreen": {
-          "type": "boolean"
+          "description": "Clear screen after every restart.",
+          "type": "boolean",
+          "default": false
         }
       },
       "additionalProperties": false
@@ -174,6 +220,7 @@
     {
       "properties": {
         "scripts": {
+          "description": "Contains the definition of all the scripts that can be run.",
           "type": "object",
           "additionalProperties": {
             "$ref": "#/definitions/script"
