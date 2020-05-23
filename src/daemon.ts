@@ -28,7 +28,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
    */
   private async reload() {
     if (this.#config.logger.fullscreen) {
-      log.debug("Clearing screen");
+      log.debug("clearing screen");
       console.clear();
     }
 
@@ -42,11 +42,11 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     for (let id in pcopy) {
       const p = pcopy[id];
       if (Deno.build.os === "windows") {
-        log.debug(`Closing process with pid ${p.pid}`);
+        log.debug(`closing (windows) process with pid ${p.pid}`);
         p.close();
       } else {
-        log.debug(`Killing process with pid ${p.pid}`);
-        p.kill(Deno.Signal.SIGUSR2);
+        log.debug(`killing (unix) process with pid ${p.pid}`);
+        Deno.kill(p.pid, Deno.Signal.SIGKILL);
       }
     }
 
@@ -55,6 +55,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
 
   private async start() {
     const process = this.#denon.runner.execute(this.#script);
+    log.debug(`starting process with pid ${process.pid}`);
     this.#processes[process.pid] = (process);
     this.monitor(process);
   }
@@ -92,7 +93,8 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     };
     this.start();
     for await (const watchE of this.#denon.watcher) {
-      if (watchE.some((_) => _.type === "modify")) {
+      if (watchE.some((_) => _.type === "modify" || _.type === "access")) {
+        log.debug(`reload event detected, starting the reload procedure...`);
         yield {
           type: "reload",
           change: watchE,
