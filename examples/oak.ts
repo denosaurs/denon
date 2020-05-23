@@ -16,4 +16,4 @@ app.use((ctx) => {
 
 console.log("Listening to", green(`:${PORT}`));
 
-await app.listen({ port: 8000 });
+await app.listen({ port: PORT });
