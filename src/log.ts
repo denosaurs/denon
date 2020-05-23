@@ -57,8 +57,8 @@ function formatter(record: LogRecord): string {
  */
 function logLevel(config: DenonConfig): LogLevelName {
   let level: LogLevelName = DEFAULT_LEVEL;
-  if (config.debug) level = DEBUG_LEVEL;
-  if (config.quiet) level = QUIET_LEVEL;
+  if (config.logger.debug) level = DEBUG_LEVEL;
+  if (config.logger.quiet) level = QUIET_LEVEL;
   return level;
 }
 
