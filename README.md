@@ -58,7 +58,7 @@ $ denon --allow-env run app.ts 8080
 you can run scripts declared in config:
 
 ```bash
-$ denon <script name>
+$ denon [script name]
 ```
 
 and you can see which script are available in your config:
