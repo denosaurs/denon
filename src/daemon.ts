@@ -60,20 +60,28 @@ export class Daemon implements AsyncIterable<DenonEvent> {
   }
 
   private async monitor(process: Deno.Process) {
-    const s = await process.status();
-    let p = this.#processes[process.pid];
+    const pid = process.pid;
+    let s: Deno.ProcessStatus | undefined;
+    try {
+      s = await process.status();
+    } catch (error) {
+      log.debug(error);
+    }
+    let p = this.#processes[pid];
     if (p) {
       // process exited on its own, so we should wait a reload
       // remove it from processes array as it is already dead
-      delete this.#processes[process.pid];
+      delete this.#processes[pid];
 
-      // log status status
-      if (s.success) {
-        log.info("clean exit - waiting for changes before restart");
-      } else {
-        log.info(
-          "app crashed - waiting for file changes before starting ...",
-        );
+      if (s) {
+        // log status status
+        if (s.success) {
+          log.info("clean exit - waiting for changes before restart");
+        } else {
+          log.info(
+            "app crashed - waiting for file changes before starting ...",
+          );
+        }
       }
     }
   }

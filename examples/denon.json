@@ -21,7 +21,7 @@
     }
   },
   "logger": {
-    "fullscreen": true
+    "debug": true
   },
   "watcher": {
     "exts": ["ts", "json", "ini"],
