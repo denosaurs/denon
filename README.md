@@ -46,13 +46,13 @@ $ denon run app.ts
 you can pass arguments to deno:
 
 ```bash
-$ denon --allow-env run app.ts
+$ denon run --allow-env app.ts
 ```
 
 and even to your application:
 
 ```bash
-$ denon --allow-env run app.ts 8080
+$ denon run --allow-env app.ts --arg-for-my-app
 ```
 
 you can run scripts declared in config:
