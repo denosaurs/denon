@@ -164,10 +164,10 @@ export function buildFlags(options: ScriptOptions): string[] {
     flags.push(options.cert);
   }
   if (options.inspect) {
-    flags.push(`--inspect=${options.inspect}}`);
+    flags.push(`--inspect=${options.inspect}`);
   }
   if (options.inspectBrk) {
-    flags.push(`--inspect-brk=${options.inspectBrk}}`);
+    flags.push(`--inspect-brk=${options.inspectBrk}`);
   }
   if (options.unstable) {
     flags.push("--unstable");
