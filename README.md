@@ -9,6 +9,7 @@
 [![deno version](https://img.shields.io/badge/deno-1.0.1-informational)](https://github.com/denoland/deno) 
 [![deno doc](https://img.shields.io/badge/deno-doc-informational)](https://doc.deno.land/https/deno.land/x/denon/mod.ts)
 [![license](https://img.shields.io/github/license/denosaurs/denon)](https://github.com/denosaurs/denon/blob/master/LICENSE)
+[![Discord](https://img.shields.io/discord/713043818806509608)](https://discord.gg/shHG8vg)
 
 denon is the [deno](https://deno.land/) replacement for [nodemon](https://nodemon.io/) providing a feature packed and easy to use experience.
 
