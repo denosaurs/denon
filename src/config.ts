@@ -87,7 +87,7 @@ export function cleanConfig(
  */
 export function getConfigFilename(): string | undefined {
   return configs.find((filename) => {
-    return existsSync(filename);
+    return existsSync(filename) && Deno.statSync(filename).isFile;
   });
 }
 

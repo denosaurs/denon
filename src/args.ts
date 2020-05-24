@@ -31,6 +31,7 @@ export function parseArgs(args: string[] = Deno.args): Args {
     version: false,
     init: false,
     upgrade: false,
+    config: undefined,
     cmd: [],
   };
 
