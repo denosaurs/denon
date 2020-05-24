@@ -26,32 +26,42 @@ export function parseArgs(args: string[] = Deno.args): Args {
     args = args.slice(1);
   }
 
-  const flags = parseFlags(args, {
-    string: [
-      "config",
-    ],
-    boolean: [
-      "help",
-      "version",
-      "init",
-      "upgrade",
-    ],
-    alias: {
-      help: "h",
-      version: "v",
-      init: "i",
-      config: "c",
-    },
-  });
-
-  return {
-    help: flags.help ?? false,
-    version: flags.version ?? false,
-    init: flags.init ?? false,
-    upgrade: flags.upgrade ?? false,
-
-    config: flags.config,
-
-    cmd: flags._.map((_: any) => _.toString()),
+  const flags: Args = {
+    help: false,
+    version: false,
+    init: false,
+    upgrade: false,
+    cmd: [],
   };
+
+  if (
+    (args.indexOf("--config") === 0 || args.indexOf("-c") === 0) &&
+    args.length > 1
+  ) {
+    flags.config = args[1];
+    args = args.slice(2);
+  }
+
+  if (args.indexOf("--help") === 0 || args.indexOf("-h") === 0) {
+    flags.help = true;
+    args = args.slice(1);
+  }
+
+  if (args.indexOf("--version") === 0 || args.indexOf("-v") === 0) {
+    flags.version = true;
+    args = args.slice(1);
+  }
+
+  if (args.indexOf("--init") === 0 || args.indexOf("-i") === 0) {
+    flags.init = true;
+    args = args.slice(1);
+  }
+
+  if (args.indexOf("--upgrade") === 0 || args.indexOf("-u") === 0) {
+    flags.upgrade = true;
+    args = args.slice(1);
+  }
+
+  flags.cmd = args;
+  return flags;
 }

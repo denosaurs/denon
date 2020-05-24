@@ -5,6 +5,7 @@ import { log } from "../deps.ts";
 import { Scripts, ScriptOptions, buildFlags } from "./scripts.ts";
 
 import { merge } from "./merge.ts";
+import { DenonConfig } from "./config.ts";
 
 /**
  * `Runner` configuration.
@@ -29,9 +30,9 @@ const reCliCompact = new RegExp(/^(run|test|fmt) *(.*)$/);
  * object to make available process events.
  */
 export class Runner {
-  #config: RunnerConfig;
+  #config: DenonConfig;
 
-  constructor(config: RunnerConfig) {
+  constructor(config: DenonConfig) {
     this.#config = config;
   }
 
@@ -47,8 +48,8 @@ export class Runner {
 
     const s = this.#config.scripts[script];
 
-    if (!s) {
-      const cmd = Deno.args.join(" ");
+    if (!s && this.#config.args) {
+      const cmd = this.#config.args.cmd.join(" ");
       let out: string[] = [];
       if (reCompact.test(cmd)) {
         out = ["deno", "run"];
