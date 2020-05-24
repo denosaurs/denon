@@ -49,3 +49,6 @@ export { deferred, delay } from "https://deno.land/std@0.52.0/async/mod.ts";
 
 // permission management
 export { grant } from "https://deno.land/std@0.52.0/permissions/mod.ts";
+
+// autocomplete
+export * as omelette from "https://deno.land/x/omelette/omelette.ts";

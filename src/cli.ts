@@ -10,6 +10,7 @@ import {
   setColorEnabled,
   grant,
   exists,
+  omelette,
 } from "../deps.ts";
 
 import { DenonConfig, writeConfig, getConfigFilename } from "./config.ts";
@@ -94,6 +95,25 @@ export async function upgrade() {
     stdout: undefined,
   }).status();
   Deno.exit(0);
+}
+
+/**
+ * Generate autocomplete suggestions
+ */
+export function autocomplete(config: DenonConfig) {
+  // Write your CLI template.
+  const completion = omelette.default(`denon <script>`);
+
+  // Bind events for every template part.
+  completion.on('script', function ({ reply }: { reply: Function}) {
+    const auto = Object.keys(config.scripts); 
+    for (const file of Deno.readDirSync(Deno.cwd())) {
+      auto.push(file.name);
+    }
+    reply(auto);
+  });
+
+  completion.init();
 }
 
 /**

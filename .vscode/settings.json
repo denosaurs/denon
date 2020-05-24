@@ -19,6 +19,8 @@
     "helloworld",
     "importmap",
     "oneliner",
-    "stdlib"
+    "pcopy",
+    "stdlib",
+    "velociraptor"
   ]
 }

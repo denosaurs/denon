@@ -12,6 +12,7 @@ import {
   initializeConfig,
   grantPermissions,
   upgrade,
+  autocomplete,
 } from "./src/cli.ts";
 import { readConfig, DenonConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
@@ -99,6 +100,8 @@ if (import.meta.main) {
   const args = parseArgs(Deno.args);
   const config = await readConfig(args.config);
   await setupLog(config);
+
+  autocomplete(config);
 
   config.args = args;
 

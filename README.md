@@ -74,6 +74,27 @@ to see what else you can do with deno CLI use the help flag:
 $ denon --help
 ```
 
+## Autocompletion
+
+In **zsh**, you can install autocompletion with:
+
+```bash
+echo '. <(denon --completion)' >> ~/.zshrc
+```
+
+In **bash**:
+
+```bash
+denon --completion >> ~/.config/denon.completion.sh
+echo 'source ~/.config/denon.completion.sh' >> ~/.bash_profile
+```
+
+In **fish**:
+
+```bash
+echo 'denon --completion-fish | source' >> ~/.config/fish/config.fish
+```
+
 ## Configuration
 
 denon is designed to be simple but also extremely configurable to fit your project needs. It supports both json and yaml for the configuration file. The configuration options in yaml is the same as json making it compatible.
