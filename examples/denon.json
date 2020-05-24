@@ -1,7 +1,7 @@
 {
   "$schema": "https://deno.land/x/denon/schema.json",
   "scripts": {
-    "hello": {
+    "run": {
       "cmd": "simple.ts",
       "desc": "Run main app",
       "allow": [

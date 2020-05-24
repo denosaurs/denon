@@ -78,7 +78,7 @@ export class Denon {
 
   constructor(public config: DenonConfig) {
     this.watcher = new Watcher(config.watcher);
-    this.runner = new Runner(config);
+    this.runner = new Runner(config, config.args ? config.args.cmd : []);
   }
 
   run(script: string): AsyncIterable<DenonEvent> {

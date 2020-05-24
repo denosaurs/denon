@@ -5,7 +5,6 @@ import { log } from "../deps.ts";
 import { Scripts, ScriptOptions, buildFlags } from "./scripts.ts";
 
 import { merge } from "./merge.ts";
-import { DenonConfig } from "./config.ts";
 
 /**
  * `Runner` configuration.
@@ -17,7 +16,7 @@ export interface RunnerConfig extends ScriptOptions {
   scripts: Scripts;
 }
 
-const reDenoAction = new RegExp(/^(deno +\w+) +(.*)$/);
+const reDenoAction = new RegExp(/^(deno +\w+) *(.*)$/);
 const reCompact = new RegExp(
   /^'(?:\\'|.)*?\.(ts|js)'|^"(?:\\"|.)*?\.(ts|js)"|^(?:\\\ |\S)+\.(ts|js)$/,
 );
@@ -30,10 +29,12 @@ const reCliCompact = new RegExp(/^(run|test|fmt) *(.*)$/);
  * object to make available process events.
  */
 export class Runner {
-  #config: DenonConfig;
+  #config: RunnerConfig;
+  #args: string[];
 
-  constructor(config: DenonConfig) {
+  constructor(config: RunnerConfig, args: string[] = []) {
     this.#config = config;
+    this.#args = args;
   }
 
   /**
@@ -48,8 +49,8 @@ export class Runner {
 
     const s = this.#config.scripts[script];
 
-    if (!s && this.#config.args) {
-      const cmd = this.#config.args.cmd.join(" ");
+    if (!s && this.#args) {
+      const cmd = this.#args.join(" ");
       let out: string[] = [];
       if (reCompact.test(cmd)) {
         out = ["deno", "run"];
@@ -85,7 +86,7 @@ export class Runner {
       const args = denoAction[2];
       out = out.concat(stdCmd(action));
       out = out.concat(buildFlags(o));
-      out = out.concat(stdCmd(args));
+      if (args) out = out.concat(stdCmd(args));
     } else if (reCompact.test(cmd)) {
       out = ["deno", "run"];
       out = out.concat(buildFlags(o));

@@ -10,7 +10,8 @@ Deno.test({
       scripts: {
         "oneliner-1": "helloworld.ts",
         "oneliner-2": "deno test helloworld.ts",
-        "oneliner-3": "sh build.sh",
+        "oneliner-3": "deno test",
+        "oneliner-4": "sh build.sh",
       },
     };
     const runner = new Runner(config);
@@ -26,6 +27,10 @@ Deno.test({
       "helloworld.ts",
     ]);
     assertEquals(runner.build("oneliner-3").cmd, [
+      "deno",
+      "test",
+    ]);
+    assertEquals(runner.build("oneliner-4").cmd, [
       "sh",
       "build.sh",
     ]);
@@ -64,6 +69,10 @@ Deno.test({
           allow: ["all"],
         },
         "extended-2": {
+          cmd: "deno test",
+          allow: ["all"],
+        },
+        "extended-3": {
           cmd: "sh build.sh",
           allow: ["all"],
         },
@@ -78,6 +87,11 @@ Deno.test({
       "helloworld.ts",
     ]);
     assertEquals(runner.build("extended-2").cmd, [
+      "deno",
+      "test",
+      "--allow-all",
+    ]);
+    assertEquals(runner.build("extended-3").cmd, [
       "sh",
       "build.sh",
     ]);
