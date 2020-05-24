@@ -105,8 +105,8 @@ export function autocomplete(config: DenonConfig) {
   const completion = omelette.default(`denon <script>`);
 
   // Bind events for every template part.
-  completion.on('script', function ({ reply }: { reply: Function}) {
-    const auto = Object.keys(config.scripts); 
+  completion.on("script", function ({ reply }: { reply: Function }) {
+    const auto = Object.keys(config.scripts);
     for (const file of Deno.readDirSync(Deno.cwd())) {
       auto.push(file.name);
     }
