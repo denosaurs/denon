@@ -26,7 +26,7 @@ export interface FileEvent {
   /** The path of the changed file */
   path: string;
   /** The type of change that occurred */
-  type: FileAction;
+  type: FileAction[];
 }
 
 /** All of the options for the `watch` generator */
@@ -55,7 +55,7 @@ export interface WatcherConfig {
  */
 export class Watcher implements AsyncIterable<FileEvent[]> {
   #signal = deferred();
-  #changes: { [key: string]: FileAction } = {};
+  #changes: { [key: string]: FileAction[] } = {};
   #exts?: string[] = undefined;
   #match?: RegExp[] = undefined;
   #skip?: RegExp[] = undefined;
@@ -89,7 +89,6 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
 
   isWatched(path: string): boolean {
     path = this.verifyPath(path);
-    log.debug(`evaluating path ${path}`);
     if (
       extname(path) && this.#exts?.length &&
       this.#exts?.every((ext) => !path.endsWith(ext))
@@ -156,7 +155,8 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
         const { kind, paths } = event;
         for (const path of paths) {
           if (this.isWatched(path)) {
-            this.#changes[path] = kind;
+            if (!this.#changes[path]) this.#changes[path] = [];
+            this.#changes[path].push(kind);
             debounce();
           }
         }
@@ -206,19 +206,19 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
         const pre = previous[path];
         const post = current[path];
         if (pre && !post) {
-          this.#changes[path] = "remove";
+          this.#changes[path].push("remove");
         } else if (
           pre &&
           post &&
           pre.getTime() !== post.getTime()
         ) {
-          this.#changes[path] = "modify";
+          this.#changes[path].push("modify");
         }
       }
 
       for (const path in current) {
         if (!previous[path] && current[path]) {
-          this.#changes[path] = "create";
+          this.#changes[path].push("create");
         }
       }
 

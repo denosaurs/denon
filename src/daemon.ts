@@ -23,19 +23,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     this.#config = denon.config; // just as a shortcut
   }
 
-  /**
-   * Restart current process.
-   */
-  private async reload() {
-    if (this.#config.logger.fullscreen) {
-      log.debug("clearing screen");
-      console.clear();
-    }
-
-    log.info(`watching path(s): ${this.#config.watcher.match.join(" ")}`);
-    log.info(`watching extensions: ${this.#config.watcher.exts.join(",")}`);
-    log.info("restarting due to changes...");
-
+  private killAll() {
     // kill all processes spawned
     let pcopy = Object.assign({}, this.#processes);
     this.#processes = {};
@@ -49,6 +37,22 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         Deno.kill(p.pid, Deno.Signal.SIGKILL);
       }
     }
+  }
+
+  /**
+   * Restart current process.
+   */
+  private async reload() {
+    if (this.#config.logger.fullscreen) {
+      log.debug("clearing screen");
+      console.clear();
+    }
+
+    log.info(`watching path(s): ${this.#config.watcher.match.join(" ")}`);
+    log.info(`watching extensions: ${this.#config.watcher.exts.join(",")}`);
+    log.info("restarting due to changes...");
+
+    this.killAll();
 
     await this.start();
   }
@@ -87,13 +91,32 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     }
   }
 
+  private async onExit() {
+    if (Deno.build.os !== "windows") {
+      const signs = [
+        Deno.Signal.SIGHUP,
+        Deno.Signal.SIGINT,
+        Deno.Signal.SIGTERM,
+        Deno.Signal.SIGTSTP,
+      ];
+      signs.forEach((s) => {
+        (async () => {
+          await Deno.signal(s);
+          this.killAll();
+          Deno.exit(0);
+        })();
+      });
+    }
+  }
+
   async *iterate(): AsyncIterator<DenonEvent> {
     yield {
       type: "start",
     };
     this.start();
+    this.onExit();
     for await (const watchE of this.#denon.watcher) {
-      if (watchE.some((_) => _.type === "modify" || _.type === "access")) {
+      if (watchE.some((_) => _.type.includes("modify"))) {
         log.debug(`reload event detected, starting the reload procedure...`);
         yield {
           type: "reload",
