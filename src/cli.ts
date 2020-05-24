@@ -84,10 +84,14 @@ export async function upgrade() {
     cmd: [
       "deno",
       "install",
-      "-Af",
+      "--allow-read",
+      "--allow-run",
+      "--allow-write",
+      "-f",
       "--unstable",
       "https://deno.land/x/denon/denon.ts",
     ],
+    stdout: undefined,
   }).status();
   Deno.exit(0);
 }
