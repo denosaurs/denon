@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 1.0.1
+          deno-version: 1.0.2
 
       - run: deno -V
       
