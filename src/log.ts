@@ -3,7 +3,13 @@
 import {
   log,
   reset,
+  bold,
+  blue,
+  yellow,
+  red,
   LogRecord,
+  LogLevels,
+  BaseHandler,
   LogLevelName,
 } from "../deps.ts";
 
@@ -38,17 +44,41 @@ const DEFAULT_HANDLER = "format_fn";
 /**
  * Deno logger, but slightly better.
  */
-function formatter(record: LogRecord): string {
-  let msg = `${TAG} ${reset(record.msg)}`;
-
-  for (const arg of record.args) {
-    if (arg instanceof Object) {
-      msg += ` ${JSON.stringify(arg)}`;
-    } else {
-      msg += ` ${String(arg)}`;
+export class ConsoleHandler extends BaseHandler {
+  format(record: LogRecord): string {
+    let msg = "";
+    switch (record.level) {
+      case LogLevels.INFO:
+        msg += blue(TAG);
+        break;
+      case LogLevels.WARNING:
+        msg += yellow(TAG);
+        break;
+      case LogLevels.ERROR:
+        msg += red(TAG);
+        break;
+      case LogLevels.CRITICAL:
+        msg += bold(red(TAG));
+        break;
+      default:
+        break;
     }
+
+    msg += ` ${reset(record.msg)}`;
+
+    for (const arg of record.args) {
+      if (arg instanceof Object) {
+        msg += ` ${JSON.stringify(arg)}`;
+      } else {
+        msg += ` ${String(arg)}`;
+      }
+    }
+    return msg;
   }
-  return msg;
+
+  log(msg: string): void {
+    console.log(msg);
+  }
 }
 
 /**
@@ -70,9 +100,7 @@ export async function setupLog(config?: DenonConfig): Promise<void> {
   const level = config ? logLevel(config) : DEBUG_LEVEL;
   await log.setup({
     handlers: {
-      [DEFAULT_HANDLER]: new log.handlers.ConsoleHandler(DEBUG_LEVEL, {
-        formatter,
-      }),
+      [DEFAULT_HANDLER]: new ConsoleHandler(DEBUG_LEVEL),
     },
     loggers: {
       default: {
