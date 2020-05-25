@@ -79,7 +79,9 @@ export async function initializeConfig() {
  * Grab a fresh copy of denon
  */
 export async function upgrade(version?: string) {
-  const url = `https://deno.land/x/denon${version ? `@${version}` : ""}/denon.ts`;
+  const url = `https://deno.land/x/denon${
+    version ? `@${version}` : ""
+  }/denon.ts`;
 
   if (version === VERSION) {
     log.info(`Version ${version} already installed`);
