@@ -133,9 +133,9 @@ export function buildFlags(options: ScriptOptions): string[] {
   if (options.allow) {
     if (Array.isArray(options.allow)) {
       options.allow.forEach((flag) => flags.push(`--allow-${flag}`));
-    } else if (typeof options.allow == "object") {
+    } else if (typeof options.allow === "object") {
       Object.entries(options.allow).map(([flag, value]) => {
-        if (!value || (typeof value == "boolean" && value)) {
+        if (!value || (typeof value === "boolean" && value)) {
           flags.push(`--allow-${flag}`);
         } else {
           flags.push(`--allow-${flag}=${value}`);

@@ -70,7 +70,7 @@ export class Runner {
     let o: ScriptOptions;
     let cmd: string;
 
-    if (typeof s == "string") {
+    if (typeof s === "string") {
       o = g;
       cmd = s;
     } else {
@@ -81,7 +81,7 @@ export class Runner {
     let out: string[] = [];
 
     let denoAction = reDenoAction.exec(cmd);
-    if (denoAction && denoAction.length == 3) {
+    if (denoAction && denoAction.length === 3) {
       const action = denoAction[1];
       const args = denoAction[2];
       out = out.concat(stdCmd(action));
