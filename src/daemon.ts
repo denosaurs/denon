@@ -23,22 +23,6 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     this.#config = denon.config; // just as a shortcut
   }
 
-  private killAll() {
-    // kill all processes spawned
-    let pcopy = Object.assign({}, this.#processes);
-    this.#processes = {};
-    for (let id in pcopy) {
-      const p = pcopy[id];
-      if (Deno.build.os === "windows") {
-        log.debug(`closing (windows) process with pid ${p.pid}`);
-        p.close();
-      } else {
-        log.debug(`killing (unix) process with pid ${p.pid}`);
-        Deno.kill(p.pid, Deno.Signal.SIGKILL);
-      }
-    }
-  }
-
   /**
    * Restart current process.
    */
@@ -59,21 +43,42 @@ export class Daemon implements AsyncIterable<DenonEvent> {
 
   private async start() {
     const process = this.#denon.runner.execute(this.#script);
-    log.debug(`starting process with pid ${process.pid}`);
+    log.debug(`S: starting process with pid ${process.pid}`);
     this.#processes[process.pid] = (process);
     this.monitor(process);
   }
 
+  private killAll() {
+    log.debug(`K: killing ${Object.keys(this.#processes).length} process[es]`);
+    // kill all processes spawned
+    let pcopy = Object.assign({}, this.#processes);
+    this.#processes = {};
+    for (let id in pcopy) {
+      const p = pcopy[id];
+      if (Deno.build.os === "windows") {
+        log.debug(`K: closing (windows) process with pid ${p.pid}`);
+        p.close();
+      } else {
+        log.debug(`K: killing (unix) process with pid ${p.pid}`);
+        Deno.kill(p.pid, Deno.Signal.SIGKILL);
+      }
+    }
+  }
+
   private async monitor(process: Deno.Process) {
+    log.debug(`M: monitoring status of process with pid ${process.pid}`);
     const pid = process.pid;
     let s: Deno.ProcessStatus | undefined;
     try {
       s = await process.status();
+      log.debug(`M: got status of process with pid ${process.pid}`);
     } catch (error) {
+      log.debug(`M: error getting status of process with pid ${process.pid}`);
       log.debug(error);
     }
     let p = this.#processes[pid];
     if (p) {
+      log.debug(`M: process with pid ${process.pid} exited on its own`);
       // process exited on its own, so we should wait a reload
       // remove it from processes array as it is already dead
       delete this.#processes[pid];
@@ -88,6 +93,8 @@ export class Daemon implements AsyncIterable<DenonEvent> {
           );
         }
       }
+    } else {
+      log.debug(`M: process with pid ${process.pid} was killed`);
     }
   }
 
@@ -117,7 +124,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     this.onExit();
     for await (const watchE of this.#denon.watcher) {
       if (watchE.some((_) => _.type.includes("modify"))) {
-        log.debug(`reload event detected, starting the reload procedure...`);
+        log.debug(`R: reload event detected, starting the reload procedure...`);
         yield {
           type: "reload",
           change: watchE,
