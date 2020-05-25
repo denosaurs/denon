@@ -18,7 +18,7 @@ import { readConfig, DenonConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
-const VERSION = "v2.0.1";
+export const VERSION = "v2.0.1";
 
 /**
  * Events you can listen to when creating a `denon`
@@ -117,7 +117,7 @@ if (import.meta.main) {
 
   // update denon to latest release
   if (args.upgrade) {
-    await upgrade();
+    await upgrade(args.upgrade);
     Deno.exit(0);
   }
 

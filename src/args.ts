@@ -1,6 +1,9 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { parseFlags } from "../deps.ts";
+/**
+ * Regex to test if string matches version format
+ */
+const versionRegex = /^v?[0-9]+\.[0-9]+\.[0-9]+$/;
 
 /**
  * Map of supported flags that modify
@@ -10,8 +13,8 @@ export interface Args {
   help: boolean;
   version: boolean;
   init: boolean;
-  upgrade: boolean;
 
+  upgrade?: string;
   config?: string;
 
   cmd: string[];
@@ -30,37 +33,49 @@ export function parseArgs(args: string[] = Deno.args): Args {
     help: false,
     version: false,
     init: false,
-    upgrade: false,
+    upgrade: undefined,
     config: undefined,
     cmd: [],
   };
 
   if (
-    (args.indexOf("--config") === 0 || args.indexOf("-c") === 0) &&
+    (args.includes("--config") || args.includes("-c")) &&
     args.length > 1
   ) {
     flags.config = args[1];
     args = args.slice(2);
   }
 
-  if (args.indexOf("--help") === 0 || args.indexOf("-h") === 0) {
+  if (args.includes("--help") || args.includes("-h")) {
     flags.help = true;
     args = args.slice(1);
   }
 
-  if (args.indexOf("--version") === 0 || args.indexOf("-v") === 0) {
+  if (args.includes("--version") || args.includes("-v")) {
     flags.version = true;
     args = args.slice(1);
   }
 
-  if (args.indexOf("--init") === 0 || args.indexOf("-i") === 0) {
+  if (args.includes("--init") || args.includes("-i")) {
     flags.init = true;
     args = args.slice(1);
   }
 
-  if (args.indexOf("--upgrade") === 0 || args.indexOf("-u") === 0) {
-    flags.upgrade = true;
-    args = args.slice(1);
+  if (args.includes("--upgrade") || args.includes("-u")) {
+    const index = args.includes("--upgrade")
+      ? args.indexOf("--upgrade")
+      : args.indexOf("-u");
+    const next = args[index + 1];
+
+    if (next && (next === "master" || versionRegex.test(next))) {
+      flags.upgrade = !next.startsWith("v") || next !== "master"
+        ? "v" + next
+        : next;
+      args = args.slice(2);
+    } else {
+      flags.upgrade = "master";
+      args = args.slice(1);
+    }
   }
 
   flags.cmd = args;

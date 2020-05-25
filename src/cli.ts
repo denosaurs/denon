@@ -15,6 +15,7 @@ import {
 
 import { DenonConfig, writeConfig, getConfigFilename } from "./config.ts";
 import { Runner } from "./runner.ts";
+import { VERSION } from "../denon.ts";
 
 /**
  * These are the permissions required for a clean run
@@ -77,9 +78,22 @@ export async function initializeConfig() {
 /**
  * Grab a fresh copy of denon
  */
-export async function upgrade() {
+export async function upgrade(version?: string) {
+  const url = `https://deno.land/x/denon${version ? `@${version}` : ""}/denon.ts`;
+
+  if (version === VERSION) {
+    log.info(`Version ${version} already installed`);
+    Deno.exit(0);
+  }
+
+  log.debug(`Checking if ${url} exists`);
+  if ((await fetch(url)).status !== 200) {
+    log.critical(`Upgrade url ${url} does not exist`);
+    Deno.exit(1);
+  }
+
   log.info(
-    "Running \`deno install -Af --unstable https://deno.land/x/denon/denon.ts\`",
+    `Running \`deno install -Af --unstable ${url}\``,
   );
   await Deno.run({
     cmd: [
@@ -90,7 +104,7 @@ export async function upgrade() {
       "--allow-write",
       "-f",
       "--unstable",
-      "https://deno.land/x/denon/denon.ts",
+      url,
     ],
     stdout: undefined,
   }).status();
@@ -176,11 +190,11 @@ Usage:
     ${blue("denon")} [options]         ${gray("-- eg: denon --help")}
 
 Options:
-    -h --help            Show this screen.
-    -v --version         Show version.
-    -i --init            Create config file in current working dir.
-    -u --upgrade         Upgrade to latest version.
-    -c --config <file>   Use specific file as configuration.
+    -h --help               Show this screen.
+    -v --version            Show version.
+    -i --init               Create config file in current working dir.
+    -u --upgrade <version>  Upgrade to latest version. (default: master)
+    -c --config <file>      Use specific file as configuration.
 `,
   );
 }

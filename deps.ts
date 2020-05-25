@@ -20,9 +20,6 @@ export {
   gray,
 } from "https://deno.land/std@0.53.0/fmt/colors.ts";
 
-// parsing of execution flags
-export { parse as parseFlags } from "https://deno.land/std@0.53.0/flags/mod.ts";
-
 // configuration reading
 export {
   exists,
