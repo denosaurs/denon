@@ -74,7 +74,6 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       log.debug(`M: got status of process with pid ${process.pid}`);
     } catch (error) {
       log.debug(`M: error getting status of process with pid ${process.pid}`);
-      log.debug(error);
     }
     let p = this.#processes[pid];
     if (p) {
