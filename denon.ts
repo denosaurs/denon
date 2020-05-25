@@ -18,7 +18,7 @@ import { readConfig, DenonConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
-const VERSION = "v2.0.0";
+const VERSION = "v2.0.1";
 
 /**
  * Events you can listen to when creating a `denon`

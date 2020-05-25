@@ -6,7 +6,7 @@
 [![issues](https://img.shields.io/github/issues/denosaurs/denon)](https://github.com/denosaurs/denon/issues)
 [![workflow](https://img.shields.io/github/workflow/status/denosaurs/denon/test)](https://github.com/denosaurs/denon/actions)
 [![releases](https://img.shields.io/github/v/release/denosaurs/denon)](https://github.com/denosaurs/denon/releases/latest/)
-[![deno version](https://img.shields.io/badge/deno-1.0.1-informational)](https://github.com/denoland/deno) 
+[![deno version](https://img.shields.io/badge/deno-^1.0.1-informational)](https://github.com/denoland/deno) 
 [![deno doc](https://img.shields.io/badge/deno-doc-informational)](https://doc.deno.land/https/deno.land/x/denon/mod.ts)
 [![license](https://img.shields.io/github/license/denosaurs/denon)](https://github.com/denosaurs/denon/blob/master/LICENSE)
 [![Discord](https://img.shields.io/discord/713043818806509608)](https://discord.gg/shHG8vg)
