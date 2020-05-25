@@ -2,6 +2,7 @@
 
 # denon
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2231b4b5f746484ebeaaf95eb6433ce5)](https://app.codacy.com/gh/denosaurs/denon?utm_source=github.com&utm_medium=referral&utm_content=denosaurs/denon&utm_campaign=Badge_Grade_Dashboard)
 [![stars](https://img.shields.io/github/stars/denosaurs/denon)](https://github.com/denosaurs/denon/stargazers)
 [![issues](https://img.shields.io/github/issues/denosaurs/denon)](https://github.com/denosaurs/denon/issues)
 [![workflow](https://img.shields.io/github/workflow/status/denosaurs/denon/test)](https://github.com/denosaurs/denon/actions)
