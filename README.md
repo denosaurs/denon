@@ -295,9 +295,9 @@ Activate inspector on `host:port`. If `inspectBrk` is used the executions breaks
       "cmd": "deno run app.ts",
       "desc": "Run the main server.",
 
-      "inspect": "localhost:9229",
+      "inspect": "127.0.0.1:9229",
       // OR
-      "inspectBrk": "localhost:9229"
+      "inspectBrk": "127.0.0.1:9229"
     }
   }
 }
