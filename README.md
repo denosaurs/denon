@@ -166,12 +166,12 @@ Scripts can also be defined by a complex object:
       // they are described in the next paragraph
       "allow": [
         "env",
-        "watch",
+        "write",
       ],
       "unstable": true
 
       // running `denon start` will resolve in
-      // deno run --allow-env --allow-watch --unstable app.ts
+      // deno run --allow-env --allow-write --unstable app.ts
     }
   }
 }
