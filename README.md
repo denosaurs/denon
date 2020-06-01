@@ -3,11 +3,11 @@
 # denon
 
 [![stars](https://img.shields.io/github/stars/denosaurs/denon)](https://github.com/denosaurs/denon/stargazers)
-[![workflow](https://img.shields.io/github/workflow/status/denosaurs/denon/test)](https://github.com/denosaurs/denon/actions)
-[![releases](https://img.shields.io/github/v/release/denosaurs/denon)](https://github.com/denosaurs/denon/releases/latest/)
-[![deno version](https://img.shields.io/badge/deno-^1.0.1-informational)](https://github.com/denoland/deno)
-[![deno doc](https://img.shields.io/badge/deno-doc-informational)](https://doc.deno.land/https/deno.land/x/denon/mod.ts)
-[![Discord](https://img.shields.io/discord/713043818806509608)](https://discord.gg/shHG8vg)
+[![workflow](https://img.shields.io/github/workflow/status/denosaurs/denon/test?logo=github)](https://github.com/denosaurs/denon/actions)
+[![releases](https://img.shields.io/github/v/release/denosaurs/denon?logo=github)](https://github.com/denosaurs/denon/releases/latest/)
+[![deno version](https://img.shields.io/badge/deno-^1.0.1-informational?logo=deno)](https://github.com/denoland/deno)
+[![deno doc](https://img.shields.io/badge/deno-doc-informational?logo=deno)](https://doc.deno.land/https/deno.land/x/denon/mod.ts)
+[![Discord](https://img.shields.io/discord/713043818806509608?logo=discord&logoColor=white)](https://discord.gg/shHG8vg)
 [![license](https://img.shields.io/github/license/denosaurs/denon)](https://github.com/denosaurs/denon/blob/master/LICENSE)
 [![issues](https://img.shields.io/github/issues/denosaurs/denon)](https://github.com/denosaurs/denon/issues)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2231b4b5f746484ebeaaf95eb6433ce5)](https://app.codacy.com/gh/denosaurs/denon?utm_source=github.com&utm_medium=referral&utm_content=denosaurs/denon&utm_campaign=Badge_Grade_Dashboard)
