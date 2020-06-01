@@ -13,15 +13,20 @@ import {
   omelette,
 } from "../deps.ts";
 
-import { DenonConfig, writeConfig, getConfigFilename } from "./config.ts";
+import {
+  writeConfig,
+  getConfigFilename,
+  CompleteDenonConfig,
+} from "./config.ts";
 import { Runner } from "./runner.ts";
 import { VERSION } from "../denon.ts";
+import { Watcher } from "./watcher.ts";
 
 /**
  * These are the permissions required for a clean run
- * of `denon`. If not provided through installation they 
+ * of `denon`. If not provided through installation they
  * will be asked on every run by the `grant()` std function.
- * 
+ *
  * The permissions required are:
  * - *read*, used to correctly load a configuration file and
  * to monitor for filesystem changes in the directory `denon`
@@ -116,15 +121,20 @@ export async function upgrade(version?: string) {
 /**
  * Generate autocomplete suggestions
  */
-export function autocomplete(config: DenonConfig) {
+export function autocomplete(config: CompleteDenonConfig) {
   // Write your CLI template.
   const completion = omelette.default(`denon <script>`);
 
   // Bind events for every template part.
   completion.on("script", function ({ reply }: { reply: Function }) {
+    const watcher = new Watcher(config.watcher);
     const auto = Object.keys(config.scripts);
     for (const file of Deno.readDirSync(Deno.cwd())) {
-      auto.push(file.name);
+      if (file.isFile && watcher.isWatched(file.name)) {
+        auto.push(file.name);
+      } else {
+        // auto.push(file.name);
+      }
     }
     reply(auto);
   });
@@ -136,7 +146,7 @@ export function autocomplete(config: DenonConfig) {
  * List all available scripts declared in the config file.
  * // TODO: make it interactive
  */
-export function printAvailableScripts(config: DenonConfig) {
+export function printAvailableScripts(config: CompleteDenonConfig) {
   if (Object.keys(config.scripts).length) {
     log.info("available scripts:");
     const runner = new Runner(config);

@@ -1,7 +1,7 @@
 {
   "$schema": "https://deno.land/x/denon/schema.json",
   "scripts": {
-    "tesst": {
+    "test": {
       "cmd": "deno test",
       "allow": [
         "read"

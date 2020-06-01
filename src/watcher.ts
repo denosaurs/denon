@@ -32,23 +32,23 @@ export interface FileEvent {
 /** All of the options for the `watch` generator */
 export interface WatcherConfig {
   /** An array of paths to watch */
-  paths: string[];
+  paths?: string[];
   /** The number of milliseconds after the last change */
-  interval: number;
+  interval?: number;
   /** The file extensions that it will scan for */
-  exts: string[];
+  exts?: string[];
   /** The globs that it will scan for */
-  match: string[];
+  match?: string[];
   /** The globs that it will not scan for */
-  skip: string[];
+  skip?: string[];
   /** Use the legacy file monitoring algorithm */
   legacy?: boolean;
 }
 
 /**
- * Watches for file changes in `paths` path 
+ * Watches for file changes in `paths` path
  * yielding an array of all of the changes
- * each time one or more changes are detected. 
+ * each time one or more changes are detected.
  * It is debounced by `interval`, `recursive`, `exts`,
  * `match` and `skip` are filtering the files which
  * will yield a change
@@ -56,20 +56,27 @@ export interface WatcherConfig {
 export class Watcher implements AsyncIterable<FileEvent[]> {
   #signal = deferred();
   #changes: { [key: string]: FileAction[] } = {};
+  #paths: string[] = [Deno.cwd()];
+  #interval: number = 350;
   #exts?: string[] = undefined;
   #match?: RegExp[] = undefined;
   #skip?: RegExp[] = undefined;
   #watch: Function = this.denoWatch;
   #config: WatcherConfig;
 
-  constructor(config: WatcherConfig) {
+  constructor(config: WatcherConfig = {}) {
     this.#config = config;
-
     this.reload();
   }
 
   reload() {
     this.#watch = this.#config.legacy ? this.legacyWatch : this.denoWatch;
+    if (this.#config.paths) {
+      this.#paths = this.#config.paths;
+    }
+    if (this.#config.interval) {
+      this.#interval = this.#config.interval;
+    }
     if (this.#config.exts) {
       this.#exts = this.#config.exts.map((_) =>
         _.startsWith(".") ? _ : `.${_}`
@@ -116,7 +123,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
   }
 
   private verifyPath(path: string): string {
-    for (const directory of this.#config.paths) {
+    for (const directory of this.#paths) {
       const rel = relative(directory, path);
       if (rel && !rel.startsWith("..")) {
         path = relative(directory, path);
@@ -145,12 +152,12 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     let timer = 0;
     const debounce = () => {
       clearTimeout(timer);
-      timer = setTimeout(this.#signal.resolve, this.#config.interval);
+      timer = setTimeout(this.#signal.resolve, this.#interval);
     };
 
     const run = async () => {
       for await (
-        const event of Deno.watchFs(this.#config.paths)
+        const event of Deno.watchFs(this.#paths)
       ) {
         const { kind, paths } = event;
         for (const path of paths) {
@@ -165,7 +172,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     run();
     while (true) {
       debounce();
-      await delay(this.#config.interval);
+      await delay(this.#interval);
     }
   }
 
@@ -173,13 +180,13 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     let timer = 0;
     const debounce = () => {
       clearTimeout(timer);
-      timer = setTimeout(this.#signal.resolve, this.#config.interval);
+      timer = setTimeout(this.#signal.resolve, this.#interval);
     };
 
     const walkPaths = async () => {
       const tree: { [path: string]: Date | null } = {};
-      for (let i in this.#config.paths) {
-        const action = walk(this.#config.paths[i], {
+      for (let i in this.#paths) {
+        const action = walk(this.#paths[i], {
           maxDepth: Infinity,
           includeDirs: false,
           followSymlinks: false,
@@ -224,7 +231,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
 
       previous = current;
       debounce();
-      await delay(this.#config.interval);
+      await delay(this.#interval);
     }
   }
 }

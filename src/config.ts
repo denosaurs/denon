@@ -2,13 +2,14 @@
 
 import {
   existsSync,
-  readFileStr,
-  writeJson,
-  readJson,
   extname,
-  parseYaml,
   JSON_SCHEMA,
   log,
+  parseYaml,
+  readFileStr,
+  readJson,
+  writeJson,
+  resolve,
 } from "../deps.ts";
 
 import { WatcherConfig } from "./watcher.ts";
@@ -17,6 +18,8 @@ import { LogConfig } from "./log.ts";
 
 import { merge } from "./merge.ts";
 import { Args } from "./args.ts";
+
+const TS_CONFIG = "denon.config.ts";
 
 /**
  * Possible default configuration files.
@@ -36,12 +39,26 @@ const configs = [
   ".denonrc.yaml",
   ".denonrc.yml",
   ".denonrc.json",
+
+  TS_CONFIG,
 ];
 
 /**
  * The denon configuration format
  */
-export interface DenonConfig extends RunnerConfig {
+// export interface DenonConfig extends RunnerConfig {
+//   [key: string]: any;
+//   watcher?: WatcherConfig;
+//   logger?: LogConfig;
+//   args?: Args;
+// }
+
+export type DenonConfig = RunnerConfig & Partial<CompleteDenonConfig>;
+
+/**
+ * Parameters are not optional
+ */
+export interface CompleteDenonConfig extends RunnerConfig {
   [key: string]: any;
   watcher: WatcherConfig;
   logger: LogConfig;
@@ -49,7 +66,7 @@ export interface DenonConfig extends RunnerConfig {
 }
 
 /** The default denon configuration */
-export const DEFAULT_DENON_CONFIG: DenonConfig = {
+export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
   scripts: {},
   watcher: {
     interval: 350,
@@ -61,17 +78,48 @@ export const DEFAULT_DENON_CONFIG: DenonConfig = {
   logger: {},
 };
 
-export async function readYaml(file: string): Promise<unknown> {
+/**
+ * Read YAML config, throws if YAML format is not valid
+ */
+async function readYaml(file: string): Promise<unknown> {
   const source = await readFileStr(file);
-  const parsed = parseYaml(source, {
+  return parseYaml(source, {
     schema: JSON_SCHEMA,
     json: true,
   });
-
-  return parsed;
 }
 
-export function cleanConfig(
+/**
+ * from: deno-nessie
+ */
+export const parsePath = (...path: string[]): string => {
+  if (
+    path.length === 1 &&
+    (path[0]?.startsWith("http://") || path[0]?.startsWith("https://"))
+  ) {
+    return path[0];
+  }
+  return "file://" + resolve(...path);
+};
+
+/**
+ * Safe import a TypeScript file
+ */
+async function importConfig(
+  file: string,
+): Promise<Partial<DenonConfig> | undefined> {
+  try {
+    const configRaw = await import(parsePath(file));
+    return configRaw.default as Partial<DenonConfig>;
+  } catch (error) {
+    return;
+  }
+}
+
+/**
+ * Clean config from malformed strings
+ */
+function cleanConfig(
   config: Partial<DenonConfig>,
 ): Partial<DenonConfig> {
   if (config.watcher?.exts) {
@@ -96,33 +144,40 @@ export function getConfigFilename(): string | undefined {
  */
 export async function readConfig(
   file: string | undefined = getConfigFilename(),
-): Promise<DenonConfig> {
-  let config: DenonConfig = DEFAULT_DENON_CONFIG;
+): Promise<CompleteDenonConfig> {
+  let config: CompleteDenonConfig = DEFAULT_DENON_CONFIG;
+  if (!config.watcher.paths) config.watcher.paths = [];
   config.watcher.paths.push(Deno.cwd());
 
   if (file) {
-    try {
-      const extension = extname(file);
-      if (/^\.ya?ml$/.test(extension)) {
-        const parsed = await readYaml(file);
+    if (file === TS_CONFIG) {
+      const parsed = await importConfig(TS_CONFIG);
+      if (parsed) {
         config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
-      } else if (/^\.json$/.test(extension)) {
-        const parsed = await readJson(file);
-        config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
-      } else {
-        try {
-          const parsed = await readJson(file);
-          config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
-        } catch {
+      }
+    } else {
+      try {
+        const extension = extname(file);
+        if (/^\.ya?ml$/.test(extension)) {
           const parsed = await readYaml(file);
           config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
+        } else if (/^\.json$/.test(extension)) {
+          const parsed = await readJson(file);
+          config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
+        } else {
+          try {
+            const parsed = await readJson(file);
+            config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
+          } catch {
+            const parsed = await readYaml(file);
+            config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
+          }
         }
+      } catch {
+        log.warning(`unsupported configuration \`${file}\``);
       }
-    } catch {
-      log.warning(`unsupported configuration \`${file}\``);
     }
   }
-
   return config;
 }
 
