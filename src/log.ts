@@ -85,10 +85,10 @@ export class ConsoleHandler extends BaseHandler {
  * Determines the log level based on configuration
  * preferences.
  */
-function logLevel(config: DenonConfig): LogLevelName {
+function logLevel(config: LogConfig): LogLevelName {
   let level: LogLevelName = DEFAULT_LEVEL;
-  if (config.logger.debug) level = DEBUG_LEVEL;
-  if (config.logger.quiet) level = QUIET_LEVEL;
+  if (config.debug) level = DEBUG_LEVEL;
+  if (config.quiet) level = QUIET_LEVEL;
   return level;
 }
 
@@ -96,7 +96,7 @@ function logLevel(config: DenonConfig): LogLevelName {
  * Modify default deno logger with configurable
  * log level.
  */
-export async function setupLog(config?: DenonConfig): Promise<void> {
+export async function setupLog(config: LogConfig = {}): Promise<void> {
   const level = config ? logLevel(config) : DEBUG_LEVEL;
   await log.setup({
     handlers: {

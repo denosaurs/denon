@@ -3,10 +3,10 @@
 import { log } from "../deps.ts";
 
 import { Denon, DenonEvent } from "../denon.ts";
-import { DenonConfig } from "./config.ts";
+import { CompleteDenonConfig, DenonConfig } from "./config.ts";
 
 /**
- * Daemon instance. 
+ * Daemon instance.
  * Returned by Denon instance when
  * `start(script)` is called. It can be used in a for
  * loop to listen to DenonEvents.
@@ -14,7 +14,7 @@ import { DenonConfig } from "./config.ts";
 export class Daemon implements AsyncIterable<DenonEvent> {
   #denon: Denon;
   #script: string;
-  #config: DenonConfig;
+  #config: CompleteDenonConfig;
   #processes: { [pid: number]: Deno.Process } = {};
 
   constructor(denon: Denon, script: string) {
@@ -27,13 +27,17 @@ export class Daemon implements AsyncIterable<DenonEvent> {
    * Restart current process.
    */
   private async reload() {
-    if (this.#config.logger.fullscreen) {
+    if (this.#config.logger && this.#config.logger.fullscreen) {
       log.debug("clearing screen");
       console.clear();
     }
 
-    log.info(`watching path(s): ${this.#config.watcher.match.join(" ")}`);
-    log.info(`watching extensions: ${this.#config.watcher.exts.join(",")}`);
+    if (this.#config.watcher.match) {
+      log.info(`watching path(s): ${this.#config.watcher.match.join(" ")}`);
+    }
+    if (this.#config.watcher.exts) {
+      log.info(`watching extensions: ${this.#config.watcher.exts.join(",")}`);
+    }
     log.info("restarting due to changes...");
 
     this.killAll();
@@ -41,11 +45,13 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     await this.start();
   }
 
-  private async start() {
-    const process = this.#denon.runner.execute(this.#script);
+  private start() {
+    const command = this.#denon.runner.build(this.#script);
+    const process = command.exe();
     log.debug(`S: starting process with pid ${process.pid}`);
     this.#processes[process.pid] = (process);
     this.monitor(process);
+    return command;
   }
 
   private killAll() {
@@ -119,16 +125,20 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     yield {
       type: "start",
     };
-    this.start();
+    const command = this.start();
     this.onExit();
-    for await (const watchE of this.#denon.watcher) {
-      if (watchE.some((_) => _.type.includes("modify"))) {
-        log.debug(`R: reload event detected, starting the reload procedure...`);
-        yield {
-          type: "reload",
-          change: watchE,
-        };
-        await this.reload();
+    if (command.options.watch) {
+      for await (const watchE of this.#denon.watcher) {
+        if (watchE.some((_) => _.type.includes("modify"))) {
+          log.debug(
+            `R: reload event detected, starting the reload procedure...`,
+          );
+          yield {
+            type: "reload",
+            change: watchE,
+          };
+          await this.reload();
+        }
       }
     }
     yield {

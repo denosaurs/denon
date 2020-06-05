@@ -106,6 +106,13 @@ to create a basic configuration in the root directory of your project file you c
 $ denon --init
 ```
 
+you can also initialize from a custom template 
+(see [templates/](https://github.com/denosaurs/denon/tree/master/templates) folder for all the available templates)
+
+```bash
+$ denon --init denon.config.ts
+```
+
 this will create a basic `denon.json` file:
 
 ```jsonc
@@ -128,6 +135,29 @@ You can use a JSON schema to have type checking on your configuration. Simply ad
 ```
 
 > ⚠️ This feature going under development, so it might change
+
+### Typescript config
+
+You can use a typescript configuration file to have programmable configuration
+based on your environment (for example loading a `.env` file):
+
+```typescript
+import { DenonConfig } from "https://deno.land/x/denon/mod.ts";
+export { config as env } from "https://deno.land/x/dotenv/mod.ts";
+
+const config: DenonConfig = {
+  scripts: {
+    // same as json configuration
+    start: {
+      cmd: "app.js",
+      desc: "Run my webserver",
+      env: env()
+    },
+  },
+};
+
+export default config;
+```
 
 ### Available options
 

@@ -2,13 +2,15 @@
 
 import {
   existsSync,
-  readFileStr,
-  writeJson,
-  readJson,
   extname,
-  parseYaml,
   JSON_SCHEMA,
   log,
+  parseYaml,
+  readFileStr,
+  readJson,
+  writeJson,
+  resolve,
+  globToRegExp,
 } from "../deps.ts";
 
 import { WatcherConfig } from "./watcher.ts";
@@ -17,11 +19,14 @@ import { LogConfig } from "./log.ts";
 
 import { merge } from "./merge.ts";
 import { Args } from "./args.ts";
+import { BRANCH, VERSION } from "../denon.ts";
+
+const TS_CONFIG = "denon.config.ts";
 
 /**
  * Possible default configuration files.
  */
-const configs = [
+export const configs = [
   "denon",
   "denon.yaml",
   "denon.yml",
@@ -36,20 +41,42 @@ const configs = [
   ".denonrc.yaml",
   ".denonrc.yml",
   ".denonrc.json",
+
+  TS_CONFIG,
 ];
+
+export const reConfig = new RegExp(
+  configs
+    .map((_) => `**/${_}`)
+    .map((_) => globToRegExp(_).source)
+    .join("|"), // i know, right
+);
 
 /**
  * The denon configuration format
  */
-export interface DenonConfig extends RunnerConfig {
+// export interface DenonConfig extends RunnerConfig {
+//   [key: string]: any;
+//   watcher?: WatcherConfig;
+//   logger?: LogConfig;
+//   args?: Args;
+// }
+
+export type DenonConfig = RunnerConfig & Partial<CompleteDenonConfig>;
+
+/**
+ * Parameters are not optional
+ */
+export interface CompleteDenonConfig extends RunnerConfig {
   [key: string]: any;
   watcher: WatcherConfig;
   logger: LogConfig;
   args?: Args;
+  configPath: string;
 }
 
 /** The default denon configuration */
-export const DEFAULT_DENON_CONFIG: DenonConfig = {
+export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
   scripts: {},
   watcher: {
     interval: 350,
@@ -59,25 +86,61 @@ export const DEFAULT_DENON_CONFIG: DenonConfig = {
     skip: ["**/.git/**"],
   },
   logger: {},
+  configPath: "",
 };
 
-export async function readYaml(file: string): Promise<unknown> {
+/**
+ * Read YAML config, throws if YAML format is not valid
+ */
+async function readYaml(file: string): Promise<unknown> {
   const source = await readFileStr(file);
-  const parsed = parseYaml(source, {
+  return parseYaml(source, {
     schema: JSON_SCHEMA,
     json: true,
   });
-
-  return parsed;
 }
 
-export function cleanConfig(
+/**
+ * from: deno-nessie
+ */
+export const parsePath = (...path: string[]): string => {
+  if (
+    path.length === 1 &&
+    (path[0]?.startsWith("http://") || path[0]?.startsWith("https://"))
+  ) {
+    return path[0];
+  }
+  return "file://" + resolve(...path);
+};
+
+/**
+ * Safe import a TypeScript file
+ */
+async function importConfig(
+  file: string,
+): Promise<Partial<DenonConfig> | undefined> {
+  try {
+    const configRaw = await import(parsePath(file));
+    return configRaw.default as Partial<DenonConfig>;
+  } catch (error) {
+    return;
+  }
+}
+
+/**
+ * Clean config from malformed strings
+ */
+function cleanConfig(
   config: Partial<DenonConfig>,
+  file?: string,
 ): Partial<DenonConfig> {
-  if (config.watcher?.exts) {
+  if (config.watcher && config.watcher.exts) {
     config.watcher.exts = config.watcher.exts.map((_) =>
       _.startsWith(".") ? _.substr(0) : _
     );
+  }
+  if (file) {
+    config.configPath = resolve(file);
   }
   return config;
 }
@@ -96,45 +159,91 @@ export function getConfigFilename(): string | undefined {
  */
 export async function readConfig(
   file: string | undefined = getConfigFilename(),
-): Promise<DenonConfig> {
-  let config: DenonConfig = DEFAULT_DENON_CONFIG;
+): Promise<CompleteDenonConfig> {
+  let config: CompleteDenonConfig = DEFAULT_DENON_CONFIG;
+  if (!config.watcher.paths) config.watcher.paths = [];
   config.watcher.paths.push(Deno.cwd());
 
   if (file) {
-    try {
-      const extension = extname(file);
-      if (/^\.ya?ml$/.test(extension)) {
-        const parsed = await readYaml(file);
-        config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
-      } else if (/^\.json$/.test(extension)) {
-        const parsed = await readJson(file);
-        config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
-      } else {
-        try {
-          const parsed = await readJson(file);
-          config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
-        } catch {
-          const parsed = await readYaml(file);
-          config = merge(config, cleanConfig(parsed as Partial<DenonConfig>));
-        }
+    if (file === TS_CONFIG) {
+      const parsed = await importConfig(TS_CONFIG);
+      if (parsed) {
+        config = merge(
+          config,
+          cleanConfig(parsed as Partial<DenonConfig>, file),
+        );
       }
-    } catch {
-      log.warning(`unsupported configuration \`${file}\``);
+    } else {
+      try {
+        const extension = extname(file);
+        if (/^\.ya?ml$/.test(extension)) {
+          const parsed = await readYaml(file);
+          config = merge(
+            config,
+            cleanConfig(parsed as Partial<DenonConfig>, file),
+          );
+        } else if (/^\.json$/.test(extension)) {
+          const parsed = await readJson(file);
+          config = merge(
+            config,
+            cleanConfig(parsed as Partial<DenonConfig>, file),
+          );
+        } else {
+          try {
+            const parsed = await readJson(file);
+            config = merge(
+              config,
+              cleanConfig(parsed as Partial<DenonConfig>, file),
+            );
+          } catch {
+            const parsed = await readYaml(file);
+            config = merge(
+              config,
+              cleanConfig(parsed as Partial<DenonConfig>, file),
+            );
+          }
+        }
+      } catch {
+        log.warning(`unsupported configuration \`${file}\``);
+      }
     }
   }
-
   return config;
 }
 
 /**
  * Reads the denon config from a file
  */
-export async function writeConfig(file: string) {
-  let config = {
-    "$schema": "https://deno.land/x/denon/schema.json",
-    scripts: {
-      "start": "app.ts",
-    },
-  };
-  await writeJson(file, config, { spaces: 2 });
+export async function writeConfigTemplate(template: string) {
+  const templates = `https://deno.land/x/denon@${BRANCH}/templates`;
+  const url = `${templates}/${template}`;
+  log.info(`fetching template from ${url}`);
+
+  let res;
+  try {
+    res = await fetch(url);
+  } catch (e) {
+    log.error(`${url} cannot be fetched`);
+  }
+
+  if (res) {
+    if (res.status === 200) {
+      try {
+        log.info(`writing template to \`${template}\``);
+        await Deno.writeTextFile(
+          resolve(Deno.cwd(), template),
+          await res.text(),
+        );
+        log.info(`\`${template}\` created in current working directory`);
+      } catch (e) {
+        log.error(
+          `\`${template}\` cannot be saved in current working directory`,
+        );
+      }
+    } else {
+      log.error(
+        `\`${template}\` is not a denon template. All templates are available on ${templates}/`,
+      );
+    }
+  }
 }

@@ -13,15 +13,20 @@ import {
   omelette,
 } from "../deps.ts";
 
-import { DenonConfig, writeConfig, getConfigFilename } from "./config.ts";
+import {
+  writeConfigTemplate,
+  getConfigFilename,
+  CompleteDenonConfig,
+} from "./config.ts";
 import { Runner } from "./runner.ts";
 import { VERSION } from "../denon.ts";
+import { Watcher } from "./watcher.ts";
 
 /**
  * These are the permissions required for a clean run
- * of `denon`. If not provided through installation they 
+ * of `denon`. If not provided through installation they
  * will be asked on every run by the `grant()` std function.
- * 
+ *
  * The permissions required are:
  * - *read*, used to correctly load a configuration file and
  * to monitor for filesystem changes in the directory `denon`
@@ -39,13 +44,13 @@ const PERMISSIONS: Deno.PermissionDescriptor[] = [
  * but you should be granting them when they are required.
  */
 const PERMISSION_OPTIONAL: { [key: string]: Deno.PermissionDescriptor[] } = {
-  write: [{ name: "write" }],
+  initializeConfig: [{ name: "write" }, { name: "net" }],
 };
 
 export async function grantPermissions() {
   // @see PERMISSIONS .
   let permissions = await grant([...PERMISSIONS]);
-  if (!permissions || permissions.length < 2) {
+  if (!permissions || permissions.length < PERMISSIONS.length) {
     log.critical("Required permissions `read` and `run` not granted");
     Deno.exit(1);
   }
@@ -55,23 +60,19 @@ export async function grantPermissions() {
  * Create configuration file in the root of current work directory.
  * // TODO: make it interactive
  */
-export async function initializeConfig() {
-  let permissions = await grant(PERMISSION_OPTIONAL.write);
-  if (!permissions || permissions.length < 1) {
+export async function initializeConfig(template: string) {
+  let permissions = await grant(PERMISSION_OPTIONAL.initializeConfig);
+  if (
+    !permissions ||
+    permissions.length < PERMISSION_OPTIONAL.initializeConfig.length
+  ) {
     log.critical("Required permissions `write` not granted");
     Deno.exit(1);
   }
-  const file = "denon.json";
-  if (!await exists(file)) {
-    log.info("creating json configuration...");
-    try {
-      await writeConfig(file);
-    } catch (_) {
-      log.error("`denon.json` cannot be saved in root dir");
-    }
-    log.info("`denon.json` created correctly in root dir");
+  if (!await exists(template)) {
+    await writeConfigTemplate(template);
   } else {
-    log.error("`denon.json` already exists in root dir");
+    log.error(`\`${template}\` already exists in root dir`);
   }
 }
 
@@ -116,15 +117,20 @@ export async function upgrade(version?: string) {
 /**
  * Generate autocomplete suggestions
  */
-export function autocomplete(config: DenonConfig) {
+export function autocomplete(config: CompleteDenonConfig) {
   // Write your CLI template.
   const completion = omelette.default(`denon <script>`);
 
   // Bind events for every template part.
   completion.on("script", function ({ reply }: { reply: Function }) {
+    const watcher = new Watcher(config.watcher);
     const auto = Object.keys(config.scripts);
     for (const file of Deno.readDirSync(Deno.cwd())) {
-      auto.push(file.name);
+      if (file.isFile && watcher.isWatched(file.name)) {
+        auto.push(file.name);
+      } else {
+        // auto.push(file.name);
+      }
     }
     reply(auto);
   });
@@ -136,7 +142,7 @@ export function autocomplete(config: DenonConfig) {
  * List all available scripts declared in the config file.
  * // TODO: make it interactive
  */
-export function printAvailableScripts(config: DenonConfig) {
+export function printAvailableScripts(config: CompleteDenonConfig) {
   if (Object.keys(config.scripts).length) {
     log.info("available scripts:");
     const runner = new Runner(config);

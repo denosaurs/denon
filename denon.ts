@@ -14,11 +14,17 @@ import {
   upgrade,
   autocomplete,
 } from "./src/cli.ts";
-import { readConfig, DenonConfig } from "./src/config.ts";
+import {
+  readConfig,
+  DenonConfig,
+  CompleteDenonConfig,
+  reConfig,
+} from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
-export const VERSION = "v2.0.2";
+export const VERSION = "v2.1.0";
+export const BRANCH = "2.1.0";
 
 /**
  * Events you can listen to when creating a `denon`
@@ -76,7 +82,7 @@ export class Denon {
   watcher: Watcher;
   runner: Runner;
 
-  constructor(public config: DenonConfig) {
+  constructor(public config: CompleteDenonConfig) {
     this.watcher = new Watcher(config.watcher);
     this.runner = new Runner(config, config.args ? config.args.cmd : []);
   }
@@ -89,7 +95,7 @@ export class Denon {
 /**
  * CLI starts here,
  * other than the awesome `denon` cli this is an
- * example on how the library should be used if 
+ * example on how the library should be used if
  * included as a module.
  */
 if (import.meta.main) {
@@ -98,8 +104,8 @@ if (import.meta.main) {
   await grantPermissions();
 
   const args = parseArgs(Deno.args);
-  const config = await readConfig(args.config);
-  await setupLog(config);
+  let config = await readConfig(args.config);
+  await setupLog(config.logger);
 
   autocomplete(config);
 
@@ -124,7 +130,7 @@ if (import.meta.main) {
   // create configuration file.
   // TODO: should be made interactive.
   if (args.init) {
-    await initializeConfig();
+    await initializeConfig(args.init);
     Deno.exit(0);
   }
 
@@ -138,8 +144,24 @@ if (import.meta.main) {
   const denon = new Denon(config);
 
   if (config.logger.fullscreen) console.clear();
-  log.info(`watching path(s): ${config.watcher.match.join(" ")}`);
-  log.info(`watching extensions: ${config.watcher.exts.join(",")}`);
 
-  for await (let _ of denon.run(script)) {}
+  if (config.watcher.match) {
+    log.info(`watching path(s): ${config.watcher.match.join(" ")}`);
+  }
+  if (config.watcher.exts) {
+    log.info(`watching extensions: ${config.watcher.exts.join(",")}`);
+  }
+
+  // TODO(qu4k): events
+  for await (let event of denon.run(script)) {
+    if (event.type === "reload") {
+      if (
+        event.change.some((_) =>
+          reConfig.test(_.path) && _.path === config.configPath
+        )
+      ) {
+        config = await readConfig(args.config);
+      }
+    }
+  }
 }

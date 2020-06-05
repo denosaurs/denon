@@ -1,9 +1,11 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
+import { reConfig } from "./config.ts";
+
 /**
  * Regex to test if string matches version format
  */
-const versionRegex = /^v?[0-9]+\.[0-9]+\.[0-9]+$/;
+const reVersion = /^v?[0-9]+\.[0-9]+\.[0-9]+$/;
 
 /**
  * Map of supported flags that modify
@@ -12,8 +14,8 @@ const versionRegex = /^v?[0-9]+\.[0-9]+\.[0-9]+$/;
 export interface Args {
   help: boolean;
   version: boolean;
-  init: boolean;
 
+  init?: string;
   upgrade?: string;
   config?: string;
 
@@ -21,7 +23,7 @@ export interface Args {
 }
 
 /**
- * Parse Deno.args into a flag map (`Args`) 
+ * Parse Deno.args into a flag map (`Args`)
  * to be handled by th CLI.
  */
 export function parseArgs(args: string[] = Deno.args): Args {
@@ -32,7 +34,7 @@ export function parseArgs(args: string[] = Deno.args): Args {
   const flags: Args = {
     help: false,
     version: false,
-    init: false,
+    init: undefined,
     upgrade: undefined,
     config: undefined,
     cmd: [],
@@ -57,8 +59,18 @@ export function parseArgs(args: string[] = Deno.args): Args {
   }
 
   if (args.includes("--init") || args.includes("-i")) {
-    flags.init = true;
-    args = args.slice(1);
+    const index = args.includes("--init")
+      ? args.indexOf("--init")
+      : args.indexOf("-i");
+    const next = args[index + 1];
+
+    if (next) {
+      flags.init = next;
+      args = args.slice(2);
+    } else {
+      flags.init = "denon.json";
+      args = args.slice(1);
+    }
   }
 
   if (args.includes("--upgrade") || args.includes("-u")) {
@@ -67,7 +79,7 @@ export function parseArgs(args: string[] = Deno.args): Args {
       : args.indexOf("-u");
     const next = args[index + 1];
 
-    if (next && (next === "master" || versionRegex.test(next))) {
+    if (next && (next === "master" || reVersion.test(next))) {
       flags.upgrade = !next.startsWith("v") || next !== "master"
         ? "v" + next
         : next;

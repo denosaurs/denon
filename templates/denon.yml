@@ -1,0 +1,4 @@
+scripts:
+  hello:
+    cmd: "echo Hello World from denon.yml"
+    desc: "greet the world"

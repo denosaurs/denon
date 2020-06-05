@@ -1,5 +1,9 @@
+# ide
+.idea
+
 # testing directory
 testing/
+issues/
 
 # macOS files
 .DS_Store
