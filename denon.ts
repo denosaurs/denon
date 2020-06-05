@@ -14,7 +14,12 @@ import {
   upgrade,
   autocomplete,
 } from "./src/cli.ts";
-import { readConfig, DenonConfig, CompleteDenonConfig } from "./src/config.ts";
+import {
+  readConfig,
+  DenonConfig,
+  CompleteDenonConfig,
+  reConfig,
+} from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
@@ -98,7 +103,7 @@ if (import.meta.main) {
   await grantPermissions();
 
   const args = parseArgs(Deno.args);
-  const config = await readConfig(args.config);
+  let config = await readConfig(args.config);
   await setupLog(config.logger);
 
   autocomplete(config);
@@ -147,5 +152,15 @@ if (import.meta.main) {
   }
 
   // TODO(qu4k): events
-  for await (let _ of denon.run(script)) {}
+  for await (let event of denon.run(script)) {
+    if (event.type === "reload") {
+      if (
+        event.change.some((_) =>
+          reConfig.test(_.path) && _.path === config.configPath
+        )
+      ) {
+        config = await readConfig(args.config);
+      }
+    }
+  }
 }

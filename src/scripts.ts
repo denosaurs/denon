@@ -58,7 +58,7 @@ export interface EnvironmentVariables {
 
 /**
  * Additional script options.
- * 
+ *
  * These can be applied both in `ScriptObject`s and at top-level
  * in which case they're applied to all the scripts defined in the file
  */
@@ -75,7 +75,7 @@ export interface ScriptOptions {
   /**
    * The path to an importmap json file,
    * passed to deno cli's `--importmap` option.
-   * 
+   *
    * **Note** This currently requires the `--unstable` flag
    */
   importmap?: string;
@@ -102,7 +102,7 @@ export interface ScriptOptions {
   /**
    * The path to an _existing_ lockfile,
    * passed to deno cli's `--lock` option.
-   * 
+   *
    * **Note** This doesn't create the lockfile, use `--lock-write` manually
    * when appropriate
    */
@@ -116,6 +116,11 @@ export interface ScriptOptions {
    * The log level, passed to deno cli's `--log-level` option.
    */
   log?: string;
+  /**
+   * Should watch. Enabled by default. Toggle file watching
+   * for particular script.
+   */
+  watch?: boolean;
   /**
    * Standard i/o/err, to be passed directly to Deno.run.
    */

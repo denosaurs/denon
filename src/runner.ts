@@ -44,7 +44,9 @@ export class Runner {
    */
   build(script: string): Command {
     // global options
-    const g = Object.assign({}, this.#config);
+    const g = Object.assign({
+      watch: true, // we are a file watcher after all :)
+    }, this.#config);
     delete g.scripts;
 
     const s = this.#config.scripts[script];
@@ -61,10 +63,14 @@ export class Runner {
       } else {
         out = stdCmd(cmd);
       }
-      return {
+      const command = {
         cmd: out,
         options: g,
+        exe: (): Deno.Process => {
+          return this.execute(command);
+        },
       };
+      return command;
     }
 
     let o: ScriptOptions;
@@ -94,18 +100,21 @@ export class Runner {
     } else {
       out = stdCmd(cmd);
     }
-    return {
+    const command = {
       cmd: out,
       options: o,
+      exe: (): Deno.Process => {
+        return this.execute(command);
+      },
     };
+    return command;
   }
 
   /**
    * Create an `Execution` object to handle the lifetime
    * of the process that is executed.
    */
-  execute(script: string): Deno.Process {
-    const command = this.build(script);
+  execute(command: Command): Deno.Process {
     log.info(`starting \`${command.cmd.join(" ")}\``);
     const options = {
       cmd: command.cmd,
@@ -125,4 +134,5 @@ function stdCmd(cmd: string): string[] {
 interface Command {
   cmd: string[];
   options: ScriptOptions;
+  exe: () => Deno.Process;
 }

@@ -45,11 +45,13 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     await this.start();
   }
 
-  private async start() {
-    const process = this.#denon.runner.execute(this.#script);
+  private start() {
+    const command = this.#denon.runner.build(this.#script);
+    const process = command.exe();
     log.debug(`S: starting process with pid ${process.pid}`);
     this.#processes[process.pid] = (process);
     this.monitor(process);
+    return command;
   }
 
   private killAll() {
@@ -123,16 +125,20 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     yield {
       type: "start",
     };
-    this.start();
+    const command = this.start();
     this.onExit();
-    for await (const watchE of this.#denon.watcher) {
-      if (watchE.some((_) => _.type.includes("modify"))) {
-        log.debug(`R: reload event detected, starting the reload procedure...`);
-        yield {
-          type: "reload",
-          change: watchE,
-        };
-        await this.reload();
+    if (command.options.watch) {
+      for await (const watchE of this.#denon.watcher) {
+        if (watchE.some((_) => _.type.includes("modify"))) {
+          log.debug(
+            `R: reload event detected, starting the reload procedure...`,
+          );
+          yield {
+            type: "reload",
+            change: watchE,
+          };
+          await this.reload();
+        }
       }
     }
     yield {

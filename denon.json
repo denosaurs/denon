@@ -3,10 +3,11 @@
   "scripts": {
     "test": {
       "cmd": "deno test",
+      "desc": "run denon test",
       "allow": [
         "read"
-      ],
-      "unstable": true
+      ]
     }
   }
 }
+
