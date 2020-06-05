@@ -14,7 +14,7 @@ import {
 } from "../deps.ts";
 
 import {
-  writeConfig,
+  writeConfigTemplate,
   getConfigFilename,
   CompleteDenonConfig,
 } from "./config.ts";
@@ -44,13 +44,13 @@ const PERMISSIONS: Deno.PermissionDescriptor[] = [
  * but you should be granting them when they are required.
  */
 const PERMISSION_OPTIONAL: { [key: string]: Deno.PermissionDescriptor[] } = {
-  write: [{ name: "write" }],
+  initializeConfig: [{ name: "write" }, { name: "net" }],
 };
 
 export async function grantPermissions() {
   // @see PERMISSIONS .
   let permissions = await grant([...PERMISSIONS]);
-  if (!permissions || permissions.length < 2) {
+  if (!permissions || permissions.length < PERMISSIONS.length) {
     log.critical("Required permissions `read` and `run` not granted");
     Deno.exit(1);
   }
@@ -60,23 +60,19 @@ export async function grantPermissions() {
  * Create configuration file in the root of current work directory.
  * // TODO: make it interactive
  */
-export async function initializeConfig() {
-  let permissions = await grant(PERMISSION_OPTIONAL.write);
-  if (!permissions || permissions.length < 1) {
+export async function initializeConfig(template: string) {
+  let permissions = await grant(PERMISSION_OPTIONAL.initializeConfig);
+  if (
+    !permissions ||
+    permissions.length < PERMISSION_OPTIONAL.initializeConfig.length
+  ) {
     log.critical("Required permissions `write` not granted");
     Deno.exit(1);
   }
-  const file = "denon.json";
-  if (!await exists(file)) {
-    log.info("creating json configuration...");
-    try {
-      await writeConfig(file);
-    } catch (_) {
-      log.error("`denon.json` cannot be saved in root dir");
-    }
-    log.info("`denon.json` created correctly in root dir");
+  if (!await exists(template)) {
+    await writeConfigTemplate(template);
   } else {
-    log.error("`denon.json` already exists in root dir");
+    log.error(`\`${template}\` already exists in root dir`);
   }
 }
 

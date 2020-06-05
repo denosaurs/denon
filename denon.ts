@@ -24,6 +24,7 @@ import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
 export const VERSION = "v2.1.0";
+export const BRANCH = "2.1.0";
 
 /**
  * Events you can listen to when creating a `denon`
@@ -129,7 +130,7 @@ if (import.meta.main) {
   // create configuration file.
   // TODO: should be made interactive.
   if (args.init) {
-    await initializeConfig();
+    await initializeConfig(args.init);
     Deno.exit(0);
   }
 

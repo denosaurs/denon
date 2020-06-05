@@ -19,6 +19,7 @@ import { LogConfig } from "./log.ts";
 
 import { merge } from "./merge.ts";
 import { Args } from "./args.ts";
+import { BRANCH, VERSION } from "../denon.ts";
 
 const TS_CONFIG = "denon.config.ts";
 
@@ -213,12 +214,36 @@ export async function readConfig(
 /**
  * Reads the denon config from a file
  */
-export async function writeConfig(file: string) {
-  let config = {
-    "$schema": "https://deno.land/x/denon/schema.json",
-    scripts: {
-      "start": "app.ts",
-    },
-  };
-  await writeJson(file, config, { spaces: 2 });
+export async function writeConfigTemplate(template: string) {
+  const templates = `https://deno.land/x/denon@${BRANCH}/templates`;
+  const url = `${templates}/${template}`;
+  log.info(`fetching template from ${url}`);
+
+  let res;
+  try {
+    res = await fetch(url);
+  } catch (e) {
+    log.error(`${url} cannot be fetched`);
+  }
+
+  if (res) {
+    if (res.status === 200) {
+      try {
+        log.info(`writing template to \`${template}\``);
+        await Deno.writeTextFile(
+          resolve(Deno.cwd(), template),
+          await res.text(),
+        );
+        log.info(`\`${template}\` created in current working directory`);
+      } catch (e) {
+        log.error(
+          `\`${template}\` cannot be saved in current working directory`,
+        );
+      }
+    } else {
+      log.error(
+        `\`${template}\` is not a denon template. All templates are available on ${templates}/`,
+      );
+    }
+  }
 }

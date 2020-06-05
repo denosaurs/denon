@@ -1,0 +1,10 @@
+{
+  "$schema": "https://deno.land/x/denon/schema.json",
+  "scripts": {
+    "hello": {
+      "cmd": "echo Hello World from denon.json",
+      "desc": "greet the world"
+    }
+  }
+}
+
