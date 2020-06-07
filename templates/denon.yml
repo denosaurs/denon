@@ -1,4 +1,4 @@
 scripts:
-  hello:
-    cmd: "echo Hello World from denon.yml"
-    desc: "greet the world"
+  start:
+    cmd: "deno run app.ts"
+    desc: "run my app.ts file"

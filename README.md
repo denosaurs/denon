@@ -12,7 +12,8 @@
 [![issues](https://img.shields.io/github/issues/denosaurs/denon)](https://github.com/denosaurs/denon/issues)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2231b4b5f746484ebeaaf95eb6433ce5)](https://app.codacy.com/gh/denosaurs/denon?utm_source=github.com&utm_medium=referral&utm_content=denosaurs/denon&utm_campaign=Badge_Grade_Dashboard)
 
-denon is the [deno](https://deno.land/) replacement for [nodemon](https://nodemon.io/) providing a feature packed and easy to use experience.
+denon is the [deno](https://deno.land/) replacement for [nodemon](https://nodemon.io/) 
+providing a feature packed, highly configurable and easy to use experience.
 
 denon does **not** require _any_ additional changes to your code or method of development. `denon` is a replacement wrapper for `deno`. To use `denon`,replace the word `deno` on the command line when executing your script.
 
@@ -106,13 +107,6 @@ to create a basic configuration in the root directory of your project file you c
 $ denon --init
 ```
 
-you can also initialize from a custom template 
-(see [templates/](https://github.com/denosaurs/denon/tree/master/templates) folder for all the available templates)
-
-```bash
-$ denon --init denon.config.ts
-```
-
 this will create a basic `denon.json` file:
 
 ```jsonc
@@ -123,7 +117,32 @@ this will create a basic `denon.json` file:
 }
 ```
 
-### JSON Schema
+you can also initialize from a custom template 
+(see [templates/](https://github.com/denosaurs/denon/tree/master/templates) folder for all the available templates)
+
+```bash
+$ denon --init denon.config.ts
+```
+
+### JSON config (`denon.json` template)
+
+Denon configuration can be provided as a JSON file:
+
+```jsonc
+{
+  // optional but highly raccomended
+  "$schema": "https://deno.land/x/denon/schema.json",
+
+  "scripts": {
+    "start": {
+      "cmd": "deno run app.ts",
+      "desc": "run my app.ts file"
+    }
+  }
+}
+```
+
+#### JSON Schema
 
 You can use a JSON schema to have type checking on your configuration. Simply add:
 
@@ -134,9 +153,35 @@ You can use a JSON schema to have type checking on your configuration. Simply ad
 }
 ```
 
-> ⚠️ This feature going under development, so it might change
+### YAML Configuration (`denon.yml` template)
 
-### Typescript config
+Denon configuration can be provided as a YAML file:
+
+```yaml
+scripts:
+  start:
+    cmd: "deno run app.ts"
+    desc: "run my app.ts file"
+```
+
+### Typescript config (`denon.config.ts` template)
+
+Denon configuration can be provided as a `.config.ts` file:
+
+```typescript
+import { DenonConfig } from "https://deno.land/x/denon/mod.ts";
+
+const config: DenonConfig = {
+  scripts: {
+    start: {
+      cmd: "deno run app.ts",
+      desc: "run my app.ts file",
+    },
+  },
+};
+
+export default config;
+```
 
 You can use a typescript configuration file to have programmable configuration
 based on your environment (for example loading a `.env` file):
@@ -256,6 +301,29 @@ Permission can be granted to child processes.
         "run", // --allow-run
         "net", // --allow-net
       ]
+    }
+  }
+}
+```
+
+#### File watching
+
+While file watching is a core feature of `denon` you always have the option
+of disabling file watching and run a script only once:
+
+```jsonc
+{
+  // globally applied to all scripts
+  // now denon will essentialy be a script runner
+  "watch": false
+
+  "scripts": {
+    "start": {
+      "cmd": "deno run app.ts",
+      "desc": "Run the main server.",
+      
+      // you can still enable watch on a script-by-script basis
+      "watch": true
     }
   }
 }
