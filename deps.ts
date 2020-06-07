@@ -1,13 +1,13 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 // provide better logging, see src/log.ts
-export * as log from "https://deno.land/std@0.53.0/log/mod.ts";
-export { LogRecord } from "https://deno.land/std@0.53.0/log/logger.ts";
+export * as log from "https://deno.land/std@0.54.0/log/mod.ts";
+export { LogRecord } from "https://deno.land/std@0.54.0/log/logger.ts";
 export {
   LogLevels,
   LevelName as LogLevelName,
 } from "https://deno.land/std@0.53.0/log/levels.ts";
-export { BaseHandler } from "https://deno.land/std@0.53.0/log/handlers.ts";
+export { BaseHandler } from "https://deno.land/std@0.54.0/log/handlers.ts";
 
 // colors for a pretty cli
 export {
