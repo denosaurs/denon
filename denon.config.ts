@@ -1,4 +1,4 @@
-import { DenonConfig } from "https://deno.land/x/denon@2.1.0/mod.ts";
+import { DenonConfig } from "https://deno.land/x/denon/mod.ts";
 
 const config: DenonConfig = {
   scripts: {
@@ -8,6 +8,7 @@ const config: DenonConfig = {
       allow: [
         "read",
       ],
+      unstable: true,
     },
   },
 };
