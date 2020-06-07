@@ -6,7 +6,7 @@ export { LogRecord } from "https://deno.land/std@0.54.0/log/logger.ts";
 export {
   LogLevels,
   LevelName as LogLevelName,
-} from "https://deno.land/std@0.53.0/log/levels.ts";
+} from "https://deno.land/std@0.54.0/log/levels.ts";
 export { BaseHandler } from "https://deno.land/std@0.54.0/log/handlers.ts";
 
 // colors for a pretty cli

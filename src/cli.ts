@@ -45,6 +45,7 @@ const PERMISSIONS: Deno.PermissionDescriptor[] = [
  */
 const PERMISSION_OPTIONAL: { [key: string]: Deno.PermissionDescriptor[] } = {
   initializeConfig: [{ name: "write" }, { name: "net" }],
+  upgradeExe: [{ name: "net" }],
 };
 
 export async function grantPermissions() {
@@ -66,7 +67,7 @@ export async function initializeConfig(template: string) {
     !permissions ||
     permissions.length < PERMISSION_OPTIONAL.initializeConfig.length
   ) {
-    log.critical("Required permissions `write` not granted");
+    log.critical("Required permissions for this operation not granted");
     Deno.exit(1);
   }
   if (!await exists(template)) {
@@ -87,6 +88,15 @@ export async function upgrade(version?: string) {
   if (version === VERSION) {
     log.info(`Version ${version} already installed`);
     Deno.exit(0);
+  }
+
+  let permissions = await grant(PERMISSION_OPTIONAL.upgradeExe);
+  if (
+    !permissions ||
+    permissions.length < PERMISSION_OPTIONAL.upgradeExe.length
+  ) {
+    log.critical("Required permissions for this operation not granted");
+    Deno.exit(1);
   }
 
   log.debug(`Checking if ${url} exists`);
