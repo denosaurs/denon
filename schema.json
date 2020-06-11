@@ -164,7 +164,7 @@
           "items": {
             "type": "string"
           },
-          "default": ["js", "ts", "json"]
+          "default": ["js", "jsx", "ts", "tsx", "json"]
         },
         "match": {
           "description": "The globs that the watcher will scan for.",
