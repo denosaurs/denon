@@ -31,11 +31,16 @@ import { Watcher } from "./watcher.ts";
  * - *read*, used to correctly load a configuration file and
  * to monitor for filesystem changes in the directory `denon`
  * is executed to reload scripts.
+ * - *write*, write configuration templates.
  * - *run*, used to run scripts as child processes.
+ * - *write*, download configuration templates and import
+ * `denon.config.ts` file.
  */
-const PERMISSIONS: Deno.PermissionDescriptor[] = [
+export const PERMISSIONS: Deno.PermissionDescriptor[] = [
   { name: "read" },
+  { name: "write" },
   { name: "run" },
+  { name: "net" },
 ];
 
 /**
@@ -43,7 +48,9 @@ const PERMISSIONS: Deno.PermissionDescriptor[] = [
  * `denon` should not be installed with this permissions
  * but you should be granting them when they are required.
  */
-const PERMISSION_OPTIONAL: { [key: string]: Deno.PermissionDescriptor[] } = {
+export const PERMISSION_OPTIONAL: {
+  [key: string]: Deno.PermissionDescriptor[];
+} = {
   initializeConfig: [{ name: "write" }, { name: "net" }],
   upgradeExe: [{ name: "net" }],
 };
