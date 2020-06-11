@@ -107,7 +107,7 @@ async function importConfig(
   file: string,
 ): Promise<Partial<DenonConfig> | undefined> {
   try {
-    const configRaw = await import(resolve(file));
+    const configRaw = await import(`file://${resolve(file)}`);
     return configRaw.default as Partial<DenonConfig>;
   } catch (error) {
     log.error(error.message ?? "Error opening ts config config");
