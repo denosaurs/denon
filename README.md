@@ -32,7 +32,7 @@ Denon provides most of the features you would expect of a file watcher and more.
 To install denon simply enter the following into a terminal:
 
 ```bash
-$ deno install --allow-read --allow-run --allow-write -f --unstable https://deno.land/x/denon/denon.ts
+$ deno install --allow-read --allow-run --allow-write --allow-net -f --unstable https://deno.land/x/denon/denon.ts
 ```
 
 > ⚠️ Make sure you are using `deno` version `^1.0.1` to install this executable. You can upgrade running `deno upgrade`.
