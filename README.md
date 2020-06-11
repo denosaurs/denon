@@ -129,7 +129,7 @@ Denon configuration can be provided as a JSON file:
 
 ```jsonc
 {
-  // optional but highly raccomended
+  // optional but highly recommended
   "$schema": "https://deno.land/x/denon/schema.json",
 
   "scripts": {
