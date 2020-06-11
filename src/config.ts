@@ -101,20 +101,13 @@ async function readYaml(file: string): Promise<unknown> {
 }
 
 /**
- * from: deno-nessie, adapted
- */
-export const parsePath = (...path: string[]): string => {
-  return resolve(...path);
-};
-
-/**
  * Safe import a TypeScript file
  */
 async function importConfig(
   file: string,
 ): Promise<Partial<DenonConfig> | undefined> {
   try {
-    const configRaw = await import(parsePath(file));
+    const configRaw = await import(resolve(file));
     return configRaw.default as Partial<DenonConfig>;
   } catch (error) {
     log.error(error.message ?? "Error opening ts config config");
