@@ -101,10 +101,10 @@ async function readYaml(file: string): Promise<unknown> {
 }
 
 /**
- * from: deno-nessie
+ * from: deno-nessie, adapted
  */
 export const parsePath = (...path: string[]): string => {
-  return "file://" + resolve(...path);
+  return resolve(...path);
 };
 
 /**
@@ -117,7 +117,7 @@ async function importConfig(
     const configRaw = await import(parsePath(file));
     return configRaw.default as Partial<DenonConfig>;
   } catch (error) {
-    log.info(error.message ?? "Error opening ts config config");
+    log.error(error.message ?? "Error opening ts config config");
     return;
   }
 }
