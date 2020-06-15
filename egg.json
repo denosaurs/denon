@@ -1,0 +1,16 @@
+{
+  "name": "denon",
+  "description": "Monitor any changes in you Deno application and automatically restart.",
+  "stable": true,
+  "version": "2.1.0",
+  "files": [
+    "./README.md",
+    "./deps.ts",
+    "./test_deps.ts",
+    "./denon.ts",
+    "./denon.config.ts",
+    "./mod.ts",
+    "./templates/**/*",
+    "./src/**/*"
+  ]
+}
