@@ -69,7 +69,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     this.reload();
   }
 
-  reload() {
+  reload(): void {
     this.#watch = this.#config.legacy ? this.legacyWatch : this.denoWatch;
     if (this.#config.paths) {
       this.#paths = this.#config.paths;
@@ -117,7 +117,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     return true;
   }
 
-  private reset() {
+  private reset(): void {
     this.#changes = {};
     this.#signal = deferred();
   }
@@ -148,7 +148,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     return this.iterate();
   }
 
-  private async denoWatch() {
+  private async denoWatch(): Promise<void> {
     let timer = 0;
     const debounce = () => {
       clearTimeout(timer);
@@ -176,7 +176,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     }
   }
 
-  private async legacyWatch() {
+  private async legacyWatch(): Promise<void> {
     let timer = 0;
     const debounce = () => {
       clearTimeout(timer);

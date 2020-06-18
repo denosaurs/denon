@@ -1,6 +1,7 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 // deno-lint-ignore-file
+export type Indexable = Record<string, any>;
 
 /**
  * Performs a deep merge of `source` into `target`.
@@ -8,13 +9,13 @@
  */
 export function merge<T extends Record<string, any>>(
   target: T,
-  source: any,
+  source: Indexable,
 ): T {
-  const t = target as Record<string, any>;
-  const isObject = (obj: any) => obj && typeof obj === "object";
+  const t = target as Record<string, unknown>;
+  const isObject = (obj: unknown) => obj && typeof obj === "object";
 
   if (!isObject(target) || !isObject(source)) {
-    return source;
+    return source as T;
   }
 
   for (const key of Object.keys(source)) {
@@ -24,7 +25,7 @@ export function merge<T extends Record<string, any>>(
     if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
       t[key] = sourceValue;
     } else if (isObject(targetValue) && isObject(sourceValue)) {
-      t[key] = merge(Object.assign({}, targetValue), sourceValue);
+      t[key] = merge(Object.assign({}, targetValue), sourceValue as Indexable);
     } else {
       t[key] = sourceValue;
     }

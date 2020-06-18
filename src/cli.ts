@@ -11,6 +11,7 @@ import {
   grant,
   exists,
   omelette,
+  red,
 } from "../deps.ts";
 
 import {
@@ -55,7 +56,7 @@ export const PERMISSION_OPTIONAL: {
   upgradeExe: [{ name: "net" }],
 };
 
-export async function grantPermissions() {
+export async function grantPermissions(): Promise<void> {
   // @see PERMISSIONS .
   let permissions = await grant([...PERMISSIONS]);
   if (!permissions || permissions.length < PERMISSIONS.length) {
@@ -68,7 +69,7 @@ export async function grantPermissions() {
  * Create configuration file in the root of current work directory.
  * // TODO: make it interactive
  */
-export async function initializeConfig(template: string) {
+export async function initializeConfig(template: string): Promise<void> {
   let permissions = await grant(PERMISSION_OPTIONAL.initializeConfig);
   if (
     !permissions ||
@@ -87,7 +88,7 @@ export async function initializeConfig(template: string) {
 /**
  * Grab a fresh copy of denon
  */
-export async function upgrade(version?: string) {
+export async function upgrade(version?: string): Promise<void> {
   const url = `https://deno.land/x/denon${
     version ? `@${version}` : ""
   }/denon.ts`;
@@ -134,21 +135,21 @@ export async function upgrade(version?: string) {
 /**
  * Generate autocomplete suggestions
  */
-export function autocomplete(config: CompleteDenonConfig) {
+export function autocomplete(config: CompleteDenonConfig): void {
   // Write your CLI template.
   const completion = omelette.default(`denon <script>`);
 
   // Bind events for every template part.
-  completion.on("script", function ({ reply }: { reply: Function }) {
-    const watcher = new Watcher(config.watcher);
+  completion.on("script", function ({ reply }: { reply: Function }): void {
+    // const watcher = new Watcher(config.watcher);
     const auto = Object.keys(config.scripts);
-    for (const file of Deno.readDirSync(Deno.cwd())) {
-      if (file.isFile && watcher.isWatched(file.name)) {
-        auto.push(file.name);
-      } else {
-        // auto.push(file.name);
-      }
-    }
+    // for (const file of Deno.readDirSync(Deno.cwd())) {
+    //   if (file.isFile && watcher.isWatched(file.name)) {
+    //     auto.push(file.name);
+    //   } else {
+    //     // auto.push(file.name);
+    //   }
+    // }
     reply(auto);
   });
 
@@ -157,9 +158,9 @@ export function autocomplete(config: CompleteDenonConfig) {
 
 /**
  * List all available scripts declared in the config file.
- * // TODO: make it interactive
+ * // TODO(@qu4k): make it interactive
  */
-export function printAvailableScripts(config: CompleteDenonConfig) {
+export function printAvailableScripts(config: CompleteDenonConfig): void {
   if (Object.keys(config.scripts).length) {
     log.info("available scripts:");
     const runner = new Runner(config);
@@ -168,11 +169,18 @@ export function printAvailableScripts(config: CompleteDenonConfig) {
       console.log();
       console.log(` - ${yellow(bold(name))}`);
 
-      if (typeof script === "object" && script.desc) {
+      if (typeof script === "object" && !Array.isArray(script) && script.desc) {
         console.log(`   ${script.desc}`);
       }
 
-      console.log(gray(`   $ ${runner.build(name).cmd.join(" ")}`));
+      let commands = runner
+        .build(name)
+        .map((command) => command.cmd.join(" "))
+        .join(bold(" && "));
+
+      console.log(
+        gray(`   $ ${commands}`),
+      );
     }
     console.log();
     console.log(
@@ -199,7 +207,7 @@ export function printAvailableScripts(config: CompleteDenonConfig) {
  * Help message to be shown if `denon`
  * is run with `--help` flag.
  */
-export function printHelp(version: string) {
+export function printHelp(version: string): void {
   setColorEnabled(true);
   console.log(
     `${blue("DENON")} - ${version}

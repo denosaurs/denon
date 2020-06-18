@@ -202,7 +202,7 @@ export async function readConfig(
 /**
  * Reads the denon config from a file
  */
-export async function writeConfigTemplate(template: string) {
+export async function writeConfigTemplate(template: string): Promise<void> {
   const templates = `https://deno.land/x/denon@${BRANCH}/templates`;
   const url = `${templates}/${template}`;
   log.info(`fetching template from ${url}`);

@@ -127,7 +127,7 @@ if (import.meta.main) {
   }
 
   // create configuration file.
-  // TODO: should be made interactive.
+  // TODO(@qu4k): should be made interactive.
   if (args.init) {
     await initializeConfig(args.init);
     Deno.exit(0);
@@ -151,7 +151,7 @@ if (import.meta.main) {
     log.info(`watching extensions: ${config.watcher.exts.join(",")}`);
   }
 
-  // TODO(qu4k): events
+  // TODO(@qu4k): events
   for await (let event of denon.run(script)) {
     if (event.type === "reload") {
       if (

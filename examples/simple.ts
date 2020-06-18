@@ -22,6 +22,6 @@ while (i > 0) {
   console.log(Deno.pid, red(`Execution #${i}!`));
 
   if (--i % 10 === 0) {
-    throw "Oh no.";
+    throw new Error("Oh no.");
   }
 }

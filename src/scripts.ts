@@ -9,6 +9,12 @@ export interface Scripts {
 }
 
 /**
+ * A collection of runnable scripts.
+ * See Script
+ */
+export type ScriptArray = (string | ScriptObject)[];
+
+/**
  * A runnable script.
  * Can be as simple as a string:
  * ```json
@@ -27,7 +33,7 @@ export interface Scripts {
  * }
  * ```
  */
-export type Script = string | ScriptObject;
+export type Script = string | ScriptObject | ScriptArray;
 
 /**
  * Most complete representation of a script. Can

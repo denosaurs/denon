@@ -3,7 +3,8 @@
 import { log } from "../deps.ts";
 
 import { Denon, DenonEvent } from "../denon.ts";
-import { CompleteDenonConfig, DenonConfig } from "./config.ts";
+import { CompleteDenonConfig } from "./config.ts";
+import { ScriptOptions } from "./scripts.ts";
 
 /**
  * Daemon instance.
@@ -26,7 +27,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
   /**
    * Restart current process.
    */
-  private async reload() {
+  private async reload(): Promise<void> {
     if (this.#config.logger && this.#config.logger.fullscreen) {
       log.debug("clearing screen");
       console.clear();
@@ -45,16 +46,31 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     await this.start();
   }
 
-  private start() {
-    const command = this.#denon.runner.build(this.#script);
-    const process = command.exe();
-    log.debug(`S: starting process with pid ${process.pid}`);
-    this.#processes[process.pid] = (process);
-    this.monitor(process);
-    return command;
+  private async start(): Promise<ScriptOptions> {
+    const commands = this.#denon.runner.build(this.#script);
+
+    // Sequential execution, one process after another is executed,
+    // *sequentially*, the last process is named `main` and is the
+    // one that will actually be demonized.
+    for (let i = 0; i < commands.length; i++) {
+      const command = commands[i];
+      let process = command.exe();
+      log.debug(`S: starting process with pid ${process.pid}`);
+
+      if (i === commands.length - 1) {
+        log.warning(`starting main \`${command.cmd.join(" ")}\``);
+        this.#processes[process.pid] = process;
+        this.monitor(process, command.options);
+        return command.options;
+      } else {
+        log.info(`starting sequential \`${command.cmd.join(" ")}\``);
+        await process.status();
+      }
+    }
+    return {};
   }
 
-  private killAll() {
+  private killAll(): void {
     log.debug(`K: killing ${Object.keys(this.#processes).length} process[es]`);
     // kill all processes spawned
     let pcopy = Object.assign({}, this.#processes);
@@ -71,7 +87,10 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     }
   }
 
-  private async monitor(process: Deno.Process) {
+  private async monitor(
+    process: Deno.Process,
+    options: ScriptOptions,
+  ): Promise<void> {
     log.debug(`M: monitoring status of process with pid ${process.pid}`);
     const pid = process.pid;
     let s: Deno.ProcessStatus | undefined;
@@ -91,11 +110,19 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       if (s) {
         // log status status
         if (s.success) {
-          log.info("clean exit - waiting for changes before restart");
+          if (options.watch) {
+            log.info("clean exit - waiting for changes before restart");
+          } else {
+            log.info("clean exit - denon is exiting ...");
+          }
         } else {
-          log.info(
-            "app crashed - waiting for file changes before starting ...",
-          );
+          if (options.watch) {
+            log.error(
+              "app crashed - waiting for file changes before starting ...",
+            );
+          } else {
+            log.error("app crashed - denon is exiting ...");
+          }
         }
       }
     } else {
@@ -103,7 +130,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     }
   }
 
-  private async onExit() {
+  private async onExit(): Promise<void> {
     if (Deno.build.os !== "windows") {
       const signs = [
         Deno.Signal.SIGHUP,
@@ -125,9 +152,9 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     yield {
       type: "start",
     };
-    const command = this.start();
+    const options = await this.start();
     this.onExit();
-    if (command.options.watch) {
+    if (options.watch) {
       for await (const watchE of this.#denon.watcher) {
         if (watchE.some((_) => _.type.includes("modify"))) {
           log.debug(
