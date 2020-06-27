@@ -290,24 +290,38 @@ Environment variables can be provided as an object and are passed directly to th
 
 #### Permissions
 
-Permission can be granted to child processes.
+Permission can be granted to child processes. You can provide specific permissions for each script,
+but you can also declare permissions globally, following the same format.
 
 ```jsonc
 {
   // globally applied to all scripts
+  // as object ...
   "allow": {
-    "read": "/etc", // --allow-read=/etc
+    "read": "/etc,/tmp", // --allow-read=/etc,/tmp
     "env": true     // --allow-env
   },
+  // ... or as array
+  "allow": [
+    "run", // --allow-run
+    "net" // --allow-net
+  ]
 
   "scripts": {
     "start": {
       "cmd": "deno run app.ts",
       "desc": "Run the main server.",
-
+      
+      // specific for a single script
+      // as object ...
+      "allow": {
+        "read": "/etc,/tmp", // --allow-read=/etc,/tmp
+        "env": true     // --allow-env
+      },
+      // ... or as array
       "allow": [
         "run", // --allow-run
-        "net", // --allow-net
+        "net" // --allow-net
       ]
     }
   }
