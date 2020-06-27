@@ -139,7 +139,7 @@
           "type": "object",
           "description": "Flag key.",
           "additionalProperties": {
-            "type": "string"
+            "type": ["string", "boolean"]
           }
         }
       ]
