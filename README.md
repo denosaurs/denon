@@ -196,7 +196,7 @@ based on your environment (for example loading a `.env` file):
 
 ```typescript
 import { DenonConfig } from "https://deno.land/x/denon/mod.ts";
-export { config as env } from "https://deno.land/x/dotenv/mod.ts";
+import { config as env } from "https://deno.land/x/dotenv/mod.ts";
 
 const config: DenonConfig = {
   scripts: {
