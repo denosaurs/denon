@@ -10,7 +10,7 @@ const config: DenonConfig = {
       ],
       unstable: true,
     },
-  }
+  },
 };
 
 export default config;
