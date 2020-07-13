@@ -3,7 +3,7 @@ import { green } from "https://deno.land/std/fmt/colors.ts";
 
 const app = new Application();
 
-let PORT: number = 8000;
+let PORT = 8000;
 
 let port = Deno.env.get("PORT");
 if (port) {
