@@ -22,7 +22,7 @@ import {
 import { parseArgs } from "./src/args.ts";
 import { setupLog } from "./src/log.ts";
 
-export const VERSION = "v2.2.0";
+export const VERSION = "v2.2.1";
 export const BRANCH = "master";
 
 /**
