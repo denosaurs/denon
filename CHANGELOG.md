@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/denosaurs/denon/compare/v2.2.0...v2.2.1) (2020-07-14)
+
+
+### Bug Fixes
+
+* :arrow_up: Updated std dependencies to 0.61.0 ([60250e3](https://github.com/denosaurs/denon/commit/60250e3ea8058e20afabffd9c1e4f915eec8463f))
+* temp fix for outdated dependencies in omelette ([#74](https://github.com/denosaurs/denon/issues/74)) ([99d586d](https://github.com/denosaurs/denon/commit/99d586dd608dc091297ff04646887dfc7439a56e))
+* **examples:** wrong version in configuration ([391acc4](https://github.com/denosaurs/denon/commit/391acc4f4326ef0c98d2684c87e1073189fffa4b))
+* **README:** export to import ([d1c79cf](https://github.com/denosaurs/denon/commit/d1c79cff38bb6b35b909c0f56c7378ae1922aa86)), closes [#71](https://github.com/denosaurs/denon/issues/71)
+* **schema:** allow bolean as permissions ([185f20d](https://github.com/denosaurs/denon/commit/185f20d62ca336ddba04cc8cfc50a4f0c9d75e49)), closes [#69](https://github.com/denosaurs/denon/issues/69)
+
 ## [2.2.0](https://github.com/denosaurs/denon/compare/v2.1.0...v2.2.0) (2020-06-16)
 
 
