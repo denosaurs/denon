@@ -1,5 +1,7 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
+// deno-lint-ignore-file
+
 /**
  * Performs a deep merge of `source` into `target`.
  * Mutates `target` only but not its objects and arrays.

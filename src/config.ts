@@ -68,7 +68,7 @@ export type DenonConfig = RunnerConfig & Partial<CompleteDenonConfig>;
  * Parameters are not optional
  */
 export interface CompleteDenonConfig extends RunnerConfig {
-  [key: string]: any;
+  [key: string]: unknown;
   watcher: WatcherConfig;
   logger: LogConfig;
   args?: Args;
