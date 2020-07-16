@@ -72,7 +72,7 @@ you can run scripts declared in config:
 $ denon [script name]
 ```
 
-and you can see which script are available in your config:
+and you can see which scripts are available in your config:
 
 ```bash
 $ denon
