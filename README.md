@@ -1,4 +1,4 @@
-![denom](https://raw.githubusercontent.com/denosaurs/denon/master/.assets/denom.svg)
+![denon](./.assets/denon-horizontal.svg)
 
 # denon
 

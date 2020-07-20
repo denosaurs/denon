@@ -1,8 +1,10 @@
 {
   "name": "denon",
   "description": "Monitor any changes in you Deno application and automatically restart.",
+  "repository": "https://github.com/denosaurs/denon.git",
   "stable": true,
-  "version": "2.2.0",
+  "unlisted": false,
+  "version": "2.2.1",
   "files": [
     "./README.md",
     "./deps.ts",
