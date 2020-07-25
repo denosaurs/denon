@@ -208,14 +208,17 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
         const pre = previous[path];
         const post = current[path];
         if (pre && !post) {
+          if (!this.#changes[path]) this.#changes[path] = [];
           this.#changes[path].push("remove");
         } else if (pre && post && pre.getTime() !== post.getTime()) {
+          if (!this.#changes[path]) this.#changes[path] = [];
           this.#changes[path].push("modify");
         }
       }
 
       for (const path in current) {
         if (!previous[path] && current[path]) {
+          if (!this.#changes[path]) this.#changes[path] = [];
           this.#changes[path].push("create");
         }
       }

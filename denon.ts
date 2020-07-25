@@ -16,8 +16,8 @@ import { readConfig, CompleteDenonConfig, reConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import log from "./src/log.ts";
 
-export const VERSION = "v2.2.1";
-export const BRANCH = "master";
+export const VERSION = "v2.3.0";
+export const BRANCH = "dev";
 
 const logger = log.prefix("main");
 

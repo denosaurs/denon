@@ -8,18 +8,23 @@ const config: DenonConfig = {
         desc: "format code",
       },
       {
-        cmd: "deno lint --unstable",
+        cmd: "deno lint",
         desc: "lint code",
+        unstable: true,
       },
       {
         cmd: "deno test",
         desc: "test code",
         allow: "all",
+        unstable: true,
       },
     ],
   },
   logger: {
-    debug: true,
+    debug: false,
+  },
+  watcher: {
+    legacy: true,
   },
 };
 
