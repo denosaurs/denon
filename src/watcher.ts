@@ -1,7 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 import {
-  log,
   deferred,
   globToRegExp,
   extname,
@@ -10,16 +9,13 @@ import {
   delay,
 } from "../deps.ts";
 
-/**
- * Represents a change in the filesystem.
- * Should reflect the Deno.FsEvent.
- */
-type FileAction =
-  | "any"
-  | "access"
-  | "create"
-  | "modify"
-  | "remove";
+import log from "./log.ts";
+
+const logger = log.prefix("path");
+
+/** Represents a change in the filesystem.
+ * Should reflect the Deno.FsEvent. */
+type FileAction = "any" | "access" | "create" | "modify" | "remove";
 
 /** A file that was changed, created or removed */
 export interface FileEvent {
@@ -45,14 +41,12 @@ export interface WatcherConfig {
   legacy?: boolean;
 }
 
-/**
- * Watches for file changes in `paths` path
+/** Watches for file changes in `paths` path
  * yielding an array of all of the changes
  * each time one or more changes are detected.
  * It is debounced by `interval`, `recursive`, `exts`,
  * `match` and `skip` are filtering the files which
- * will yield a change
- */
+ * will yield a change */
 export class Watcher implements AsyncIterable<FileEvent[]> {
   #signal = deferred();
   #changes: { [key: string]: FileAction[] } = {};
@@ -97,23 +91,26 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
   isWatched(path: string): boolean {
     path = this.verifyPath(path);
     if (
-      extname(path) && this.#exts?.length &&
+      extname(path) &&
+      this.#exts?.length &&
       this.#exts?.every((ext) => !path.endsWith(ext))
     ) {
-      log.debug(`path ${path} does not have right extension`);
+      logger.debug(`path ${path} does not have right extension`);
       return false;
     } else if (
-      this.#skip?.length && this.#skip?.some((skip) => path.match(skip))
+      this.#skip?.length &&
+      this.#skip?.some((skip) => path.match(skip))
     ) {
-      log.debug(`path ${path} is skipped`);
+      logger.debug(`path ${path} is skipped`);
       return false;
     } else if (
-      this.#match?.length && this.#match?.every((match) => !path.match(match))
+      this.#match?.length &&
+      this.#match?.every((match) => !path.match(match))
     ) {
-      log.debug(`path ${path} is not matched`);
+      logger.debug(`path ${path} is not matched`);
       return false;
     }
-    log.debug(`path ${path} is matched`);
+    logger.debug(`path ${path} is matched`);
     return true;
   }
 
@@ -136,10 +133,10 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     this.#watch();
     while (true) {
       await this.#signal;
-      yield Object.entries(this.#changes).map(([
+      yield Object.entries(this.#changes).map(([path, type]) => ({
         path,
         type,
-      ]) => ({ path, type }));
+      }));
       this.reset();
     }
   }
@@ -156,9 +153,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
     };
 
     const run = async () => {
-      for await (
-        const event of Deno.watchFs(this.#paths)
-      ) {
+      for await (const event of Deno.watchFs(this.#paths)) {
         const { kind, paths } = event;
         for (const path of paths) {
           if (this.isWatched(path)) {
@@ -214,11 +209,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
         const post = current[path];
         if (pre && !post) {
           this.#changes[path].push("remove");
-        } else if (
-          pre &&
-          post &&
-          pre.getTime() !== post.getTime()
-        ) {
+        } else if (pre && post && pre.getTime() !== post.getTime()) {
           this.#changes[path].push("modify");
         }
       }

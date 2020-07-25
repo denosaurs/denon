@@ -5,18 +5,21 @@ const config: DenonConfig = {
     test: [
       {
         cmd: "deno fmt",
-        desc: "run denon format",
+        desc: "format code",
+      },
+      {
+        cmd: "deno lint --unstable",
+        desc: "lint code",
       },
       {
         cmd: "deno test",
-        desc: "run denon format",
-        allow: [
-          "all",
-        ],
-        unstable: true,
-        watch: false,
+        desc: "test code",
+        allow: "all",
       },
     ],
+  },
+  logger: {
+    debug: true,
   },
 };
 

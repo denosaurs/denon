@@ -3,10 +3,8 @@
 // deno-lint-ignore-file
 export type Indexable = Record<string, any>;
 
-/**
- * Performs a deep merge of `source` into `target`.
- * Mutates `target` only but not its objects and arrays.
- */
+/** Performs a deep merge of `source` into `target`.
+ * Mutates `target` only but not its objects and arrays. */
 export function merge<T extends Record<string, any>>(
   target: T,
   source: Indexable,

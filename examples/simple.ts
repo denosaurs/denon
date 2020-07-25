@@ -9,11 +9,7 @@ console.log(
   Deno.env.get("SECRET_ENV_VARIABLE"),
 );
 
-console.log(
-  Deno.pid,
-  green("args:"),
-  Deno.args,
-);
+console.log(Deno.pid, green("args:"), Deno.args);
 
 let i = 50;
 

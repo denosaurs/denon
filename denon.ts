@@ -1,7 +1,5 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { log } from "./deps.ts";
-
 import { Watcher, FileEvent } from "./src/watcher.ts";
 import { Runner } from "./src/runner.ts";
 import { Daemon } from "./src/daemon.ts";
@@ -14,27 +12,23 @@ import {
   upgrade,
   autocomplete,
 } from "./src/cli.ts";
-import {
-  readConfig,
-  CompleteDenonConfig,
-  reConfig,
-} from "./src/config.ts";
+import { readConfig, CompleteDenonConfig, reConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
-import { setupLog } from "./src/log.ts";
+import log from "./src/log.ts";
 
 export const VERSION = "v2.2.1";
 export const BRANCH = "master";
 
-/**
- * Events you can listen to when creating a `denon`
+const logger = log.prefix("main");
+
+/** Events you can listen to when creating a `denon`
  * instance as module:
  * ```typescript
  * const denon = new Denon(config);
  * for await (let event of denon.run(script)) {
  *   // event handling here
  * }
- * ```
- */
+ * ``` */
 export declare type DenonEventType =
   | "start"
   | "reload"
@@ -72,11 +66,9 @@ export declare interface DenonExitEvent {
   type: "exit";
 }
 
-/**
- * Denon instance.
+/** Denon instance.
  * Holds loaded configuration and handles creation
- * of daemons with the `start(script)` method.
- */
+ * of daemons with the `start(script)` method. */
 export class Denon {
   watcher: Watcher;
   runner: Runner;
@@ -91,20 +83,18 @@ export class Denon {
   }
 }
 
-/**
- * CLI starts here,
+/** CLI starts here,
  * other than the awesome `denon` cli this is an
- * example on how the library should be used if
- * included as a module.
- */
+ * example on how the library could be used if
+ * included as a module. */
 if (import.meta.main) {
-  await setupLog();
+  await log.setup();
 
   await grantPermissions();
 
   const args = parseArgs(Deno.args);
   let config = await readConfig(args.config);
-  await setupLog(config.logger);
+  await log.setup(config.logger);
 
   autocomplete(config);
 
@@ -117,7 +107,7 @@ if (import.meta.main) {
   }
 
   // show version number.
-  log.info(VERSION);
+  logger.info(`${VERSION}-${BRANCH}`);
   if (args.version) Deno.exit(0);
 
   // update denon to latest release
@@ -144,22 +134,24 @@ if (import.meta.main) {
 
   if (config.logger.fullscreen) console.clear();
 
+  const conf = log.prefix("conf");
   if (config.watcher.match) {
-    log.info(`watching path(s): ${config.watcher.match.join(" ")}`);
+    conf.info(`watching path(s): ${config.watcher.match.join(" ")}`);
   }
   if (config.watcher.exts) {
-    log.info(`watching extensions: ${config.watcher.exts.join(",")}`);
+    conf.info(`watching extensions: ${config.watcher.exts.join(",")}`);
   }
 
   // TODO(@qu4k): events
   for await (let event of denon.run(script)) {
     if (event.type === "reload") {
       if (
-        event.change.some((_) =>
-          reConfig.test(_.path) && _.path === config.configPath
+        event.change.some(
+          (_) => reConfig.test(_.path) && _.path === config.configPath,
         )
       ) {
         config = await readConfig(args.config);
+        logger.debug("reloading config");
       }
     }
   }

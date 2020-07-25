@@ -4,7 +4,7 @@ import { RunnerConfig, Runner } from "./runner.ts";
 import { assertEquals } from "../test_deps.ts";
 
 Deno.test({
-  name: "runner:build:oneliner",
+  name: "runner | build | oneliner",
   async fn(): Promise<void> {
     const config: RunnerConfig = {
       scripts: {
@@ -26,19 +26,13 @@ Deno.test({
       "test",
       "helloworld.ts",
     ]);
-    assertEquals(runner.build("oneliner-3")[0].cmd, [
-      "deno",
-      "test",
-    ]);
-    assertEquals(runner.build("oneliner-4")[0].cmd, [
-      "sh",
-      "build.sh",
-    ]);
+    assertEquals(runner.build("oneliner-3")[0].cmd, ["deno", "test"]);
+    assertEquals(runner.build("oneliner-4")[0].cmd, ["sh", "build.sh"]);
   },
 });
 
 Deno.test({
-  name: "runner:build:compact",
+  name: "runner | build | compact",
   async fn(): Promise<void> {
     const config: RunnerConfig = {
       scripts: {
@@ -60,7 +54,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "runner:build:extended",
+  name: "runner | build | extended",
   async fn(): Promise<void> {
     const config: RunnerConfig = {
       scripts: {
@@ -91,9 +85,6 @@ Deno.test({
       "test",
       "--allow-all",
     ]);
-    assertEquals(runner.build("extended-3")[0].cmd, [
-      "sh",
-      "build.sh",
-    ]);
+    assertEquals(runner.build("extended-3")[0].cmd, ["sh", "build.sh"]);
   },
 });

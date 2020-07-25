@@ -10,12 +10,10 @@ import {
 
 import { merge } from "./merge.ts";
 
-/**
- * `Runner` configuration.
+/** `Runner` configuration.
  * This configuration is, in contrast to other, extended
  * by `Denon` config as scripts has to be a top level
- * parameter.
- */
+ * parameter. */
 export interface RunnerConfig extends ScriptOptions {
   scripts: Scripts;
 }
@@ -26,12 +24,10 @@ const reCompact = new RegExp(
 );
 const reCliCompact = new RegExp(/^(run|test|fmt) *(.*)$/);
 
-/**
- * Handle all the things related to process management.
+/** Handle all the things related to process management.
  * Scripts are built into executable commands that are
  * executed by `Deno.run()` and managed in an `Executable`
- * object to make available process events.
- */
+ * object to make available process events. */
 export class Runner {
   #config: RunnerConfig;
   #args: string[];
@@ -39,6 +35,17 @@ export class Runner {
   constructor(config: RunnerConfig, args: string[] = []) {
     this.#config = config;
     this.#args = args;
+  }
+
+  private cmd(cmd: string[], options: ScriptOptions): Command {
+    const command = {
+      cmd,
+      options,
+      exe: (): Deno.Process => {
+        return this.execute(command);
+      },
+    };
+    return command;
   }
 
   private buildCliCommand(args: string[], global: ScriptOptions): Command {
@@ -53,14 +60,7 @@ export class Runner {
     } else {
       out = stdCmd(cmd);
     }
-    const command = {
-      cmd: out,
-      options: global,
-      exe: (): Deno.Process => {
-        return this.execute(command);
-      },
-    };
-    return command; // single command
+    return this.cmd(out, global); // single command
   }
 
   private buildCommands(
@@ -115,27 +115,20 @@ export class Runner {
     }
 
     if (cli) out = out.concat(cli);
-
-    const command = {
-      cmd: out,
-      options: options,
-      exe: (): Deno.Process => {
-        return this.execute(command);
-      },
-    };
-    return command;
+    return this.cmd(out, options); // single command
   }
 
-  /**
-   * Build the script, in whatever form it is declared in,
+  /** Build the script, in whatever form it is declared in,
    * to be compatible with `Deno.run()`.
-   * This function add flags, arguments and actions.
-   */
+   * This function add flags, arguments and actions. */
   build(script: string): Command[] {
     // global options
-    const g = Object.assign({
-      watch: true, // this is a file watcher after all :)
-    }, this.#config);
+    const g = Object.assign(
+      {
+        watch: true, // this is a file watcher after all :)
+      },
+      this.#config,
+    );
     delete g.scripts;
 
     const s: Script = this.#config.scripts[script];
@@ -159,10 +152,8 @@ export class Runner {
     return commands;
   }
 
-  /**
-   * Create an `Execution` object to handle the lifetime
-   * of the process that is executed.
-   */
+  /** Create an `Execution` object to handle the lifetime
+   * of the process that is executed. */
   execute(command: Command): Deno.Process {
     const options = {
       cmd: command.cmd,
