@@ -4,15 +4,33 @@
   "definitions": {
     "script": {
       "description": "A script representation.",
-      "type": ["string", "object"],
+      "type": ["string", "object", "array"],
       "anyOf": [
+        {
+          "type": "string"
+        },
         {
           "$ref": "#/definitions/script_object"
         },
         {
-          "type": "string"
+          "$ref": "#/definitions/script_array"
         }
       ]
+    },
+    "script_array": {
+      "description": "A script array representation.",
+      "type": "array",
+      "items": {
+        "type": ["string", "object"],
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/definitions/script_object"
+          }
+        ]
+      }
     },
     "script_object": {
       "type": "object",
@@ -131,18 +149,22 @@
       }
     },
     "flags": {
-      "type": ["array", "object"],
+      "type": ["array", "string", "object"],
       "anyOf": [
         {
-          "description": "Flag.",
           "type": "array",
+          "description": "Flag array.",
           "items": {
             "type": "string"
           }
         },
         {
+          "type": "string",
+          "description": "Single flag."
+        },
+        {
           "type": "object",
-          "description": "Flag key.",
+          "description": "Key value flag.",
           "additionalProperties": {
             "type": ["string", "boolean"]
           }
