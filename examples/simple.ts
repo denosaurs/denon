@@ -9,11 +9,7 @@ console.log(
   Deno.env.get("SECRET_ENV_VARIABLE"),
 );
 
-console.log(
-  Deno.pid,
-  green("args:"),
-  Deno.args,
-);
+console.log(Deno.pid, green("args:"), Deno.args);
 
 let i = 50;
 
@@ -22,6 +18,6 @@ while (i > 0) {
   console.log(Deno.pid, red(`Execution #${i}!`));
 
   if (--i % 10 === 0) {
-    throw "Oh no.";
+    throw new Error("Oh no.");
   }
 }

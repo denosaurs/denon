@@ -6,17 +6,12 @@ const config: DenonConfig = {
     run: {
       cmd: "simple.ts",
       desc: "Run main app",
-      allow: [
-        "env",
-      ],
+      allow: ["env"],
     },
     oak: {
       cmd: "oak.ts",
       desc: "Run oak instance",
-      allow: [
-        "env",
-        "net",
-      ],
+      allow: ["env", "net"],
       env: {
         PORT: "9001",
       },
