@@ -22,7 +22,7 @@ const reDenoAction = new RegExp(/^(deno +\w+) *(.*)$/);
 const reCompact = new RegExp(
   /^'(?:\\'|.)*?\.(ts|js)'|^"(?:\\"|.)*?\.(ts|js)"|^(?:\\ |\S)+\.(ts|js)$/,
 );
-const reCliCompact = new RegExp(/^(run|test|fmt) *(.*)$/);
+const reCliCompact = new RegExp(/^(run|test|fmt|lint) *(.*)$/);
 
 /** Handle all the things related to process management.
  * Scripts are built into executable commands that are

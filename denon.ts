@@ -16,8 +16,8 @@ import { readConfig, CompleteDenonConfig, reConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import log from "./src/log.ts";
 
-export const VERSION = "v2.3.0";
-export const BRANCH = "dev";
+export const VERSION = "2.3.0";
+export const BRANCH = "master";
 
 const logger = log.prefix("main");
 
@@ -107,7 +107,7 @@ if (import.meta.main) {
   }
 
   // show version number.
-  logger.info(`${VERSION}-${BRANCH}`);
+  logger.info(`v${VERSION}-${BRANCH}`);
   if (args.version) Deno.exit(0);
 
   // update denon to latest release

@@ -63,11 +63,11 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         this.#processes[process.pid] = process;
         this.monitor(process, command.options);
         return command.options;
-      } else {
-        plog.info(`starting sequential \`${command.cmd.join(" ")}\``);
-        await process.status();
-        process.close();
       }
+      
+      plog.info(`starting sequential \`${command.cmd.join(" ")}\``);
+      await process.status();
+      process.close();
     }
     return {};
   }
