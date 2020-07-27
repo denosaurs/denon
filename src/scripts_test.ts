@@ -4,15 +4,11 @@ import { buildFlags, ScriptOptions } from "./scripts.ts";
 import { assert, assertEquals } from "../test_deps.ts";
 
 Deno.test({
-  name: "scripts:flags",
+  name: "scripts | flags",
   fn: () => {
     const options: ScriptOptions = {
       watch: false, // not going to show up
-      allow: [
-        "net",
-        "env",
-        "write",
-      ],
+      allow: ["net", "env", "write"],
       cert: "secure.pem",
       env: {
         SECRET: "123", // not going to show up
@@ -55,8 +51,9 @@ Deno.test({
       len--;
     };
 
-    ["--watch", "--env", "--stderr", "--stdin", "--stdout"]
-      .forEach((_) => noExist(_));
+    ["--watch", "--env", "--stderr", "--stdin", "--stdout"].forEach((_) =>
+      noExist(_)
+    );
 
     [
       "--allow-net",
@@ -65,8 +62,7 @@ Deno.test({
       "--unstable",
       "--inspect=127.0.0.1:4321",
       "--inspect-brk=127.0.0.1:1234",
-    ]
-      .forEach((_) => exist(_));
+    ].forEach((_) => exist(_));
 
     const values = {
       "--cert": "secure.pem",

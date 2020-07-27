@@ -4,28 +4,26 @@ import {
   existsSync,
   extname,
   JSON_SCHEMA,
-  log,
   parseYaml,
   readFileStr,
   readJson,
-  writeJson,
   resolve,
   globToRegExp,
 } from "../deps.ts";
 
 import { WatcherConfig } from "./watcher.ts";
 import { RunnerConfig } from "./runner.ts";
-import { LogConfig } from "./log.ts";
+import log, { LogConfig } from "./log.ts";
 
 import { merge } from "./merge.ts";
 import { Args } from "./args.ts";
-import { BRANCH, VERSION } from "../denon.ts";
+import { BRANCH } from "../denon.ts";
 
 const TS_CONFIG = "denon.config.ts";
 
-/**
- * Possible default configuration files.
- */
+const logger = log.prefix("conf");
+
+/** Possible default configuration files. */
 export const configs = [
   "denon",
   "denon.yaml",
@@ -52,9 +50,7 @@ export const reConfig = new RegExp(
     .join("|"), // i know, right
 );
 
-/**
- * The denon configuration format
- */
+/** The denon configuration format */
 // export interface DenonConfig extends RunnerConfig {
 //   [key: string]: any;
 //   watcher?: WatcherConfig;
@@ -64,9 +60,7 @@ export const reConfig = new RegExp(
 
 export type DenonConfig = RunnerConfig & Partial<CompleteDenonConfig>;
 
-/**
- * Parameters are not optional
- */
+/** Parameters are not optional */
 export interface CompleteDenonConfig extends RunnerConfig {
   [key: string]: unknown;
   watcher: WatcherConfig;
@@ -89,9 +83,7 @@ export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
   configPath: "",
 };
 
-/**
- * Read YAML config, throws if YAML format is not valid
- */
+/** Read YAML config, throws if YAML format is not valid */
 async function readYaml(file: string): Promise<unknown> {
   const source = await readFileStr(file);
   return parseYaml(source, {
@@ -100,9 +92,7 @@ async function readYaml(file: string): Promise<unknown> {
   });
 }
 
-/**
- * Safe import a TypeScript file
- */
+/** Safe import a TypeScript file */
 async function importConfig(
   file: string,
 ): Promise<Partial<DenonConfig> | undefined> {
@@ -110,14 +100,12 @@ async function importConfig(
     const configRaw = await import(`file://${resolve(file)}`);
     return configRaw.default as Partial<DenonConfig>;
   } catch (error) {
-    log.error(error.message ?? "Error opening ts config config");
+    logger.error(error.message ?? "Error opening ts config config");
     return;
   }
 }
 
-/**
- * Clean config from malformed strings
- */
+/** Clean config from malformed strings */
 function cleanConfig(
   config: Partial<DenonConfig>,
   file?: string,
@@ -133,18 +121,14 @@ function cleanConfig(
   return config;
 }
 
-/**
- * Returns, if exists, the config filename
- */
+/** Returns, if exists, the config filename */
 export function getConfigFilename(): string | undefined {
   return configs.find((filename) => {
     return existsSync(filename) && Deno.statSync(filename).isFile;
   });
 }
 
-/**
- * Reads the denon config from a file
- */
+/** Reads the denon config from a file */
 export async function readConfig(
   file: string | undefined = getConfigFilename(),
 ): Promise<CompleteDenonConfig> {
@@ -192,44 +176,42 @@ export async function readConfig(
           }
         }
       } catch {
-        log.warning(`unsupported configuration \`${file}\``);
+        logger.warning(`unsupported configuration \`${file}\``);
       }
     }
   }
   return config;
 }
 
-/**
- * Reads the denon config from a file
- */
-export async function writeConfigTemplate(template: string) {
+/** Reads the denon config from a file */
+export async function writeConfigTemplate(template: string): Promise<void> {
   const templates = `https://deno.land/x/denon@${BRANCH}/templates`;
   const url = `${templates}/${template}`;
-  log.info(`fetching template from ${url}`);
+  logger.info(`fetching template from ${url}`);
 
   let res;
   try {
     res = await fetch(url);
   } catch (e) {
-    log.error(`${url} cannot be fetched`);
+    logger.error(`${url} cannot be fetched`);
   }
 
   if (res) {
     if (res.status === 200) {
       try {
-        log.info(`writing template to \`${template}\``);
+        logger.info(`writing template to \`${template}\``);
         await Deno.writeTextFile(
           resolve(Deno.cwd(), template),
           await res.text(),
         );
-        log.info(`\`${template}\` created in current working directory`);
+        logger.info(`\`${template}\` created in current working directory`);
       } catch (e) {
-        log.error(
+        logger.error(
           `\`${template}\` cannot be saved in current working directory`,
         );
       }
     } else {
-      log.error(
+      logger.error(
         `\`${template}\` is not a denon template. All templates are available on ${templates}/`,
       );
     }

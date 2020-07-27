@@ -3,12 +3,10 @@
 import { assert } from "../test_deps.ts";
 
 import { Watcher, WatcherConfig } from "./watcher.ts";
-import { setupLog } from "./log.ts";
 
 Deno.test({
-  name: "watcher:exts",
+  name: "watcher | exts",
   async fn(): Promise<void> {
-    await setupLog();
     const config: WatcherConfig = {
       paths: [Deno.cwd()],
       interval: 350,
@@ -52,9 +50,8 @@ Deno.test({
 });
 
 Deno.test({
-  name: "watcher:skip",
+  name: "watcher | skip",
   async fn(): Promise<void> {
-    await setupLog();
     const config: WatcherConfig = {
       paths: [Deno.cwd()],
       interval: 350,

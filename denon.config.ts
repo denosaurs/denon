@@ -1,15 +1,30 @@
-import { DenonConfig } from "https://deno.land/x/denon/mod.ts";
+import { DenonConfig } from "./mod.ts";
 
 const config: DenonConfig = {
   scripts: {
-    test: {
-      cmd: "deno test",
-      desc: "run denon test",
-      allow: [
-        "read",
-      ],
-      unstable: true,
-    },
+    test: [
+      {
+        cmd: "deno fmt",
+        desc: "format code",
+      },
+      {
+        cmd: "deno lint",
+        desc: "lint code",
+        unstable: true,
+      },
+      {
+        cmd: "deno test",
+        desc: "test code",
+        allow: "all",
+        unstable: true,
+      },
+    ],
+  },
+  logger: {
+    debug: false,
+  },
+  watcher: {
+    legacy: true,
   },
 };
 

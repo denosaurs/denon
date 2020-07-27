@@ -4,7 +4,7 @@ import { RunnerConfig, Runner } from "./runner.ts";
 import { assertEquals } from "../test_deps.ts";
 
 Deno.test({
-  name: "runner:build:oneliner",
+  name: "runner | build | oneliner",
   async fn(): Promise<void> {
     const config: RunnerConfig = {
       scripts: {
@@ -16,29 +16,23 @@ Deno.test({
     };
     const runner = new Runner(config);
 
-    assertEquals(runner.build("oneliner-1").cmd, [
+    assertEquals(runner.build("oneliner-1")[0].cmd, [
       "deno",
       "run",
       "helloworld.ts",
     ]);
-    assertEquals(runner.build("oneliner-2").cmd, [
+    assertEquals(runner.build("oneliner-2")[0].cmd, [
       "deno",
       "test",
       "helloworld.ts",
     ]);
-    assertEquals(runner.build("oneliner-3").cmd, [
-      "deno",
-      "test",
-    ]);
-    assertEquals(runner.build("oneliner-4").cmd, [
-      "sh",
-      "build.sh",
-    ]);
+    assertEquals(runner.build("oneliner-3")[0].cmd, ["deno", "test"]);
+    assertEquals(runner.build("oneliner-4")[0].cmd, ["sh", "build.sh"]);
   },
 });
 
 Deno.test({
-  name: "runner:build:compact",
+  name: "runner | build | compact",
   async fn(): Promise<void> {
     const config: RunnerConfig = {
       scripts: {
@@ -50,7 +44,7 @@ Deno.test({
     };
     const runner = new Runner(config);
 
-    assertEquals(runner.build("compact-1").cmd, [
+    assertEquals(runner.build("compact-1")[0].cmd, [
       "deno",
       "run",
       "--allow-all",
@@ -60,7 +54,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "runner:build:extended",
+  name: "runner | build | extended",
   async fn(): Promise<void> {
     const config: RunnerConfig = {
       scripts: {
@@ -80,20 +74,17 @@ Deno.test({
     };
     const runner = new Runner(config);
 
-    assertEquals(runner.build("extended-1").cmd, [
+    assertEquals(runner.build("extended-1")[0].cmd, [
       "deno",
       "test",
       "--allow-all",
       "helloworld.ts",
     ]);
-    assertEquals(runner.build("extended-2").cmd, [
+    assertEquals(runner.build("extended-2")[0].cmd, [
       "deno",
       "test",
       "--allow-all",
     ]);
-    assertEquals(runner.build("extended-3").cmd, [
-      "sh",
-      "build.sh",
-    ]);
+    assertEquals(runner.build("extended-3")[0].cmd, ["sh", "build.sh"]);
   },
 });

@@ -1,16 +1,10 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { reConfig } from "./config.ts";
-
-/**
- * Regex to test if string matches version format
- */
+/** Regex to test if string matches version format */
 const reVersion = /^v?[0-9]+\.[0-9]+\.[0-9]+$/;
 
-/**
- * Map of supported flags that modify
- * `denon` behavior.
- */
+/** Map of supported flags that modify
+ * `denon` behavior. */
 export interface Args {
   help: boolean;
   version: boolean;
@@ -22,10 +16,8 @@ export interface Args {
   cmd: string[];
 }
 
-/**
- * Parse Deno.args into a flag map (`Args`)
- * to be handled by th CLI.
- */
+/** Parse Deno.args into a flag map (`Args`)
+ * to be handled by th CLI. */
 export function parseArgs(args: string[] = Deno.args): Args {
   if (args[0] === "--") {
     args = args.slice(1);
@@ -40,10 +32,7 @@ export function parseArgs(args: string[] = Deno.args): Args {
     cmd: [],
   };
 
-  if (
-    (args.includes("--config") || args.includes("-c")) &&
-    args.length > 1
-  ) {
+  if ((args.includes("--config") || args.includes("-c")) && args.length > 1) {
     flags.config = args[1];
     args = args.slice(2);
   }
