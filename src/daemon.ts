@@ -64,7 +64,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         this.monitor(process, command.options);
         return command.options;
       }
-      
+
       plog.info(`starting sequential \`${command.cmd.join(" ")}\``);
       await process.status();
       process.close();
