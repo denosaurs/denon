@@ -198,6 +198,7 @@ export function printHelp(version: string): void {
   setColorEnabled(true);
   console.log(
     `${blue("DENON")} - ${version}
+created by qu4k & eliassjogreen
 Monitor any changes in your Deno application and automatically restart.
 
 Usage:
