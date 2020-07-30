@@ -153,7 +153,9 @@ if (import.meta.main) {
 
   if (!config.scripts[script] && !builtIn.includes(script)) {
     const other = closest(script, Object.keys(config.scripts).concat(builtIn));
-    logger.error(`Could not find script \`${script}\` did you mean \`${other}\`?`);
+    logger.error(
+      `Could not find script \`${script}\` did you mean \`${other}\`?`,
+    );
     Deno.exit(1);
   }
 
