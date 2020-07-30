@@ -106,9 +106,9 @@ if (import.meta.main) {
       `Your version of denon (${VERSION}) does not support your deno version (${Deno.version.deno})`,
     );
     logger.warning(
-      `Upgrade deno with  : deno upgrade --version ${
+      `Upgrade deno by running \`deno upgrade --version ${
         [...COMPAT[VERSION]].pop()
-      }`,
+      }\``,
     );
     Deno.exit(1);
   }

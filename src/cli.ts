@@ -105,15 +105,16 @@ export async function upgrade(version?: string): Promise<void> {
     Deno.exit(1);
   }
 
-  logger.info(`Running \`deno install -Af --unstable ${url}\``);
+  const perms = permissions.map(p => `--allow-${p.name}`);
+
+  logger.info(`Running \`deno install ${perms.join(" ")} -fq --unstable ${url}\``);
   await Deno.run({
     cmd: [
       "deno",
       "install",
-      "--allow-read",
-      "--allow-run",
-      "--allow-write",
+      ...perms,
       "-f",
+      "-q",
       "--unstable",
       url,
     ],
