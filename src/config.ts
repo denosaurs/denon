@@ -5,7 +5,6 @@ import {
   extname,
   JSON_SCHEMA,
   parseYaml,
-  readFileStr,
   readJson,
   resolve,
   globToRegExp,
@@ -85,7 +84,7 @@ export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
 
 /** Read YAML config, throws if YAML format is not valid */
 async function readYaml(file: string): Promise<unknown> {
-  const source = await readFileStr(file);
+  const source = await Deno.readTextFile(file);
   return parseYaml(source, {
     schema: JSON_SCHEMA,
     json: true,
