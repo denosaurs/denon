@@ -56,3 +56,6 @@ export { grant } from "https://deno.land/std@0.62.0/permissions/mod.ts";
 
 // autocomplete
 export * as omelette from "https://raw.githubusercontent.com/eliassjogreen/omelette/patch-1/deno/omelette.ts";
+
+// did you mean
+export { default as levenshtein } from "https://deno.land/x/levenshtein@v1.0.1/mod.ts";

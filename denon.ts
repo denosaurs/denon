@@ -14,6 +14,7 @@ import {
 } from "./src/cli.ts";
 import { readConfig, CompleteDenonConfig, reConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
+import { closest } from "./src/closest.ts";
 import log from "./src/log.ts";
 
 export const VERSION = "2.3.1";
@@ -147,7 +148,15 @@ if (import.meta.main) {
     Deno.exit(0);
   }
 
+  const builtIn = ["run", "test", "fmt", "lint"];
   const script = args.cmd[0];
+
+  if (!config.scripts[script] && !builtIn.includes(script)) {
+    const other = closest(script, Object.keys(config.scripts).concat(builtIn));
+    logger.error(`Could not find script \`${script}\` did you mean \`${other}\`?`);
+    Deno.exit(1);
+  }
+
   const denon = new Denon(config);
 
   if (config.logger.fullscreen) console.clear();
