@@ -12,7 +12,12 @@ import {
   upgrade,
   autocomplete,
 } from "./src/cli.ts";
-import { readConfig, CompleteDenonConfig, reConfig } from "./src/config.ts";
+import {
+  readConfig,
+  CompleteDenonConfig,
+  reConfig,
+  DenonConfig,
+} from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import { closest } from "./src/closest.ts";
 import log from "./src/log.ts";
@@ -163,16 +168,6 @@ if (import.meta.main) {
 
   if (config.logger.fullscreen) console.clear();
 
-  const conf = log.prefix("conf");
-  if (config.watch) {
-    if (config.watcher.match) {
-      conf.info(`watching path(s): ${config.watcher.match.join(" ")}`);
-    }
-    if (config.watcher.exts) {
-      conf.info(`watching extensions: ${config.watcher.exts.join(",")}`);
-    }
-  }
-
   // TODO(@qu4k): events
   for await (let event of denon.run(script)) {
     if (event.type === "reload") {
@@ -182,6 +177,7 @@ if (import.meta.main) {
         )
       ) {
         config = await readConfig(args.config);
+        await log.setup(config.logger);
         logger.debug("reloading config");
       }
     }

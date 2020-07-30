@@ -78,6 +78,7 @@ export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
     match: ["*.*"],
     skip: ["**/.git/**"],
   },
+  watch: true,
   logger: {},
   configPath: "",
 };

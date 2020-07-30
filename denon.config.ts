@@ -23,9 +23,6 @@ const config: DenonConfig = {
   logger: {
     debug: false,
   },
-  watcher: {
-    legacy: true,
-  },
 };
 
 export default config;
