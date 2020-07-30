@@ -135,11 +135,13 @@ if (import.meta.main) {
   if (config.logger.fullscreen) console.clear();
 
   const conf = log.prefix("conf");
-  if (config.watcher.match) {
-    conf.info(`watching path(s): ${config.watcher.match.join(" ")}`);
-  }
-  if (config.watcher.exts) {
-    conf.info(`watching extensions: ${config.watcher.exts.join(",")}`);
+  if (config.watch) {
+    if (config.watcher.match) {
+      conf.info(`watching path(s): ${config.watcher.match.join(" ")}`);
+    }
+    if (config.watcher.exts) {
+      conf.info(`watching extensions: ${config.watcher.exts.join(",")}`);
+    }
   }
 
   // TODO(@qu4k): events
