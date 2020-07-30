@@ -16,8 +16,12 @@ import { readConfig, CompleteDenonConfig, reConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 import log from "./src/log.ts";
 
-export const VERSION = "2.3.0";
-export const BRANCH = "master";
+export const VERSION = "2.3.1";
+export const BRANCH = "dev";
+export const COMPAT: { [denon: string]: string[] } = {
+  "2.3.0": ["1.2.0"],
+  "2.3.1": ["1.2.0", "1.2.1"],
+};
 
 const logger = log.prefix("main");
 
@@ -90,9 +94,33 @@ export class Denon {
 if (import.meta.main) {
   await log.setup();
 
+  const args = parseArgs(Deno.args);
+
+  // show version number.
+  logger.info(`v${VERSION}-${BRANCH}`);
+  if (args.version) Deno.exit(0);
+
+  // check compatibility
+  if (!COMPAT[VERSION].includes(Deno.version.deno) && !args.upgrade) {
+    logger.error(
+      `Your version of denon (${VERSION}) does not support your deno version (${Deno.version.deno})`,
+    );
+    logger.warning(
+      `Upgrade deno with  : deno upgrade --version ${
+        [...COMPAT[VERSION]].pop()
+      }`,
+    );
+    Deno.exit(1);
+  }
+
   await grantPermissions();
 
-  const args = parseArgs(Deno.args);
+  // update denon to latest release
+  if (args.upgrade) {
+    await upgrade(args.upgrade);
+    Deno.exit(0);
+  }
+
   let config = await readConfig(args.config);
   await log.setup(config.logger);
 
@@ -103,16 +131,6 @@ if (import.meta.main) {
   // show help message.
   if (args.help) {
     printHelp(VERSION);
-    Deno.exit(0);
-  }
-
-  // show version number.
-  logger.info(`v${VERSION}-${BRANCH}`);
-  if (args.version) Deno.exit(0);
-
-  // update denon to latest release
-  if (args.upgrade) {
-    await upgrade(args.upgrade);
     Deno.exit(0);
   }
 
