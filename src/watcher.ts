@@ -90,8 +90,8 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
 
   isWatched(path: string): boolean {
     path = this.verifyPath(path);
+    logger.debug(`trying to match ${path}`);
     if (
-      extname(path) &&
       this.#exts?.length &&
       this.#exts?.every((ext) => !path.endsWith(ext))
     ) {

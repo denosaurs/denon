@@ -31,13 +31,13 @@ To install denon simply enter the following into a terminal:
 #### deno.land
 
 ```bash
-$ deno install --allow-read --allow-run --allow-write --allow-net -f --unstable https://deno.land/x/denon@2.3.0/denon.ts
+$ deno install --allow-read --allow-run --allow-write --allow-net -f -q --unstable https://deno.land/x/denon@v2.3.1/denon.ts
 ```
 
 #### nest.land
 
 ```bash
-$ deno install --allow-read --allow-run --allow-write --allow-net -f --unstable https://x.nest.land/denon@2.3.0/denon.ts
+$ deno install --allow-read --allow-run --allow-write --allow-net -f -q --unstable https://x.nest.land/denon@2.3.1/denon.ts
 ```
 
 
@@ -126,7 +126,7 @@ you can also initialize from a custom template
 (see [templates/](https://github.com/denosaurs/denon/tree/master/templates) folder for all the available templates)
 
 ```bash
-$ denon --init denon.config.ts
+$ denon --init typescript
 ```
 
 ### JSON config (`denon.json` template)

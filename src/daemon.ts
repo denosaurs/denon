@@ -31,14 +31,6 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       console.clear();
     }
 
-    if (this.#config.watcher.match) {
-      logger.info(`watching path(s): ${this.#config.watcher.match.join(" ")}`);
-    }
-    if (this.#config.watcher.exts) {
-      logger.info(
-        `watching extensions: ${this.#config.watcher.exts.join(",")}`,
-      );
-    }
     logger.info("restarting due to changes...");
 
     this.killAll();
@@ -55,10 +47,23 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     for (let i = 0; i < commands.length; i++) {
       const plog = log.prefix(`#${i}`);
       const command = commands[i];
+      const options = command.options;
       let process = command.exe();
       plog.debug(`starting process with pid ${process.pid}`);
 
       if (i === commands.length - 1) {
+        if (options.watch && this.#config.watcher.match) {
+          const match = this.#config.watcher.match.join(" ");
+          logger.info(
+            `watching path(s): ${match}`,
+          );
+        }
+        if (options.watch && this.#config.watcher.exts) {
+          const exts = this.#config.watcher.exts.join(",");
+          logger.info(
+            `watching extensions: ${exts}`,
+          );
+        }
         plog.warning(`starting main \`${command.cmd.join(" ")}\``);
         this.#processes[process.pid] = process;
         this.monitor(process, command.options);
@@ -154,11 +159,11 @@ export class Daemon implements AsyncIterable<DenonEvent> {
   }
 
   async *iterate(): AsyncIterator<DenonEvent> {
+    this.onExit();
     yield {
       type: "start",
     };
     const options = await this.start();
-    this.onExit();
     if (options.watch) {
       for await (const watchE of this.#denon.watcher) {
         if (watchE.some((_) => _.type.includes("modify"))) {

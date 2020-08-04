@@ -5,7 +5,6 @@ import {
   extname,
   JSON_SCHEMA,
   parseYaml,
-  readFileStr,
   readJson,
   resolve,
   globToRegExp,
@@ -17,7 +16,7 @@ import log, { LogConfig } from "./log.ts";
 
 import { merge } from "./merge.ts";
 import { Args } from "./args.ts";
-import { BRANCH } from "../denon.ts";
+import { Template } from "./templates.ts";
 
 const TS_CONFIG = "denon.config.ts";
 
@@ -79,13 +78,14 @@ export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
     match: ["*.*"],
     skip: ["**/.git/**"],
   },
+  watch: true,
   logger: {},
   configPath: "",
 };
 
 /** Read YAML config, throws if YAML format is not valid */
 async function readYaml(file: string): Promise<unknown> {
-  const source = await readFileStr(file);
+  const source = await Deno.readTextFile(file);
   return parseYaml(source, {
     schema: JSON_SCHEMA,
     json: true,
@@ -184,36 +184,19 @@ export async function readConfig(
 }
 
 /** Reads the denon config from a file */
-export async function writeConfigTemplate(template: string): Promise<void> {
-  const templates = `https://deno.land/x/denon@${BRANCH}/templates`;
-  const url = `${templates}/${template}`;
-  logger.info(`fetching template from ${url}`);
-
-  let res;
+export async function writeConfigTemplate(template: Template): Promise<void> {
   try {
-    res = await fetch(url);
+    logger.info(`writing template to \`${template.filename}\``);
+    await Deno.writeTextFile(
+      resolve(Deno.cwd(), template.filename),
+      template.source,
+    );
+    logger.info(
+      `\`${template.filename}\` created in current working directory`,
+    );
   } catch (e) {
-    logger.error(`${url} cannot be fetched`);
-  }
-
-  if (res) {
-    if (res.status === 200) {
-      try {
-        logger.info(`writing template to \`${template}\``);
-        await Deno.writeTextFile(
-          resolve(Deno.cwd(), template),
-          await res.text(),
-        );
-        logger.info(`\`${template}\` created in current working directory`);
-      } catch (e) {
-        logger.error(
-          `\`${template}\` cannot be saved in current working directory`,
-        );
-      }
-    } else {
-      logger.error(
-        `\`${template}\` is not a denon template. All templates are available on ${templates}/`,
-      );
-    }
+    logger.error(
+      `\`${template.filename}\` cannot be saved in current working directory`,
+    );
   }
 }

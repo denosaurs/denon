@@ -57,7 +57,7 @@ export function parseArgs(args: string[] = Deno.args): Args {
       flags.init = next;
       args = args.slice(2);
     } else {
-      flags.init = "denon.json";
+      flags.init = "json";
       args = args.slice(1);
     }
   }
@@ -68,13 +68,13 @@ export function parseArgs(args: string[] = Deno.args): Args {
       : args.indexOf("-u");
     const next = args[index + 1];
 
-    if (next && (next === "master" || reVersion.test(next))) {
-      flags.upgrade = !next.startsWith("v") || next !== "master"
+    if (next && (next === "latest" || reVersion.test(next))) {
+      flags.upgrade = !next.startsWith("v") || next !== "latest"
         ? "v" + next
         : next;
       args = args.slice(2);
     } else {
-      flags.upgrade = "master";
+      flags.upgrade = "latest";
       args = args.slice(1);
     }
   }

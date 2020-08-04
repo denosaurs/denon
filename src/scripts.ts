@@ -74,6 +74,8 @@ export interface ScriptOptions {
    * from deno standard library this option should be set to
    * `true` so that `--unstable` option is passed to deno cli's. */
   unstable?: boolean;
+  /** Skip Typescript type checking module */
+  noCheck?: boolean;
   /** The hostname and port where to start the inspector,
    * passed to deno cli's `--inspect` option. */
   inspect?: string;
@@ -143,6 +145,9 @@ export function buildFlags(options: ScriptOptions): string[] {
   }
   if (options.inspectBrk) {
     flags.push(`--inspect-brk=${options.inspectBrk}`);
+  }
+  if (options.noCheck) {
+    flags.push("--no-check");
   }
   if (options.unstable) {
     flags.push("--unstable");

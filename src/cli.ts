@@ -9,7 +9,6 @@ import {
   setColorEnabled,
   grant,
   exists,
-  omelette,
 } from "../deps.ts";
 
 import {
@@ -18,9 +17,10 @@ import {
   CompleteDenonConfig,
 } from "./config.ts";
 import { Runner } from "./runner.ts";
-import { VERSION } from "../denon.ts";
 
 import log from "./log.ts";
+import { templates } from "./templates.ts";
+import { VERSION } from "../info.ts";
 
 const logger = log.prefix("main");
 
@@ -40,7 +40,6 @@ export const PERMISSIONS: Deno.PermissionDescriptor[] = [
   { name: "read" },
   { name: "write" },
   { name: "run" },
-  { name: "net" },
 ];
 
 /** These permissions are required on specific situations,
@@ -49,8 +48,7 @@ export const PERMISSIONS: Deno.PermissionDescriptor[] = [
 export const PERMISSION_OPTIONAL: {
   [key: string]: Deno.PermissionDescriptor[];
 } = {
-  initializeConfig: [{ name: "write" }, { name: "net" }],
-  upgradeExe: [{ name: "net" }],
+  initializeConfig: [{ name: "write" }],
 };
 
 export async function grantPermissions(): Promise<void> {
@@ -63,7 +61,7 @@ export async function grantPermissions(): Promise<void> {
 }
 /** Create configuration file in the root of current work directory.
  * // TODO: make it interactive */
-export async function initializeConfig(template: string): Promise<void> {
+export async function initializeConfig(type = "json"): Promise<void> {
   let permissions = await grant(PERMISSION_OPTIONAL.initializeConfig);
   if (
     !permissions ||
@@ -72,32 +70,27 @@ export async function initializeConfig(template: string): Promise<void> {
     logger.critical("Required permissions for this operation not granted");
     Deno.exit(1);
   }
-  if (!(await exists(template))) {
+  const template = templates[type];
+  if (!template) {
+    logger.error(
+      `\`${type}\` is not a valid template.`,
+    );
+    logger.info(`valid templates are ${Object.keys(templates)}`);
+    return;
+  }
+
+  if (!(await exists(template.filename))) {
     await writeConfigTemplate(template);
   } else {
-    logger.error(`\`${template}\` already exists in root dir`);
+    logger.error(`\`${template.filename}\` already exists in root dir`);
   }
 }
 
 /** Grab a fresh copy of denon */
 export async function upgrade(version?: string): Promise<void> {
-  const url = `https://deno.land/x/denon${
-    version ? `@${version}` : ""
-  }/denon.ts`;
-
-  if (version === VERSION) {
-    logger.info(`Version ${version} already installed`);
-    Deno.exit(0);
-  }
-
-  let permissions = await grant(PERMISSION_OPTIONAL.upgradeExe);
-  if (
-    !permissions ||
-    permissions.length < PERMISSION_OPTIONAL.upgradeExe.length
-  ) {
-    logger.critical("Required permissions for this operation not granted");
-    Deno.exit(1);
-  }
+  const url = version !== "latest"
+    ? `https://deno.land/x/denon@${version}/denon.ts`
+    : "https://deno.land/x/denon/denon.ts";
 
   logger.debug(`Checking if ${url} exists`);
   if ((await fetch(url)).status !== 200) {
@@ -105,15 +98,18 @@ export async function upgrade(version?: string): Promise<void> {
     Deno.exit(1);
   }
 
-  logger.info(`Running \`deno install -Af --unstable ${url}\``);
+  const perms = PERMISSIONS.map((p) => `--allow-${p.name}`);
+
+  logger.info(
+    `Running \`deno install ${perms.join(" ")} -fq --unstable ${url}\``,
+  );
   await Deno.run({
     cmd: [
       "deno",
       "install",
-      "--allow-read",
-      "--allow-run",
-      "--allow-write",
+      ...perms,
       "-f",
+      "-q",
       "--unstable",
       url,
     ],
@@ -122,27 +118,28 @@ export async function upgrade(version?: string): Promise<void> {
   Deno.exit(0);
 }
 
-/** Generate autocomplete suggestions */
-export function autocomplete(config: CompleteDenonConfig): void {
-  // Write your CLI template.
-  const completion = omelette.default(`denon <script>`);
+// /** Generate autocomplete suggestions */
+// export function autocomplete(config: CompleteDenonConfig): void {
+//   // Write your CLI template.
+//   const completion = omelette.default(`denon <script>`);
 
-  // Bind events for every template part.
-  completion.on("script", function ({ reply }: { reply: Function }): void {
-    // const watcher = new Watcher(config.watcher);
-    const auto = Object.keys(config.scripts);
-    // for (const file of Deno.readDirSync(Deno.cwd())) {
-    //   if (file.isFile && watcher.isWatched(file.name)) {
-    //     auto.push(file.name);
-    //   } else {
-    //     // auto.push(file.name);
-    //   }
-    // }
-    reply(auto);
-  });
+//   // Bind events for every template part.
+//   completion.on("script", function ({ reply }: { reply: Function }): void {
+//     // const watcher = new Watcher(config.watcher);
+//     const auto = Object.keys(config.scripts);
+//     // for (const file of Deno.readDirSync(Deno.cwd())) {
+//     //   if (file.isFile && watcher.isWatched(file.name)) {
+//     //     auto.push(file.name);
+//     //   } else {
+//     //     // auto.push(file.name);
+//     //   }
+//     // }
+//     console.log(auto);
+//     reply(auto);
+//   });
 
-  completion.init();
-}
+//   completion.init();
+// }
 
 /** List all available scripts declared in the config file.
  * // TODO(@qu4k): make it interactive */
@@ -191,10 +188,11 @@ export function printAvailableScripts(config: CompleteDenonConfig): void {
 
 /** Help message to be shown if `denon`
  * is run with `--help` flag. */
-export function printHelp(version: string): void {
+export function printHelp(): void {
   setColorEnabled(true);
   console.log(
-    `${blue("DENON")} - ${version}
+    `${blue("DENON")} - ${VERSION}
+created by qu4k & eliassjogreen
 Monitor any changes in your Deno application and automatically restart.
 
 Usage:
