@@ -19,12 +19,7 @@ import {
 import { parseArgs } from "./src/args.ts";
 import log from "./src/log.ts";
 
-export const VERSION = "2.3.1";
-export const BRANCH = "dev";
-// export const COMPAT: { [denon: string]: string[] } = {
-//   "2.3.0": ["1.2.0"],
-//   "2.3.1": ["1.2.0", "1.2.1", "1.2.2"],
-// };
+import { VERSION, BRANCH } from "./info.ts";
 
 const logger = log.prefix("main");
 
@@ -133,7 +128,7 @@ if (import.meta.main) {
 
   // show help message.
   if (args.help) {
-    printHelp(VERSION);
+    printHelp();
     Deno.exit(0);
   }
 

@@ -127,7 +127,7 @@ you can also initialize from a custom template
 (see [templates/](https://github.com/denosaurs/denon/tree/master/templates) folder for all the available templates)
 
 ```bash
-$ denon --init denon.config.ts
+$ denon --init typescript
 ```
 
 ### JSON config (`denon.json` template)
