@@ -16,7 +16,7 @@ import log, { LogConfig } from "./log.ts";
 
 import { merge } from "./merge.ts";
 import { Args } from "./args.ts";
-import { templates, Template } from "./templates.ts";
+import { Template } from "./templates.ts";
 
 const TS_CONFIG = "denon.config.ts";
 

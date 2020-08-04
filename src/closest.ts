@@ -1,6 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { levenshtein, log } from "../deps.ts";
+import { levenshtein } from "../deps.ts";
 
 /** Returns the closest string in the array */
 export function closest(word: string, words: string[]): string | undefined {
