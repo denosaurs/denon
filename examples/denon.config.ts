@@ -3,7 +3,7 @@ import { config as env_config } from "https://deno.land/x/dotenv/mod.ts";
 
 const config: DenonConfig = {
   scripts: {
-    run: {
+    simple: {
       cmd: "simple.ts",
       desc: "Run main app",
       allow: ["env"],

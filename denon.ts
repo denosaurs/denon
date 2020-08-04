@@ -10,24 +10,21 @@ import {
   initializeConfig,
   grantPermissions,
   upgrade,
-  autocomplete,
 } from "./src/cli.ts";
 import {
   readConfig,
   CompleteDenonConfig,
   reConfig,
-  DenonConfig,
 } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
-import { closest } from "./src/closest.ts";
 import log from "./src/log.ts";
 
 export const VERSION = "2.3.1";
 export const BRANCH = "dev";
-export const COMPAT: { [denon: string]: string[] } = {
-  "2.3.0": ["1.2.0"],
-  "2.3.1": ["1.2.0", "1.2.1"],
-};
+// export const COMPAT: { [denon: string]: string[] } = {
+//   "2.3.0": ["1.2.0"],
+//   "2.3.1": ["1.2.0", "1.2.1", "1.2.2"],
+// };
 
 const logger = log.prefix("main");
 
@@ -107,17 +104,17 @@ if (import.meta.main) {
   if (args.version) Deno.exit(0);
 
   // check compatibility
-  if (!COMPAT[VERSION].includes(Deno.version.deno) && !args.upgrade) {
-    logger.error(
-      `Your version of denon (${VERSION}) does not support your deno version (${Deno.version.deno})`,
-    );
-    logger.warning(
-      `Upgrade deno by running \`deno upgrade --version ${
-        [...COMPAT[VERSION]].pop()
-      }\``,
-    );
-    Deno.exit(1);
-  }
+  // if (!COMPAT[VERSION].includes(Deno.version.deno) && !args.upgrade) {
+  //   logger.error(
+  //     `Your version of denon (${VERSION}) does not support your deno version (${Deno.version.deno})`,
+  //   );
+  //   logger.warning(
+  //     `Upgrade deno by running \`deno upgrade --version ${
+  //       [...COMPAT[VERSION]].pop()
+  //     }\``,
+  //   );
+  //   Deno.exit(1);
+  // }
 
   await grantPermissions();
 
@@ -130,7 +127,7 @@ if (import.meta.main) {
   let config = await readConfig(args.config);
   await log.setup(config.logger);
 
-  autocomplete(config);
+  // autocomplete(config);
 
   config.args = args;
 
@@ -153,16 +150,16 @@ if (import.meta.main) {
     Deno.exit(0);
   }
 
-  const builtIn = ["run", "test", "fmt", "lint"];
+  // const builtIn = ["run", "test", "fmt", "lint"];
   const script = args.cmd[0];
 
-  if (!config.scripts[script] && !builtIn.includes(script)) {
-    const other = closest(script, Object.keys(config.scripts).concat(builtIn));
-    logger.error(
-      `Could not find script \`${script}\` did you mean \`${other}\`?`,
-    );
-    Deno.exit(1);
-  }
+  // if (!config.scripts[script] && !builtIn.includes(script)) {
+  //   const other = closest(script, Object.keys(config.scripts).concat(builtIn));
+  //   logger.error(
+  //     `Could not find script \`${script}\` did you mean \`${other}\`?`,
+  //   );
+  //   Deno.exit(1);
+  // }
 
   const denon = new Denon(config);
 

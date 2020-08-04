@@ -9,7 +9,6 @@ import {
   setColorEnabled,
   grant,
   exists,
-  omelette,
 } from "../deps.ts";
 
 import {
@@ -125,27 +124,28 @@ export async function upgrade(version?: string): Promise<void> {
   Deno.exit(0);
 }
 
-/** Generate autocomplete suggestions */
-export function autocomplete(config: CompleteDenonConfig): void {
-  // Write your CLI template.
-  const completion = omelette.default(`denon <script>`);
+// /** Generate autocomplete suggestions */
+// export function autocomplete(config: CompleteDenonConfig): void {
+//   // Write your CLI template.
+//   const completion = omelette.default(`denon <script>`);
 
-  // Bind events for every template part.
-  completion.on("script", function ({ reply }: { reply: Function }): void {
-    // const watcher = new Watcher(config.watcher);
-    const auto = Object.keys(config.scripts);
-    // for (const file of Deno.readDirSync(Deno.cwd())) {
-    //   if (file.isFile && watcher.isWatched(file.name)) {
-    //     auto.push(file.name);
-    //   } else {
-    //     // auto.push(file.name);
-    //   }
-    // }
-    reply(auto);
-  });
+//   // Bind events for every template part.
+//   completion.on("script", function ({ reply }: { reply: Function }): void {
+//     // const watcher = new Watcher(config.watcher);
+//     const auto = Object.keys(config.scripts);
+//     // for (const file of Deno.readDirSync(Deno.cwd())) {
+//     //   if (file.isFile && watcher.isWatched(file.name)) {
+//     //     auto.push(file.name);
+//     //   } else {
+//     //     // auto.push(file.name);
+//     //   }
+//     // }
+//     console.log(auto);
+//     reply(auto);
+//   });
 
-  completion.init();
-}
+//   completion.init();
+// }
 
 /** List all available scripts declared in the config file.
  * // TODO(@qu4k): make it interactive */

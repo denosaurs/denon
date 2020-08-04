@@ -133,8 +133,12 @@ export class Runner {
 
     const s: Script = this.#config.scripts[script];
 
-    if (!s && this.#args) {
-      return [this.buildCliCommand(this.#args, g)];
+    if (!s) {
+      if (this.#args.length > 0) {
+        return [this.buildCliCommand(this.#args, g)];
+      } else {
+        throw new Error("Script does not exist and CLI args are not provided.");
+      }
     }
 
     let args = this.#args.slice(1);
