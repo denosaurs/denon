@@ -1,4 +1,4 @@
-export const VERSION = "2.3.1";
+export const VERSION = "2.3.2";
 export const BRANCH = "master";
 // export const COMPAT: { [denon: string]: string[] } = {
 //   "2.3.0": ["1.2.0"],
