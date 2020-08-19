@@ -48,10 +48,9 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       const plog = log.prefix(`#${i}`);
       const command = commands[i];
       const options = command.options;
-      let process = command.exe();
-      plog.debug(`starting process with pid ${process.pid}`);
+      const last = i === commands.length - 1;
 
-      if (i === commands.length - 1) {
+      if (last) {
         if (options.watch && this.#config.watcher.match) {
           const match = this.#config.watcher.match.join(" ");
           logger.info(
@@ -64,15 +63,22 @@ export class Daemon implements AsyncIterable<DenonEvent> {
             `watching extensions: ${exts}`,
           );
         }
-        plog.warning(`starting main \`${command.cmd.join(" ")}\``);
+        plog.warning(`starting \`${command.cmd.join(" ")}\``);
+      } else {
+        plog.info(`starting sequential \`${command.cmd.join(" ")}\``);
+      }
+
+      let process = command.exe();
+      plog.debug(`starting process with pid ${process.pid}`);
+
+      if (last) {
         this.#processes[process.pid] = process;
         this.monitor(process, command.options);
         return command.options;
+      } else {
+        await process.status();
+        process.close();
       }
-
-      plog.info(`starting sequential \`${command.cmd.join(" ")}\``);
-      await process.status();
-      process.close();
     }
     return {};
   }
