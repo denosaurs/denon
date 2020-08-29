@@ -2,38 +2,38 @@ name: CI check
 
 on:
   push:
-    branches: [ master, dev ]
+    branches: [master, dev]
   pull_request:
-    branches: [ master, dev ]
+    branches: [master, dev]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout sources
-      uses: actions/checkout@v2
-      
-    - name: Setup latest deno version
-      uses: denolib/setup-deno@v2
-      with:
-        deno-version: v1.x
+      - name: Checkout sources
+        uses: actions/checkout@v2
 
-    - name: Check deno fmt
-      run: deno fmt --check
-    
-    - name: Check deno lint
-      run: deno lint --unstable
-      
+      - name: Setup latest deno version
+        uses: denolib/setup-deno@v2
+        with:
+          deno-version: v1.x
+
+      - name: Check deno fmt
+        run: deno fmt --check
+
+      - name: Check deno lint
+        run: deno lint --unstable
+
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout sources
-      uses: actions/checkout@v2
-      
-    - name: Setup latest deno version
-      uses: denolib/setup-deno@v2
-      with:
-        deno-version: v1.x
+      - name: Checkout sources
+        uses: actions/checkout@v2
 
-    - name: Run deno test
-      run: deno test -A --unstable
+      - name: Setup latest deno version
+        uses: denolib/setup-deno@v2
+        with:
+          deno-version: v1.x
+
+      - name: Run deno test
+        run: deno test -A --unstable

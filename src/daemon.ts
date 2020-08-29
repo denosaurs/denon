@@ -1,6 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import log from "./log.ts";
+import { log } from "../deps.ts";
 
 import { Denon, DenonEvent } from "../denon.ts";
 import { CompleteDenonConfig } from "./config.ts";
@@ -26,11 +26,6 @@ export class Daemon implements AsyncIterable<DenonEvent> {
 
   /** Restart current process. */
   private async reload(): Promise<void> {
-    if (this.#config.logger && this.#config.logger.fullscreen) {
-      logger.debug("clearing screen");
-      console.clear();
-    }
-
     logger.info("restarting due to changes...");
 
     this.killAll();
@@ -48,31 +43,33 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       const plog = log.prefix(`#${i}`);
       const command = commands[i];
       const options = command.options;
-      let process = command.exe();
-      plog.debug(`starting process with pid ${process.pid}`);
+      const last = i === commands.length - 1;
 
-      if (i === commands.length - 1) {
+      if (last) {
         if (options.watch && this.#config.watcher.match) {
           const match = this.#config.watcher.match.join(" ");
-          logger.info(
-            `watching path(s): ${match}`,
-          );
+          logger.info(`watching path(s): ${match}`);
         }
         if (options.watch && this.#config.watcher.exts) {
           const exts = this.#config.watcher.exts.join(",");
-          logger.info(
-            `watching extensions: ${exts}`,
-          );
+          logger.info(`watching extensions: ${exts}`);
         }
-        plog.warning(`starting main \`${command.cmd.join(" ")}\``);
+        plog.warning(`starting \`${command.cmd.join(" ")}\``);
+      } else {
+        plog.info(`starting sequential \`${command.cmd.join(" ")}\``);
+      }
+
+      let process = command.exe();
+      plog.debug(`starting process with pid ${process.pid}`);
+
+      if (last) {
         this.#processes[process.pid] = process;
         this.monitor(process, command.options);
         return command.options;
+      } else {
+        await process.status();
+        process.close();
       }
-
-      plog.info(`starting sequential \`${command.cmd.join(" ")}\``);
-      await process.status();
-      process.close();
     }
     return {};
   }

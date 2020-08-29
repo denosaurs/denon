@@ -129,7 +129,7 @@ export class Runner {
       },
       this.#config,
     );
-    delete g.scripts;
+    g.scripts = {};
 
     const s: Script = this.#config.scripts[script];
 

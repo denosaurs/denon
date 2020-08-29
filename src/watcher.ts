@@ -1,15 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import {
-  deferred,
-  globToRegExp,
-  extname,
-  relative,
-  walk,
-  delay,
-} from "../deps.ts";
-
-import log from "./log.ts";
+import { deferred, globToRegExp, log, relative, walk, delay } from "../deps.ts";
 
 const logger = log.prefix("path");
 
@@ -55,7 +46,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
   #exts?: string[] = undefined;
   #match?: RegExp[] = undefined;
   #skip?: RegExp[] = undefined;
-  #watch: Function = this.denoWatch;
+  #watch: () => Promise<void> = this.denoWatch;
   #config: WatcherConfig;
 
   constructor(config: WatcherConfig = {}) {
@@ -77,24 +68,17 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
       );
     }
     if (this.#config.match) {
-      this.#match = this.#config.match.map((_) =>
-        globToRegExp(_, { extended: true, globstar: false })
-      );
+      this.#match = this.#config.match.map((_) => globToRegExp(_));
     }
     if (this.#config.skip) {
-      this.#skip = this.#config.skip.map((_) =>
-        globToRegExp(_, { extended: true, globstar: false })
-      );
+      this.#skip = this.#config.skip.map((_) => globToRegExp(_));
     }
   }
 
   isWatched(path: string): boolean {
     path = this.verifyPath(path);
     logger.debug(`trying to match ${path}`);
-    if (
-      this.#exts?.length &&
-      this.#exts?.every((ext) => !path.endsWith(ext))
-    ) {
+    if (this.#exts?.length && this.#exts?.every((ext) => !path.endsWith(ext))) {
       logger.debug(`path ${path} does not have right extension`);
       return false;
     } else if (

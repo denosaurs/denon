@@ -40,7 +40,7 @@ Deno.test({
 
     config.exts = [".ts"];
     config.skip = [];
-    config.match = ["*.*"];
+    config.match = ["**"];
     watcher.reload();
     assert(
       watcher.isWatched("src/args.ts"),

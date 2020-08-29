@@ -4,8 +4,9 @@
   "repository": "https://github.com/denosaurs/denon.git",
   "stable": true,
   "unlisted": false,
-  "version": "2.3.2",
+  "version": "2.3.3",
   "files": [
+    "./assets/**/*",
     "./README.md",
     "./deps.ts",
     "./test_deps.ts",
