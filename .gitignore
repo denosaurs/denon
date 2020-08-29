@@ -1,5 +1,6 @@
 # ide
 .idea
+.vscode
 
 # testing directory
 testing/

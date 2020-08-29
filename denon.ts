@@ -1,5 +1,7 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
+import { log } from "./deps.ts";
+
 import { Watcher, FileEvent } from "./src/watcher.ts";
 import { Runner } from "./src/runner.ts";
 import { Daemon } from "./src/daemon.ts";
@@ -11,13 +13,8 @@ import {
   grantPermissions,
   upgrade,
 } from "./src/cli.ts";
-import {
-  readConfig,
-  CompleteDenonConfig,
-  reConfig,
-} from "./src/config.ts";
+import { readConfig, CompleteDenonConfig, reConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
-import log from "./src/log.ts";
 
 import { VERSION, BRANCH } from "./info.ts";
 
@@ -90,12 +87,16 @@ export class Denon {
  * example on how the library could be used if
  * included as a module. */
 if (import.meta.main) {
-  await log.setup();
+  await log.setup({ filter: "INFO" });
 
   const args = parseArgs(Deno.args);
 
   // show version number.
-  logger.info(`v${VERSION}-${BRANCH}`);
+  if (BRANCH !== "master") {
+    logger.info(`v${VERSION}-${BRANCH}`);
+  } else {
+    logger.info(`v${VERSION}`);
+  }
   if (args.version) Deno.exit(0);
 
   // check compatibility
@@ -120,7 +121,6 @@ if (import.meta.main) {
   }
 
   let config = await readConfig(args.config);
-  await log.setup(config.logger);
 
   // autocomplete(config);
 
@@ -158,8 +158,6 @@ if (import.meta.main) {
 
   const denon = new Denon(config);
 
-  if (config.logger.fullscreen) console.clear();
-
   // TODO(@qu4k): events
   for await (let event of denon.run(script)) {
     if (event.type === "reload") {
@@ -169,7 +167,6 @@ if (import.meta.main) {
         )
       ) {
         config = await readConfig(args.config);
-        await log.setup(config.logger);
         logger.debug("reloading config");
       }
     }

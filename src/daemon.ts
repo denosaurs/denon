@@ -1,6 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import log from "./log.ts";
+import { log } from "../deps.ts";
 
 import { Denon, DenonEvent } from "../denon.ts";
 import { CompleteDenonConfig } from "./config.ts";
@@ -26,11 +26,6 @@ export class Daemon implements AsyncIterable<DenonEvent> {
 
   /** Restart current process. */
   private async reload(): Promise<void> {
-    if (this.#config.logger && this.#config.logger.fullscreen) {
-      logger.debug("clearing screen");
-      console.clear();
-    }
-
     logger.info("restarting due to changes...");
 
     this.killAll();
@@ -53,15 +48,11 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       if (last) {
         if (options.watch && this.#config.watcher.match) {
           const match = this.#config.watcher.match.join(" ");
-          logger.info(
-            `watching path(s): ${match}`,
-          );
+          logger.info(`watching path(s): ${match}`);
         }
         if (options.watch && this.#config.watcher.exts) {
           const exts = this.#config.watcher.exts.join(",");
-          logger.info(
-            `watching extensions: ${exts}`,
-          );
+          logger.info(`watching extensions: ${exts}`);
         }
         plog.warning(`starting \`${command.cmd.join(" ")}\``);
       } else {

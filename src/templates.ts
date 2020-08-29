@@ -1,4 +1,8 @@
+// Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
+
 import { VERSION } from "../info.ts";
+
+// deno-lint-ignore-file
 
 export interface Template {
   filename: string;
@@ -28,8 +32,8 @@ const yaml: Template = {
 
 const typescript: Template = {
   filename: "denon.config.ts",
-  source: String.raw
-    `import { DenonConfig } from "https://deno.land/x/denon@${VERSION}/mod.ts";
+  source: String.raw`
+import { DenonConfig } from "https://deno.land/x/denon@${VERSION}/mod.ts";
 
 const config: DenonConfig = {
   scripts: {
@@ -44,9 +48,9 @@ export default config;`,
 };
 
 export const templates: { [key: string]: Template } = {
-  "json": json,
-  "yaml": yaml,
-  "yml": yaml,
-  "ts": typescript,
-  "typescript": typescript,
+  json: json,
+  yaml: yaml,
+  yml: yaml,
+  ts: typescript,
+  typescript: typescript,
 };

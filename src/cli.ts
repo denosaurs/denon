@@ -9,6 +9,7 @@ import {
   setColorEnabled,
   grant,
   exists,
+  log,
 } from "../deps.ts";
 
 import {
@@ -18,7 +19,6 @@ import {
 } from "./config.ts";
 import { Runner } from "./runner.ts";
 
-import log from "./log.ts";
 import { templates } from "./templates.ts";
 import { VERSION } from "../info.ts";
 
@@ -72,9 +72,7 @@ export async function initializeConfig(type = "json"): Promise<void> {
   }
   const template = templates[type];
   if (!template) {
-    logger.error(
-      `\`${type}\` is not a valid template.`,
-    );
+    logger.error(`\`${type}\` is not a valid template.`);
     logger.info(`valid templates are ${Object.keys(templates)}`);
     return;
   }
@@ -104,15 +102,7 @@ export async function upgrade(version?: string): Promise<void> {
     `Running \`deno install ${perms.join(" ")} -fq --unstable ${url}\``,
   );
   await Deno.run({
-    cmd: [
-      "deno",
-      "install",
-      ...perms,
-      "-f",
-      "-q",
-      "--unstable",
-      url,
-    ],
+    cmd: ["deno", "install", ...perms, "-f", "-q", "--unstable", url],
     stdout: undefined,
   }).status();
   Deno.exit(0);

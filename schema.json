@@ -108,7 +108,7 @@
         "log": {
           "description": "Set log level.",
           "type": "string",
-          "enum": [ "debug", "info" ],
+          "enum": ["debug", "info"],
           "default": "info"
         },
         "stdin": {

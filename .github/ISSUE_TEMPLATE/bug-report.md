@@ -1,10 +1,9 @@
 ---
 name: Bug Report
 about: Create a report to help us improve denon
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **Describe the bug**
@@ -28,9 +27,9 @@ If applicable, add screenshots to help explain your problem.
 
 **Setup**
 
--   OS: (e.g. macOS, windows, linux)
--   Deno version: (`deno version`)
--   Denon version: (`denon --version`)
+- OS: (e.g. macOS, windows, linux)
+- Deno version: (`deno version`)
+- Denon version: (`denon --version`)
 
 **Additional context**
 Add any other context about the problem here.

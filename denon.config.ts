@@ -4,7 +4,7 @@ const config: DenonConfig = {
   scripts: {
     test: [
       {
-        cmd: "deno fmt",
+        cmd: "deno fmt --check",
         desc: "format code",
       },
       {

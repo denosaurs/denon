@@ -1,4 +1,6 @@
-export const VERSION = "2.3.2";
+// Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
+
+export const VERSION = "2.3.3";
 export const BRANCH = "master";
 // export const COMPAT: { [denon: string]: string[] } = {
 //   "2.3.0": ["1.2.0"],

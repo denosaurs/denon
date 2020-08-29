@@ -8,38 +8,32 @@ import {
   readJson,
   resolve,
   globToRegExp,
+  log,
 } from "../deps.ts";
 
 import { WatcherConfig } from "./watcher.ts";
 import { RunnerConfig } from "./runner.ts";
-import log, { LogConfig } from "./log.ts";
 
 import { merge } from "./merge.ts";
 import { Args } from "./args.ts";
 import { Template } from "./templates.ts";
 
-const TS_CONFIG = "denon.config.ts";
-
 const logger = log.prefix("conf");
 
 /** Possible default configuration files. */
 export const configs = [
-  "denon",
   "denon.yaml",
   "denon.yml",
   "denon.json",
 
-  ".denon",
-  ".denon.yaml",
-  ".denon.yml",
-  ".denon.json",
+  "scripts.json",
+  "scripts.yml",
+  "scripts.yaml",
 
-  ".denonrc",
-  ".denonrc.yaml",
-  ".denonrc.yml",
-  ".denonrc.json",
-
-  TS_CONFIG,
+  "denon.config.ts",
+  "scripts.config.ts",
+  "denon.config.js",
+  "scripts.config.js",
 ];
 
 export const reConfig = new RegExp(
@@ -63,7 +57,6 @@ export type DenonConfig = RunnerConfig & Partial<CompleteDenonConfig>;
 export interface CompleteDenonConfig extends RunnerConfig {
   [key: string]: unknown;
   watcher: WatcherConfig;
-  logger: LogConfig;
   args?: Args;
   configPath: string;
 }
@@ -137,8 +130,8 @@ export async function readConfig(
   config.watcher.paths.push(Deno.cwd());
 
   if (file) {
-    if (file === TS_CONFIG) {
-      const parsed = await importConfig(TS_CONFIG);
+    if (file.endsWith("config.js") || file.endsWith("config.ts")) {
+      const parsed = await importConfig(file);
       if (parsed) {
         config = merge(
           config,
