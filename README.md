@@ -42,6 +42,14 @@ $ deno install --allow-read --allow-run --allow-write --allow-net -f -q --unstab
 
 > ⚠️ Make sure you are using `deno` version `^1.3.0` to install this executable. You can upgrade running `deno upgrade`.
 
+
+In case of a `command not found error` (on Linux) use the command
+```
+echo 'export PATH="$HOME/.deno/bin:$PATH"' >> ~/.bashrc
+```
+as mentioned in the [manual](https://deno.land/manual/tools/script_installer)
+
+
 ## Usage
 
 denon wraps your application, so you can pass all the arguments you would normally pass to your app:
