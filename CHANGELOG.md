@@ -5,8 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [2.3.4] - 2020-08-30
-
 ## [2.3.3] - 2020-08-29
 
 ### Features
