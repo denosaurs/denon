@@ -533,6 +533,21 @@ Huge thanks to all our amazing supporters :heart:
 
 ## Other
 
+### FAQ / Troubleshooting
+
+* `Command not found error`
+
+  This probably means that the executable path of your os does not include
+  the `.deno/bin` directory, where denon will be installed.
+
+  To fix this you must update your `$PATH`:
+
+  ```bash
+  echo 'export PATH="$HOME/.deno/bin:$PATH"' >> ~/.bashrc
+  ```
+
+  as mentioned in the [deno manual](https://deno.land/manual/tools/script_installer).
+
 ### Contribution
 
 Pull request, issues and feedback are very welcome. Code style is formatted with `deno fmt` and commit messages are done following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) spec.
