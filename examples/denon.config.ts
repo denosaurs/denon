@@ -1,14 +1,8 @@
-import { DenonConfig } from "https://deno.land/x/denon/mod.ts";
-import { config as env_config } from "https://deno.land/x/dotenv/mod.ts";
+import { DenonConfig } from "../src/config.ts";
 
 const config: DenonConfig = {
   scripts: {
-    simple: {
-      cmd: "simple.ts",
-      desc: "Run main app",
-      allow: ["env"],
-    },
-    oak: {
+    app: {
       cmd: "oak.ts",
       desc: "Run oak instance",
       allow: ["env", "net"],
@@ -16,15 +10,12 @@ const config: DenonConfig = {
         PORT: "9001",
       },
     },
+    simple: {
+      cmd: "simple.ts",
+      desc: "Run main app",
+      allow: ["env"],
+    },
   },
-  logger: {
-    debug: true,
-  },
-  watcher: {
-    exts: ["ts", "json", "ini"],
-    skip: ["super_duper_secret/*"],
-  },
-  env: env_config(),
 };
 
 export default config;
