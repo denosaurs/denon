@@ -14,6 +14,6 @@ app.use((ctx) => {
   ctx.response.body = "Hello Denon!";
 });
 
-console.log("Listening to", green(`:${PORT}`));
+console.log("Webserver listening to", green(`:${PORT}`));
 
 await app.listen({ port: PORT });
