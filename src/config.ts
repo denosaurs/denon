@@ -43,14 +43,6 @@ export const reConfig = new RegExp(
     .join("|"), // i know, right
 );
 
-/** The denon configuration format */
-// export interface DenonConfig extends RunnerConfig {
-//   [key: string]: any;
-//   watcher?: WatcherConfig;
-//   logger?: LogConfig;
-//   args?: Args;
-// }
-
 export type DenonConfig = RunnerConfig & Partial<CompleteDenonConfig>;
 
 /** Parameters are not optional */
