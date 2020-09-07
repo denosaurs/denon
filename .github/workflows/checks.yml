@@ -1,10 +1,6 @@
-name: CI check
+name: check
 
-on:
-  push:
-    branches: [master, dev]
-  pull_request:
-    branches: [master, dev]
+on: [push, pull_request]
 
 jobs:
   lint:
@@ -18,10 +14,10 @@ jobs:
         with:
           deno-version: v1.x
 
-      - name: Check deno fmt
+      - name: Run deno fmt
         run: deno fmt --check
 
-      - name: Check deno lint
+      - name: Run deno lint
         run: deno lint --unstable
 
   test:

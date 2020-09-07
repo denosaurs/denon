@@ -1,0 +1,21 @@
+name: depsbot
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 */2 * *"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Run depsbot
+        uses: denosaurs/depsbot@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
