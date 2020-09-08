@@ -121,6 +121,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
             logger.info("clean exit - waiting for changes before restart");
           } else {
             logger.info("clean exit - denon is exiting ...");
+            Deno.exit(0);
           }
         } else {
           if (options.watch) {
@@ -129,6 +130,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
             );
           } else {
             logger.error("app crashed - denon is exiting ...");
+            Deno.exit(1);
           }
         }
       }
