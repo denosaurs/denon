@@ -133,7 +133,9 @@ export async function upgrade(version?: string): Promise<void> {
 
 /** List all available scripts declared in the config file.
  * // TODO(@qu4k): make it interactive */
-export function printAvailableScripts(config: CompleteDenonConfig): void {
+export async function printAvailableScripts(
+  config: CompleteDenonConfig,
+): Promise<void> {
   if (Object.keys(config.scripts).length) {
     logger.info("available scripts:");
     const runner = new Runner(config);
@@ -174,6 +176,23 @@ export function printAvailableScripts(config: CompleteDenonConfig): void {
       );
     }
   }
+  const latest = await fetchLatestVersion();
+  if (latest && latest !== VERSION) {
+    logger.warning(`New version available (${latest}). Upgrade with \`${
+      blue(
+        "denon",
+      )
+    } ${yellow("--upgrade")}${reset("`.")}`);
+  }
+}
+
+export async function fetchLatestVersion(): Promise<string | undefined> {
+  const cdn = "https://cdn.deno.land/";
+  const url = `${cdn}denon/meta/versions.json`;
+  const res = await fetch(url);
+  if (res.status !== 200) return undefined;
+  const data = await res.json();
+  return data.latest;
 }
 
 /** Help message to be shown if `denon`

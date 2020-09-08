@@ -141,7 +141,7 @@ if (import.meta.main) {
 
   // show all available scripts.
   if (args.cmd.length === 0) {
-    printAvailableScripts(config);
+    await printAvailableScripts(config);
     Deno.exit(0);
   }
 
