@@ -1,0 +1,6 @@
+scripts:
+  test: 
+    - "deno fmt --check"
+    - "deno lint --unstable"
+    - "deno test --unstable -A"
+watch: false

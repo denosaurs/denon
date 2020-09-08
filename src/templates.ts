@@ -10,7 +10,7 @@ export interface Template {
 }
 
 const json: Template = {
-  filename: "denon.json",
+  filename: "scripts.json",
   source: String.raw`{
   "$schema": "https://deno.land/x/denon/schema.json",
   "scripts": {
@@ -23,7 +23,7 @@ const json: Template = {
 };
 
 const yaml: Template = {
-  filename: "denon.yml",
+  filename: "scripts.yml",
   source: String.raw`scripts:
   start:
     cmd: "deno run app.ts"
@@ -31,7 +31,7 @@ const yaml: Template = {
 };
 
 const typescript: Template = {
-  filename: "denon.config.ts",
+  filename: "scripts.config.ts",
   source: String.raw`
 import { DenonConfig } from "https://deno.land/x/denon@${VERSION}/mod.ts";
 
