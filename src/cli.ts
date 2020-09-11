@@ -22,7 +22,7 @@ import { Runner } from "./runner.ts";
 import { templates } from "./templates.ts";
 import { VERSION } from "../info.ts";
 
-const logger = log.prefix("main");
+const logger = log.create("main");
 
 /** These are the permissions required for a clean run
  * of `denon`. If not provided through installation they
@@ -178,11 +178,13 @@ export async function printAvailableScripts(
   }
   const latest = await fetchLatestVersion();
   if (latest && latest !== VERSION) {
-    logger.warning(`New version available (${latest}). Upgrade with \`${
-      blue(
-        "denon",
-      )
-    } ${yellow("--upgrade")}${reset("`.")}`);
+    logger.warning(
+      `New version available (${latest}). Upgrade with \`${
+        blue(
+          "denon",
+        )
+      } ${yellow("--upgrade")}${reset("`.")}`,
+    );
   }
 }
 

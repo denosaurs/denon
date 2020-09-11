@@ -2,7 +2,7 @@
 
 import { deferred, globToRegExp, log, relative, walk, delay } from "../deps.ts";
 
-const logger = log.prefix("path");
+const logger = log.create("path");
 
 /** Represents a change in the filesystem.
  * Should reflect the Deno.FsEvent. */

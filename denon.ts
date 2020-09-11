@@ -18,7 +18,7 @@ import { parseArgs } from "./src/args.ts";
 
 import { VERSION, BRANCH } from "./info.ts";
 
-const logger = log.prefix("main");
+const logger = log.create("main");
 
 /** Events you can listen to when creating a `denon`
  * instance as module:

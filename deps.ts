@@ -1,7 +1,7 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 // provide better logging, see src/log.ts
-export * as log from "https://deno.land/x/branch@0.0.3/mod.ts";
+export * as log from "https://deno.land/x/branch@0.1.0/mod.ts";
 
 // colors for a pretty cli
 export {

@@ -6,7 +6,7 @@ import { Denon, DenonEvent } from "../denon.ts";
 import { CompleteDenonConfig } from "./config.ts";
 import { ScriptOptions } from "./scripts.ts";
 
-const logger = log.prefix("daem");
+const logger = log.create("daem");
 
 /** Daemon instance.
  * Returned by Denon instance when
@@ -40,7 +40,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     // *sequentially*, the last process is named `main` and is the
     // one that will actually be demonized.
     for (let i = 0; i < commands.length; i++) {
-      const plog = log.prefix(`#${i}`);
+      const plog = log.create(`#${i}`);
       const command = commands[i];
       const options = command.options;
       const last = i === commands.length - 1;

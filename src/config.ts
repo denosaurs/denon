@@ -18,7 +18,7 @@ import { merge } from "./merge.ts";
 import { Args } from "./args.ts";
 import { Template } from "./templates.ts";
 
-const logger = log.prefix("conf");
+const logger = log.create("conf");
 
 /** Possible default configuration files. */
 export const configs = [
