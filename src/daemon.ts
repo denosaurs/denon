@@ -2,9 +2,9 @@
 
 import { log } from "../deps.ts";
 
-import { Denon, DenonEvent } from "../denon.ts";
-import { CompleteDenonConfig } from "./config.ts";
-import { ScriptOptions } from "./scripts.ts";
+import type { Denon, DenonEvent } from "../denon.ts";
+import type { CompleteDenonConfig } from "./config.ts";
+import type { ScriptOptions } from "./scripts.ts";
 
 const logger = log.create("daem");
 

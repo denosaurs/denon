@@ -5,18 +5,17 @@ import {
   extname,
   JSON_SCHEMA,
   parseYaml,
-  readJson,
   resolve,
   globToRegExp,
   log,
 } from "../deps.ts";
 
-import { WatcherConfig } from "./watcher.ts";
-import { RunnerConfig } from "./runner.ts";
+import type { Args } from "./args.ts";
+import type { RunnerConfig } from "./runner.ts";
+import type { Template } from "./templates.ts";
+import type { WatcherConfig } from "./watcher.ts";
 
 import { merge } from "./merge.ts";
-import { Args } from "./args.ts";
-import { Template } from "./templates.ts";
 
 const logger = log.create("conf");
 
@@ -77,11 +76,19 @@ async function readYaml(file: string): Promise<unknown> {
   });
 }
 
+/** Read JSON config, throws if JSON format is not valid */
+async function readJson(file: string): Promise<unknown> {
+  const source = await Deno.readTextFile(file);
+  return JSON.parse(source);
+}
+
+
 /** Safe import a TypeScript file */
 async function importConfig(
   file: string,
 ): Promise<Partial<DenonConfig> | undefined> {
   try {
+    // deno-lint-ignore no-undef
     const configRaw = await import(`file://${resolve(file)}`);
     return configRaw.default as Partial<DenonConfig>;
   } catch (error) {
