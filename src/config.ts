@@ -82,7 +82,6 @@ async function readJson(file: string): Promise<unknown> {
   return JSON.parse(source);
 }
 
-
 /** Safe import a TypeScript file */
 async function importConfig(
   file: string,
