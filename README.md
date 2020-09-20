@@ -34,16 +34,16 @@ Denon provides most of the features you would expect of a file watcher and more.
 
 To install denon simply enter the following into a terminal:
 
-#### deno.land
+### deno.land
 
 ```bash
-$ deno install --allow-read --allow-run --allow-write --allow-net -f -q --unstable https://deno.land/x/denon@2.4.0/denon.ts
+deno install -qAf --unstable https://deno.land/x/denon@2.4.0/denon.ts
 ```
 
-#### nest.land
+### nest.land
 
 ```bash
-$ deno install --allow-read --allow-run --allow-write --allow-net -f -q --unstable https://x.nest.land/denon@2.4.0/denon.ts
+deno install -qAf --unstable https://x.nest.land/denon@2.4.0/denon.ts
 ```
 
 > ⚠️ Make sure you are using `deno` version `^1.3.0` to install this executable. You can upgrade running `deno upgrade`.
@@ -53,58 +53,37 @@ $ deno install --allow-read --allow-run --allow-write --allow-net -f -q --unstab
 denon wraps your application, so you can pass all the arguments you would normally pass to your app:
 
 ```bash
-$ denon run app.ts
+denon run app.ts
 ```
 
 you can pass arguments to deno:
 
 ```bash
-$ denon run --allow-env app.ts
+denon run --allow-env app.ts
 ```
 
 and even to your application:
 
 ```bash
-$ denon run --allow-env app.ts --arg-for-my-app
+denon run --allow-env app.ts --arg-for-my-app
 ```
 
 you can run scripts declared in config:
 
 ```bash
-$ denon [script name]
+denon [script name]
 ```
 
 and you can see which scripts are available in your config:
 
 ```bash
-$ denon
+denon
 ```
 
 to see what else you can do with deno CLI use the help flag:
 
 ```bash
-$ denon --help
-```
-
-## Autocompletion
-
-In **zsh**, you can install autocompletion with:
-
-```bash
-echo '. <(denon --completion)' >> ~/.zshrc
-```
-
-In **bash**:
-
-```bash
-denon --completion >> ~/.config/denon.completion.sh
-echo 'source ~/.config/denon.completion.sh' >> ~/.bash_profile
-```
-
-In **fish**:
-
-```bash
-echo 'denon --completion-fish | source' >> ~/.config/fish/config.fish
+denon --help
 ```
 
 ## Configuration
@@ -114,10 +93,10 @@ denon is designed to be simple but also extremely configurable to fit your proje
 to create a basic configuration in the root directory of your project file you can run:
 
 ```bash
-$ denon --init
+denon --init
 ```
 
-this will create a basic `denon.json` file:
+this will create a basic `scripts.json` file:
 
 ```jsonc
 {
@@ -131,10 +110,10 @@ you can also initialize from a custom template
 (see [templates/](https://github.com/denosaurs/denon/tree/master/templates) folder for all the available templates)
 
 ```bash
-$ denon --init typescript
+denon --init typescript
 ```
 
-### JSON config (`denon.json` template)
+### JSON config (`scripts.json` template)
 
 Denon configuration can be provided as a JSON file:
 
@@ -165,7 +144,7 @@ You can use a JSON schema to have type checking on your configuration. Simply ad
 }
 ```
 
-### YAML Configuration (`denon.yml` template)
+### YAML Configuration (`scripts.yml` template)
 
 Denon configuration can be provided as a YAML file:
 
@@ -176,7 +155,7 @@ scripts:
     desc: "run my app.ts file"
 ```
 
-### Typescript config (`denon.config.ts` template)
+### Typescript config (`scripts.config.ts` template)
 
 Denon configuration can be provided as a `.config.ts` file:
 

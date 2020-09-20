@@ -1,6 +1,7 @@
 # ide
 .idea
 .vscode
+workspace.code-workspace
 
 # testing directory
 testing/
