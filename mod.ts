@@ -4,4 +4,5 @@ export * from "./denon.ts";
 export * from "./src/watcher.ts";
 export * from "./src/runner.ts";
 
-export { DenonConfig, DEFAULT_DENON_CONFIG } from "./src/config.ts";
+export { DEFAULT_DENON_CONFIG } from "./src/config.ts";
+export type { DenonConfig } from "./src/config.ts";

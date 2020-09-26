@@ -180,7 +180,7 @@ scripts:
 Denon configuration can be provided as a `.config.ts` file:
 
 ```typescript
-import { DenonConfig } from "https://deno.land/x/denon/mod.ts";
+import type { DenonConfig } from "https://deno.land/x/denon/mod.ts";
 
 const config: DenonConfig = {
   scripts: {
