@@ -127,7 +127,7 @@ this will create a basic `scripts.json` file:
 ```
 
 you can also initialize from a custom template
-(see [templates/](https://github.com/denosaurs/denon/tree/master/templates) folder for all the available templates)
+(see [src/templates.ts](https://github.com/denosaurs/denon/tree/master/src/templates.ts) file for all the available templates)
 
 ```bash
 denon --init typescript
