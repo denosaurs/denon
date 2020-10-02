@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.4.1] - 2020-10-02
+
+### Bug Fixes
+
+- typescript export notation for DenonConfig ([`7858474`])
+
 ## [2.4.0] - 2020-09-14
 
 ### Features
@@ -189,6 +195,8 @@ and this project adheres to [Semantic Versioning].
 
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
+[2.4.1]: https://github.com/denosaurs/denon/compare/2.4.0...2.4.1
+[`7858474`]: https://github.com/denosaurs/denon/commit/7858474659aaf09dda0b86e21895b2ea80cc7c63
 [2.4.0]: https://github.com/denosaurs/denon/compare/2.3.3...2.4.0
 [`6146dec`]: https://github.com/denosaurs/denon/commit/6146dec3adf701dde3e6479ce5d808f3aff53c77
 [`7c1e3e4`]: https://github.com/denosaurs/denon/commit/7c1e3e48c4bff1beaf965dd8dc61f29383b2414d
