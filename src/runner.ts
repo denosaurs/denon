@@ -159,6 +159,11 @@ export class Runner {
   /** Create an `Execution` object to handle the lifetime
    * of the process that is executed. */
   execute(command: Command): Deno.Process {
+    // Fix for #102
+    if (Deno.build.os === "windows") {
+      command.cmd = ["cmd", "/c"].concat(command.cmd);
+    }
+
     const options = {
       cmd: command.cmd,
       env: command.options.env ?? {},
