@@ -1,21 +1,21 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 import {
-  yellow,
-  bold,
-  gray,
   blue,
+  bold,
+  exists,
+  grant,
+  gray,
+  log,
   reset,
   setColorEnabled,
-  grant,
-  exists,
-  log,
+  yellow,
 } from "../deps.ts";
 
 import {
-  writeConfigTemplate,
-  getConfigFilename,
   CompleteDenonConfig,
+  getConfigFilename,
+  writeConfigTemplate,
 } from "./config.ts";
 import { Runner } from "./runner.ts";
 

@@ -5,15 +5,15 @@ export * as log from "https://deno.land/x/branch@0.1.2/mod.ts";
 
 // colors for a pretty cli
 export {
-  setColorEnabled,
-  reset,
-  bold,
   blue,
+  bold,
+  gray,
   green,
-  yellow,
   italic,
   red,
-  gray,
+  reset,
+  setColorEnabled,
+  yellow,
 } from "https://deno.land/std@0.74.0/fmt/colors.ts";
 
 // configuration reading
@@ -31,11 +31,11 @@ export {
 
 // file watching and directory matching
 export {
-  relative,
   dirname,
   extname,
-  resolve,
   globToRegExp,
+  relative,
+  resolve,
 } from "https://deno.land/std@0.74.0/path/mod.ts";
 
 // event control

@@ -71,7 +71,7 @@ export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
   logger: {
     quiet: false,
     debug: false,
-    fullscreen: false
+    fullscreen: false,
   },
   configPath: "",
 };
