@@ -110,10 +110,24 @@ function cleanConfig(
   config: Partial<DenonConfig>,
   file?: string,
 ): Partial<DenonConfig> {
-  if (config.watcher && config.watcher.exts) {
-    config.watcher.exts = config.watcher.exts.map((_) =>
-      _.startsWith(".") ? _.substr(0) : _
-    );
+  if (config.watcher) {
+    if (config.watcher.exts) {
+      config.watcher.exts = config.watcher.exts.map((_) =>
+        _.startsWith(".") ? _.substr(1) : _
+      );
+    }
+
+    if (config.watcher.skip) {
+      config.watcher.skip = config.watcher.skip.map((_) =>
+        _.startsWith("./") ? _.substr(2) : _
+      );
+    }
+
+    if (config.watcher.match) {
+      config.watcher.match = config.watcher.match.map((_) =>
+        _.startsWith("./") ? _.substr(2) : _
+      );
+    }
   }
   if (file) {
     config.configPath = resolve(file);
