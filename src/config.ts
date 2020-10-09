@@ -96,7 +96,6 @@ async function importConfig(
   file: string,
 ): Promise<Partial<DenonConfig> | undefined> {
   try {
-    // deno-lint-ignore no-undef
     const configRaw = await import(`file://${resolve(file)}`);
     return configRaw.default as Partial<DenonConfig>;
   } catch (error) {

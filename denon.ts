@@ -24,7 +24,7 @@ const logger = log.create("main");
  * instance as module:
  * ```typescript
  * const denon = new Denon(config);
- * for await (let event of denon.run(script)) {
+ * for await (const event of denon.run(script)) {
  *   // event handling here
  * }
  * ``` */
@@ -161,7 +161,7 @@ if (import.meta.main) {
   const denon = new Denon(config);
 
   // TODO(@qu4k): events
-  for await (let event of denon.run(script)) {
+  for await (const event of denon.run(script)) {
     if (event.type === "reload") {
       if (
         event.change.some(

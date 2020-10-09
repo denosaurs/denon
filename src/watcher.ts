@@ -167,7 +167,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
 
     const walkPaths = async () => {
       const tree: { [path: string]: Date | null } = {};
-      for (let i in this.#paths) {
+      for (const i in this.#paths) {
         const action = walk(this.#paths[i], {
           maxDepth: Infinity,
           includeDirs: false,

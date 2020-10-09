@@ -53,7 +53,7 @@ export const PERMISSION_OPTIONAL: {
 
 export async function grantPermissions(): Promise<void> {
   // @see PERMISSIONS .
-  let permissions = await grant([...PERMISSIONS]);
+  const permissions = await grant([...PERMISSIONS]);
   if (!permissions || permissions.length < PERMISSIONS.length) {
     logger.critical("Required permissions `read` and `run` not granted");
     Deno.exit(1);
@@ -62,7 +62,7 @@ export async function grantPermissions(): Promise<void> {
 /** Create configuration file in the root of current work directory.
  * // TODO: make it interactive */
 export async function initializeConfig(type = "json"): Promise<void> {
-  let permissions = await grant(PERMISSION_OPTIONAL.initializeConfig);
+  const permissions = await grant(PERMISSION_OPTIONAL.initializeConfig);
   if (
     !permissions ||
     permissions.length < PERMISSION_OPTIONAL.initializeConfig.length
@@ -146,7 +146,7 @@ export async function printAvailableScripts(
         console.log(`   ${script.desc}`);
       }
 
-      let commands = runner
+      const commands = runner
         .build(name)
         .map((command) => command.cmd.join(" "))
         .join(bold(" && "));
