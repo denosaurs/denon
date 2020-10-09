@@ -1,0 +1,15 @@
+{
+  "$schema": "https://deno.land/x/denon/schema.json",
+  "scripts": {
+    "start": {
+      "cmd": "deno run ./main.ts"
+    }
+  },
+  "watcher": {
+    "match": ["src/**/*.ts", "./main.ts"]
+  },
+  "logger": {
+    "debug": true,
+    "fullscreen": true
+  }
+}
