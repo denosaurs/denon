@@ -3,11 +3,11 @@
 import {
   existsSync,
   extname,
+  globToRegExp,
   JSON_SCHEMA,
+  log,
   parseYaml,
   resolve,
-  globToRegExp,
-  log,
 } from "../deps.ts";
 
 import type { Args } from "./args.ts";
@@ -49,6 +49,11 @@ export interface CompleteDenonConfig extends RunnerConfig {
   [key: string]: unknown;
   watcher: WatcherConfig;
   args?: Args;
+  logger: {
+    quiet: boolean;
+    debug: boolean;
+    fullscreen: boolean;
+  };
   configPath: string;
 }
 
@@ -63,7 +68,11 @@ export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
     skip: ["**/.git/**"],
   },
   watch: true,
-  logger: {},
+  logger: {
+    quiet: false,
+    debug: false,
+    fullscreen: false
+  },
   configPath: "",
 };
 

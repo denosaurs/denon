@@ -28,6 +28,10 @@ export class Daemon implements AsyncIterable<DenonEvent> {
   private async reload(): Promise<void> {
     logger.info("restarting due to changes...");
 
+    if (this.#config.logger.fullscreen) {
+      console.clear();
+    }
+
     this.killAll();
 
     await this.start();
