@@ -104,7 +104,7 @@ export interface ScriptOptions {
 /** Build deno flags from ScriptOptions.
  * `{ allow: [ run, env ]}` -> `[--allow-run, --allow-env]` */
 export function buildFlags(options: ScriptOptions): string[] {
-  let flags: string[] = [];
+  const flags: string[] = [];
   if (options.allow) {
     if (Array.isArray(options.allow)) {
       options.allow.forEach((flag) => flags.push(`--allow-${flag}`));

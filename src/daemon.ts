@@ -28,6 +28,10 @@ export class Daemon implements AsyncIterable<DenonEvent> {
   private async reload(): Promise<void> {
     logger.info("restarting due to changes...");
 
+    if (this.#config.logger.fullscreen) {
+      console.clear();
+    }
+
     this.killAll();
 
     await this.start();
@@ -59,7 +63,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         plog.info(`starting sequential \`${command.cmd.join(" ")}\``);
       }
 
-      let process = command.exe();
+      const process = command.exe();
       plog.debug(`starting process with pid ${process.pid}`);
 
       if (last) {
@@ -79,9 +83,9 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       `killing ${Object.keys(this.#processes).length} orphan process[es]`,
     );
     // kill all processes spawned
-    let pcopy = Object.assign({}, this.#processes);
+    const pcopy = Object.assign({}, this.#processes);
     this.#processes = {};
-    for (let id in pcopy) {
+    for (const id in pcopy) {
       const p = pcopy[id];
       if (Deno.build.os === "windows") {
         logger.debug(`closing (windows) process with pid ${p.pid}`);
@@ -107,7 +111,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     } catch (error) {
       logger.debug(`error getting status of process with pid ${process.pid}`);
     }
-    let p = this.#processes[pid];
+    const p = this.#processes[pid];
     if (p) {
       logger.debug(`process with pid ${process.pid} exited on its own`);
       // process exited on its own, so we should wait a reload

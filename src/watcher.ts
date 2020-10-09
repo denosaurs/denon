@@ -1,6 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { deferred, globToRegExp, log, relative, walk, delay } from "../deps.ts";
+import { deferred, delay, globToRegExp, log, relative, walk } from "../deps.ts";
 
 const logger = log.create("path");
 
@@ -78,22 +78,27 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
   isWatched(path: string): boolean {
     path = this.verifyPath(path);
     logger.debug(`trying to match ${path}`);
+
     if (this.#exts?.length && this.#exts?.every((ext) => !path.endsWith(ext))) {
       logger.debug(`path ${path} does not have right extension`);
       return false;
-    } else if (
+    }
+
+    if (
       this.#skip?.length &&
       this.#skip?.some((skip) => path.match(skip))
     ) {
       logger.debug(`path ${path} is skipped`);
       return false;
-    } else if (
-      this.#match?.length &&
-      this.#match?.every((match) => !path.match(match))
+    }
+
+    if (
+      this.#match?.length && this.#match?.every((match) => !path.match(match))
     ) {
       logger.debug(`path ${path} is not matched`);
       return false;
     }
+
     logger.debug(`path ${path} is matched`);
     return true;
   }
@@ -164,7 +169,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
 
     const walkPaths = async () => {
       const tree: { [path: string]: Date | null } = {};
-      for (let i in this.#paths) {
+      for (const i in this.#paths) {
         const action = walk(this.#paths[i], {
           maxDepth: Infinity,
           includeDirs: false,

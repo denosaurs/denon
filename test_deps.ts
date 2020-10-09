@@ -2,6 +2,6 @@
 
 // *_test.ts files
 export {
-  assertEquals,
   assert,
-} from "https://deno.land/std@0.71.0/testing/asserts.ts";
+  assertEquals,
+} from "https://deno.land/std@0.74.0/testing/asserts.ts";

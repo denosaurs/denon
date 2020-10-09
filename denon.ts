@@ -2,21 +2,21 @@
 
 import { log } from "./deps.ts";
 
-import { Watcher, FileEvent } from "./src/watcher.ts";
+import { FileEvent, Watcher } from "./src/watcher.ts";
 import { Runner } from "./src/runner.ts";
 import { Daemon } from "./src/daemon.ts";
 
 import {
+  grantPermissions,
+  initializeConfig,
   printAvailableScripts,
   printHelp,
-  initializeConfig,
-  grantPermissions,
   upgrade,
 } from "./src/cli.ts";
-import { readConfig, CompleteDenonConfig, reConfig } from "./src/config.ts";
+import { CompleteDenonConfig, readConfig, reConfig } from "./src/config.ts";
 import { parseArgs } from "./src/args.ts";
 
-import { VERSION, BRANCH } from "./info.ts";
+import { BRANCH, VERSION } from "./info.ts";
 
 const logger = log.create("main");
 
@@ -24,7 +24,7 @@ const logger = log.create("main");
  * instance as module:
  * ```typescript
  * const denon = new Denon(config);
- * for await (let event of denon.run(script)) {
+ * for await (const event of denon.run(script)) {
  *   // event handling here
  * }
  * ``` */
@@ -122,6 +122,8 @@ if (import.meta.main) {
 
   let config = await readConfig(args.config);
 
+  await log.setup({ filter: config.logger.debug ? "DEBUG" : "INFO" });
+
   // autocomplete(config);
 
   config.args = args;
@@ -159,7 +161,7 @@ if (import.meta.main) {
   const denon = new Denon(config);
 
   // TODO(@qu4k): events
-  for await (let event of denon.run(script)) {
+  for await (const event of denon.run(script)) {
     if (event.type === "reload") {
       if (
         event.change.some(

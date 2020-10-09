@@ -1,6 +1,6 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
-import { RunnerConfig, Runner } from "./runner.ts";
+import { Runner, RunnerConfig } from "./runner.ts";
 import { assertEquals } from "../test_deps.ts";
 
 Deno.test({

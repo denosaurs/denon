@@ -69,7 +69,7 @@ export class Runner {
     args: string[],
   ): Command[] {
     if (typeof script === "object") {
-      let options = Object.assign({}, merge(global, script));
+      const options = Object.assign({}, merge(global, script));
       return this.buildStringCommands(script.cmd, options, args);
     }
 
@@ -82,7 +82,7 @@ export class Runner {
     args: string[],
   ): Command[] {
     if (script.includes("&&")) {
-      let commands: Command[] = [];
+      const commands: Command[] = [];
       script.split("&&").map((s) => {
         commands.push(this.buildCommand(s, global, args));
       });
@@ -99,7 +99,7 @@ export class Runner {
   ): Command {
     let out: string[] = [];
     cmd = stdCmd(cmd).join(" ");
-    let denoAction = reDenoAction.exec(cmd);
+    const denoAction = reDenoAction.exec(cmd);
     if (denoAction && denoAction.length === 3) {
       const action = denoAction[1];
       const args = denoAction[2];
@@ -141,7 +141,7 @@ export class Runner {
       }
     }
 
-    let args = this.#args.slice(1);
+    const args = this.#args.slice(1);
 
     let commands: Command[] = [];
 

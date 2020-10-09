@@ -3,11 +3,11 @@
 import {
   existsSync,
   extname,
+  globToRegExp,
   JSON_SCHEMA,
+  log,
   parseYaml,
   resolve,
-  globToRegExp,
-  log,
 } from "../deps.ts";
 
 import type { Args } from "./args.ts";
@@ -49,6 +49,11 @@ export interface CompleteDenonConfig extends RunnerConfig {
   [key: string]: unknown;
   watcher: WatcherConfig;
   args?: Args;
+  logger: {
+    quiet: boolean;
+    debug: boolean;
+    fullscreen: boolean;
+  };
   configPath: string;
 }
 
@@ -63,7 +68,11 @@ export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
     skip: ["**/.git/**"],
   },
   watch: true,
-  logger: {},
+  logger: {
+    quiet: false,
+    debug: false,
+    fullscreen: false,
+  },
   configPath: "",
 };
 
@@ -87,7 +96,6 @@ async function importConfig(
   file: string,
 ): Promise<Partial<DenonConfig> | undefined> {
   try {
-    // deno-lint-ignore no-undef
     const configRaw = await import(`file://${resolve(file)}`);
     return configRaw.default as Partial<DenonConfig>;
   } catch (error) {
@@ -101,10 +109,24 @@ function cleanConfig(
   config: Partial<DenonConfig>,
   file?: string,
 ): Partial<DenonConfig> {
-  if (config.watcher && config.watcher.exts) {
-    config.watcher.exts = config.watcher.exts.map((_) =>
-      _.startsWith(".") ? _.substr(0) : _
-    );
+  if (config.watcher) {
+    if (config.watcher.exts) {
+      config.watcher.exts = config.watcher.exts.map((_) =>
+        _.startsWith(".") ? _.substr(1) : _
+      );
+    }
+
+    if (config.watcher.skip) {
+      config.watcher.skip = config.watcher.skip.map((_) =>
+        _.startsWith("./") ? _.substr(2) : _
+      );
+    }
+
+    if (config.watcher.match) {
+      config.watcher.match = config.watcher.match.map((_) =>
+        _.startsWith("./") ? _.substr(2) : _
+      );
+    }
   }
   if (file) {
     config.configPath = resolve(file);
