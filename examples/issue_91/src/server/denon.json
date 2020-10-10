@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "start": {
+      "cmd": "deno run app.ts",
+      "desc": "Run the server.",
+      "allow": [
+        "env",
+        "net",
+        "read",
+        "run"
+      ]
+    }
+  },
+  "watcher": {
+    "interval": 350,
+    "exts": ["js", "ts", "json"],
+    "match": ["*.*"],
+    "legacy": false
+  },
+  "logger": {
+    "fullscreen": false,
+    "quiet": false,
+    "debug": true
+  }
+}

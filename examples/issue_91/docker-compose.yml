@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  server:
+    container_name: my_server
+    build:
+      context: ../../
+      dockerfile: examples/issue_91/.docker/deno.dockerfile
+    volumes:
+      - ./src/server:/var/www/server
+    working_dir: /var/www/server
+    ports:
+      - "1667:1667"
+    command: bash -c "/root/.deno/bin/denon start"
+    networks:
+      - my-app-network
+
+networks:
+  my-app-network:
+    driver: bridge
