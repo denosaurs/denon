@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.4.2] - 2020-10-10
+
+### Features
+
+- re-add quiet config option ([`10b5669`])
+- issue_91 example ([`9e81f99`])
+- re-add logger config ([`17e609d`])
+- new example for testing with issue #101 ([`5ceb849`])
+
+### Bug Fixes
+
+- merge pr #106 ([`c1f2b85`])
+- solve lint issues ([`5afb34d`])
+- correctly clean watcher config ([`475ddf6`])
+- patch #102 ([`9f1bf13`])
+
 ## [2.4.1] - 2020-10-02
 
 ### Bug Fixes
@@ -195,6 +211,15 @@ and this project adheres to [Semantic Versioning].
 
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
+[2.4.2]: https://github.com/denosaurs/denon/compare/2.4.1...2.4.2
+[`10b5669`]: https://github.com/denosaurs/denon/commit/10b566920d760f30e852916c0465ea05003f3102
+[`9e81f99`]: https://github.com/denosaurs/denon/commit/9e81f99d6318e8ce38673583d49a50a9c6dbb3d2
+[`17e609d`]: https://github.com/denosaurs/denon/commit/17e609dbc4d8696e7e3c26275bf860072914d9a1
+[`5ceb849`]: https://github.com/denosaurs/denon/commit/5ceb8490c7a0f9787abf9c32c22fc9bd77e557e5
+[`c1f2b85`]: https://github.com/denosaurs/denon/commit/c1f2b857f358de9fab55e21e8837761fd52f3d4c
+[`5afb34d`]: https://github.com/denosaurs/denon/commit/5afb34dc9af4def36ed1c4642a59fa4dd4fa6991
+[`475ddf6`]: https://github.com/denosaurs/denon/commit/475ddf6ea75e2aec0ed77fb72485724eac12de98
+[`9f1bf13`]: https://github.com/denosaurs/denon/commit/9f1bf13d16ba94050ec4cd7e158a4576e1a48966
 [2.4.1]: https://github.com/denosaurs/denon/compare/2.4.0...2.4.1
 [`7858474`]: https://github.com/denosaurs/denon/commit/7858474659aaf09dda0b86e21895b2ea80cc7c63
 [2.4.0]: https://github.com/denosaurs/denon/compare/2.3.3...2.4.0
