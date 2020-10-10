@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.4.4] - 2020-10-10
+
+### Bug Fixes
+
+- branch detection ([`c78788f`])
+
+## [2.4.3] - 2020-10-10
+
 ## [2.4.2] - 2020-10-10
 
 ### Features
@@ -19,12 +27,12 @@ and this project adheres to [Semantic Versioning].
 - merge pr #106 ([`c1f2b85`])
 - solve lint issues ([`5afb34d`])
 - correctly clean watcher config ([`475ddf6`])
-- patch #102 ([`9f1bf13`])
 
 ## [2.4.1] - 2020-10-02
 
 ### Bug Fixes
 
+- patch #102 ([`9f1bf13`])
 - typescript export notation for DenonConfig ([`7858474`])
 
 ## [2.4.0] - 2020-09-14
@@ -211,6 +219,9 @@ and this project adheres to [Semantic Versioning].
 
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
+[2.4.4]: https://github.com/denosaurs/denon/compare/2.4.3...2.4.4
+[`c78788f`]: https://github.com/denosaurs/denon/commit/c78788f2611bbfd2e31b2d6b2417d14c34d435d3
+[2.4.3]: https://github.com/denosaurs/denon/compare/2.4.2...2.4.3
 [2.4.2]: https://github.com/denosaurs/denon/compare/2.4.1...2.4.2
 [`10b5669`]: https://github.com/denosaurs/denon/commit/10b566920d760f30e852916c0465ea05003f3102
 [`9e81f99`]: https://github.com/denosaurs/denon/commit/9e81f99d6318e8ce38673583d49a50a9c6dbb3d2
@@ -219,8 +230,8 @@ and this project adheres to [Semantic Versioning].
 [`c1f2b85`]: https://github.com/denosaurs/denon/commit/c1f2b857f358de9fab55e21e8837761fd52f3d4c
 [`5afb34d`]: https://github.com/denosaurs/denon/commit/5afb34dc9af4def36ed1c4642a59fa4dd4fa6991
 [`475ddf6`]: https://github.com/denosaurs/denon/commit/475ddf6ea75e2aec0ed77fb72485724eac12de98
-[`9f1bf13`]: https://github.com/denosaurs/denon/commit/9f1bf13d16ba94050ec4cd7e158a4576e1a48966
 [2.4.1]: https://github.com/denosaurs/denon/compare/2.4.0...2.4.1
+[`9f1bf13`]: https://github.com/denosaurs/denon/commit/9f1bf13d16ba94050ec4cd7e158a4576e1a48966
 [`7858474`]: https://github.com/denosaurs/denon/commit/7858474659aaf09dda0b86e21895b2ea80cc7c63
 [2.4.0]: https://github.com/denosaurs/denon/compare/2.3.3...2.4.0
 [`6146dec`]: https://github.com/denosaurs/denon/commit/6146dec3adf701dde3e6479ce5d808f3aff53c77
