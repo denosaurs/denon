@@ -13,9 +13,10 @@
     "./info.ts",
     "./scripts.yml",
     "./mod.ts",
-    "./src/**/*"
+    "./src/**/*",
+    "./mod.ts"
   ],
   "ignore": [],
-  "entry": "./mod.ts",
+  "entry": "/mod.ts",
   "checkAll": true
 }
