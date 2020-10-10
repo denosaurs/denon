@@ -87,17 +87,7 @@ export class Denon {
  * example on how the library could be used if
  * included as a module. */
 if (import.meta.main) {
-  await log.setup({ filter: "INFO" });
-
   const args = parseArgs(Deno.args);
-
-  // show version number.
-  if (BRANCH !== "master") {
-    logger.info(`v${VERSION}-${BRANCH}`);
-  } else {
-    logger.info(`v${VERSION}`);
-  }
-  if (args.version) Deno.exit(0);
 
   // check compatibility
   // if (!COMPAT[VERSION].includes(Deno.version.deno) && !args.upgrade) {
@@ -114,19 +104,32 @@ if (import.meta.main) {
 
   await grantPermissions();
 
+  let config = await readConfig(args.config);
+  config.args = args;
+
+  await log.setup(
+    {
+      filter: config.logger.quiet
+        ? "ERROR"
+        : config.logger.debug
+        ? "DEBUG"
+        : "INFO",
+    },
+  );
+
+  // show version number.
+  if (BRANCH !== "master") {
+    logger.info(`v${VERSION}-${BRANCH}`);
+  } else {
+    logger.info(`v${VERSION}`);
+  }
+  if (args.version) Deno.exit(0);
+
   // update denon to latest release
   if (args.upgrade) {
     await upgrade(args.upgrade);
     Deno.exit(0);
   }
-
-  let config = await readConfig(args.config);
-
-  await log.setup({ filter: config.logger.debug ? "DEBUG" : "INFO" });
-
-  // autocomplete(config);
-
-  config.args = args;
 
   // show help message.
   if (args.help) {
