@@ -118,7 +118,7 @@ if (import.meta.main) {
   );
 
   // show version number.
-  if (BRANCH !== "master") {
+  if (BRANCH !== "main") {
     logger.info(`v${VERSION}-${BRANCH}`);
   } else {
     logger.info(`v${VERSION}`);

@@ -1,5 +1,5 @@
 {"version": 2, "width": 61, "height": 58, "timestamp": 1598897156, "env": {"SHELL": "/bin/zsh", "TERM": "xterm-256color"}}
-[0.100668, "o", "\u001b[34m[*]\u001b[39m \u001b[90m[\u001b[3mmain\u001b[23m]\u001b[39m \u001b[0mv2.4.0\u001b[0m\r\n"]
+[0.100668, "o", "\u001b[34m[*]\u001b[39m \u001b[90m[\u001b[3mmain\u001b[23m]\u001b[39m \u001b[0mv2.4.4\u001b[0m\r\n"]
 [0.151823, "o", "\u001b[34m[*]\u001b[39m \u001b[90m[\u001b[3mdaem\u001b[23m]\u001b[39m \u001b[0mwatching path(s): *.*\u001b[0m\r\n\u001b[34m[*]\u001b[39m \u001b[90m[\u001b[3mdaem\u001b[23m]\u001b[39m \u001b[0mwatching extensions: ts,tsx,js,jsx,json\u001b[0m\r\n"]
 [0.151927, "o", "\u001b[33m[!]\u001b[39m \u001b[90m[\u001b[3m#0\u001b[23m]\u001b[39m \u001b[0mstarting `deno run --allow-env --allow-net oak.ts`\u001b[0m\r\n"]
 [0.267581, "o", "Webserver listening to \u001b[32m:9001\u001b[39m\r\n"]

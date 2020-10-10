@@ -1,10 +1,9 @@
 {
   "name": "denon",
-  "description": "Monitor any changes in you Deno application and automatically restart.",
+  "description": "👀 Monitor any changes in you Deno application and automatically restart.",
   "repository": "https://github.com/denosaurs/denon.git",
-  "stable": true,
   "unlisted": false,
-  "version": "2.4.0",
+  "version": "2.4.4",
   "files": [
     "./assets/**/*",
     "./README.md",
@@ -12,9 +11,11 @@
     "./test_deps.ts",
     "./denon.ts",
     "./info.ts",
-    "./denon.config.ts",
+    "./scripts.yml",
     "./mod.ts",
-    "./templates/**/*",
     "./src/**/*"
-  ]
+  ],
+  "ignore": [],
+  "entry": "./mod.ts",
+  "checkAll": true
 }
