@@ -14,7 +14,7 @@
   "watcher": {
     "interval": 350,
     "exts": ["js", "ts", "json"],
-    "match": ["*.*"],
+    "match": ["**/*.*"],
     "legacy": false
   },
   "logger": {

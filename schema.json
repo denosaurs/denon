@@ -199,7 +199,7 @@
           "items": {
             "type": "string"
           },
-          "default": ["*.*"]
+          "default": ["**/*.*"]
         },
         "skip": {
           "description": "The globs that the watcher will skip.",

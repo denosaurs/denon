@@ -64,7 +64,7 @@ export const DEFAULT_DENON_CONFIG: CompleteDenonConfig = {
     interval: 350,
     paths: [],
     exts: ["ts", "tsx", "js", "jsx", "json"],
-    match: ["*.*"],
+    match: ["**/*.*"],
     skip: ["**/.git/**"],
   },
   watch: true,

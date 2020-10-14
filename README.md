@@ -490,7 +490,7 @@ File watcher options:
     // The file extensions that it will scan for.
     "exts": ["js", "jsx", "ts", "tsx", "json"],
     // The globs that it will scan for.
-    "match": ["*.*"],
+    "match": ["**/*.*"],
     // The globs that it will not scan for.
     "skip": ["*/.git/*"],
     // Use the legacy file monitoring algorithm. (walking)
