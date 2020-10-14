@@ -92,7 +92,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         p.close();
       } else {
         logger.debug(`killing (unix) process with pid ${p.pid}`);
-        Deno.kill(p.pid, Deno.Signal.SIGKILL);
+        p.kill(9);
       }
     }
   }

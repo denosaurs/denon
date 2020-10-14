@@ -97,10 +97,10 @@ export async function upgrade(version?: string): Promise<void> {
   }
 
   logger.info(
-    `Running \`deno install -qAf --unstable ${url}\``,
+    `Running \`deno install -qAfr --unstable ${url}\``,
   );
   await Deno.run({
-    cmd: ["deno", "install", "-qAf", "--unstable", url],
+    cmd: ["deno", "install", "-qAfr", "--unstable", url],
     stdout: undefined,
   }).status();
   Deno.exit(0);
