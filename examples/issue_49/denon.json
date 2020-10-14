@@ -1,0 +1,11 @@
+{
+  "$schema": "https://deno.land/x/denon/schema.json",
+  "scripts": {
+    "start": {
+      "cmd": "deno run -A ./main.ts"
+    }
+  },
+  "logger": {
+    "debug": true
+  }
+}
