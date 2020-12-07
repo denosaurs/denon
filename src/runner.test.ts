@@ -5,7 +5,7 @@ import { assertEquals } from "../test_deps.ts";
 
 Deno.test({
   name: "runner | build | oneliner",
-  async fn(): Promise<void> {
+  fn(): void {
     const config: RunnerConfig = {
       scripts: {
         "oneliner-1": "helloworld.ts",
@@ -33,7 +33,7 @@ Deno.test({
 
 Deno.test({
   name: "runner | build | compact",
-  async fn(): Promise<void> {
+  fn(): void {
     const config: RunnerConfig = {
       scripts: {
         "compact-1": {
@@ -55,7 +55,7 @@ Deno.test({
 
 Deno.test({
   name: "runner | build | extended",
-  async fn(): Promise<void> {
+  fn(): void {
     const config: RunnerConfig = {
       scripts: {
         "extended-1": {

@@ -151,13 +151,13 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         Deno.Signal.SIGTERM,
         Deno.Signal.SIGTSTP,
       ];
-      signs.forEach((s) => {
+      await Promise.all(signs.map((s) => {
         (async () => {
           await Deno.signal(s);
           this.killAll();
           Deno.exit(0);
         })();
-      });
+      }));
     }
   }
 
