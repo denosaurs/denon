@@ -6,7 +6,7 @@ import { Watcher, WatcherConfig } from "./watcher.ts";
 
 Deno.test({
   name: "watcher | exts",
-  async fn(): Promise<void> {
+  fn(): void {
     const config: WatcherConfig = {
       paths: [Deno.cwd()],
       interval: 350,
@@ -51,7 +51,7 @@ Deno.test({
 
 Deno.test({
   name: "watcher | skip",
-  async fn(): Promise<void> {
+  fn(): void {
     const config: WatcherConfig = {
       paths: [Deno.cwd()],
       interval: 350,
