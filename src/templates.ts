@@ -12,7 +12,7 @@ export interface Template {
 const json: Template = {
   filename: "scripts.json",
   source: String.raw`{
-  "$schema": "https://deno.land/x/denon/schema.json",
+  "$schema": "https://deno.land/x/denon@${VERSION}/schema.json",
   "scripts": {
     "start": {
       "cmd": "deno run app.ts",
