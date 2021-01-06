@@ -57,13 +57,13 @@ To install denon simply enter the following into a terminal:
 ### deno.land
 
 ```bash
-deno install -qAf --unstable https://deno.land/x/denon@2.4.5/denon.ts
+deno install -qAf --unstable https://deno.land/x/denon/denon.ts
 ```
 
 ### nest.land
 
 ```bash
-deno install -qAf --unstable https://x.nest.land/denon@2.4.5/denon.ts
+deno install -qAf --unstable https://x.nest.land/denon/denon.ts
 ```
 
 > ⚠️ Make sure you are using `deno` version `^1.4.0` to install this executable. You can upgrade running `deno upgrade`.
