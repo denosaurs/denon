@@ -89,6 +89,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       const p = pcopy[id];
       if (Deno.build.os === "windows") {
         logger.debug(`closing (windows) process with pid ${p.pid}`);
+        p.kill(9);
         p.close();
       } else {
         logger.debug(`killing (unix) process with pid ${p.pid}`);
