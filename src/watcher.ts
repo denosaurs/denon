@@ -42,7 +42,7 @@ export class Watcher implements AsyncIterable<FileEvent[]> {
   #signal = deferred();
   #changes: { [key: string]: FileAction[] } = {};
   #paths: string[] = [Deno.cwd()];
-  #interval: number = 350;
+  #interval = 350;
   #exts?: string[] = undefined;
   #match?: RegExp[] = undefined;
   #skip?: RegExp[] = undefined;

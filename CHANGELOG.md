@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.4.6] - 2021-01-06
+
+### Bug Fixes
+
+- remove unused , update ([`39ba36c`])
+- add version for schema in `script.json` ([`c3b3d46`])
+
 ## [2.4.5] - 2020-11-21
 
 ### Features
@@ -231,6 +238,9 @@ and this project adheres to [Semantic Versioning].
 
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
+[2.4.6]: https://github.com/denosaurs/denon/compare/2.4.5...2.4.6
+[`39ba36c`]: https://github.com/denosaurs/denon/commit/39ba36c32937a55a3bdce32f06a079b9a41c6e46
+[`c3b3d46`]: https://github.com/denosaurs/denon/commit/c3b3d46d9d95a1368d98540fd0b7184f1745f2f4
 [2.4.5]: https://github.com/denosaurs/denon/compare/2.4.4...2.4.5
 [`6f45cb3`]: https://github.com/denosaurs/denon/commit/6f45cb3fb63f3e661a55bcaccfd75b5a6e37bd24
 [`0cceaaa`]: https://github.com/denosaurs/denon/commit/0cceaaa8238733aad5346ab9d372d8ce96d78cd7
