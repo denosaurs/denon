@@ -14,20 +14,20 @@ export {
   reset,
   setColorEnabled,
   yellow,
-} from "https://deno.land/std@0.83.0/fmt/colors.ts";
+} from "https://deno.land/std@0.84.0/fmt/colors.ts";
 
 // configuration reading
 export {
   exists,
   existsSync,
   walk, // ... and one type of file monitoring
-} from "https://deno.land/std@0.83.0/fs/mod.ts";
+} from "https://deno.land/std@0.84.0/fs/mod.ts";
 
 // configuration parsing (YAML)
 export {
   JSON_SCHEMA,
   parse as parseYaml,
-} from "https://deno.land/std@0.83.0/encoding/yaml.ts";
+} from "https://deno.land/std@0.84.0/encoding/yaml.ts";
 
 // file watching and directory matching
 export {
@@ -36,10 +36,10 @@ export {
   globToRegExp,
   relative,
   resolve,
-} from "https://deno.land/std@0.83.0/path/mod.ts";
+} from "https://deno.land/std@0.84.0/path/mod.ts";
 
 // event control
-export { deferred, delay } from "https://deno.land/std@0.83.0/async/mod.ts";
+export { deferred, delay } from "https://deno.land/std@0.84.0/async/mod.ts";
 
 // permission management
-export { grant } from "https://deno.land/std@0.83.0/permissions/mod.ts";
+export { grant } from "https://deno.land/std@0.84.0/permissions/mod.ts";
