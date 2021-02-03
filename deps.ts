@@ -1,7 +1,7 @@
 // Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
 
 // provide better logging, see src/log.ts
-export * as log from "https://deno.land/x/branch@0.1.4/mod.ts";
+export * as log from "https://deno.land/x/branch@0.1.5/mod.ts";
 
 // colors for a pretty cli
 export {
@@ -14,14 +14,14 @@ export {
   reset,
   setColorEnabled,
   yellow,
-} from "https://deno.land/std@0.84.0/fmt/colors.ts";
+} from "https://deno.land/std@0.85.0/fmt/colors.ts";
 
 // configuration reading
 export {
   exists,
   existsSync,
   walk, // ... and one type of file monitoring
-} from "https://deno.land/std@0.84.0/fs/mod.ts";
+} from "https://deno.land/std@0.85.0/fs/mod.ts";
 
 // configuration parsing (YAML)
 export {
@@ -36,10 +36,10 @@ export {
   globToRegExp,
   relative,
   resolve,
-} from "https://deno.land/std@0.84.0/path/mod.ts";
+} from "https://deno.land/std@0.85.0/path/mod.ts";
 
 // event control
-export { deferred, delay } from "https://deno.land/std@0.84.0/async/mod.ts";
+export { deferred, delay } from "https://deno.land/std@0.85.0/async/mod.ts";
 
 // permission management
-export { grant } from "https://deno.land/std@0.84.0/permissions/mod.ts";
+export { grant } from "https://deno.land/std@0.85.0/permissions/mod.ts";
