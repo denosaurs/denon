@@ -2,18 +2,12 @@
 title: Installation
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 To install denon simply enter the following into a terminal:
 
-<Tabs
-groupId="registry"
-defaultValue="official"
-values={[
-{label: 'deno.land', value: 'official'},
-{label: 'nest.land', value: 'nest'},
-]}>
+<Tabs groupId="registry" defaultValue="official" values={[ {label: 'deno.land',
+value: 'official'}, {label: 'nest.land', value: 'nest'}, ]}>
 <TabItem value="official">
 
 ```bash

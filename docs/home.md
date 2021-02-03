@@ -10,10 +10,13 @@ title: Introduction
 [![discord](https://img.shields.io/discord/713043818806509608?logo=discord&logoColor=white)](https://discord.gg/shHG8vg)
 [![license](https://img.shields.io/github/license/denosaurs/denon?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAEFCu8CAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAHKADAAQAAAABAAAAHAAAAABHddaYAAAC5UlEQVRIDd2WPWtVQRCGby5pVASLiGghQSxyG8Ui2KWwCfkH9olY2JneQkiR0oCIxH/gB+qVFDYBIWBAbAIRSbCRpLXwIxLiPT7vnNm9e87ZxJtUwYH3zO47Mzv7Mbv3tlo5KYriGtgAJ81OY1ENdG/YI4boFEOI911BXgY/pdtwGuAtXpvmB1tAXHDnUolE5urkPOQo6MqA3pXWmJJL4Bb4rQ7yEYfxsjnIF29NJIoNC6e5fxOL/qN+9KCz7AaLpN8zI415N2i2EptpGrkRIjGeAuvR6IY1hSFLFUOug9Ms2M7ZxIUNytm1mnME186sdI2BOCwAyQMg54ugzSmKmwbPwSbolKH+hbAtQdsOoF+BsF3anUVwBdiOWRidFZDKTTrKEAJTm3GVrGkHzw/uPZbyx7DNNLfB7KGmRsCcr+/gjaiPSpAOTyX9qG4L/XBDdWXDDf1M+wtQ5fwCOtcb4Dto6VpLmzByB6gqdHbTItGSJdAGqibJQhmRfCF7IN4beSF2G9CqnGXQrxofXU+EykllNeoczRgYytDKMubDIRK0g5MF8rE69cGu0u9nlUcqaUZ41W0qK2nGcSzr4D2wV9U9wxp1rnpxn8agXAOHMQ9cy9kbHM7ngY4gFb03TxrO/yfBUifTtXt78jCrjY/jgEFnMn45LuNWUtknuu7NSm7D3QEn3HbatV1Q2jvgIRf1sfODKQaeymxZoMLlTqsq1LF+HvaTqQOzEzUCfni0/eNIA+DfuE3KEtbsegckGmMktTXacnBHPVe687ugkpT+axCkkhBSyRSjWI2xf1KMMVmYiQdWksK9BEFiQoiYLIlvJA3/zeTzCejP0RbB6YPbhZuB+0pR3KcdX0LaJtju0ZgBL8Bd+sbz2QIaU2OfBX3BaQLsgZysQtrk0M8Sh1A0w3DyyYnGnAiZ4gqZ/TvI2A8OGd1YIbF7+F3P+B6dYpYdsJNZgrjO0UdOIhmom0nwL0pnfnzkL1803jAoKhvyAAAAAElFTkSuQmCC)](https://github.com/denosaurs/denon/blob/master/LICENSE)
 
-denon is the [deno](https://deno.land/) replacement for [nodemon](https://nodemon.io/)
-providing a feature packed, highly configurable and easy to use experience.
+denon is the [deno](https://deno.land/) replacement for
+[nodemon](https://nodemon.io/) providing a feature packed, highly configurable
+and easy to use experience.
 
-denon does **not** require _any_ additional changes to your code or method of development. `denon` is a replacement wrapper for `deno`. To use `denon`,replace the word `deno` on the command line when executing your script.
+denon does **not** require _any_ additional changes to your code or method of
+development. `denon` is a replacement wrapper for `deno`. To use `denon`,replace
+the word `deno` on the command line when executing your script.
 
 ## Features
 
@@ -22,6 +25,8 @@ Denon provides most of the features you would expect of a file watcher and more.
 - Automatically restart your deno projects
 - Drop-in replacement for `deno` executable
 - Extensive configuration options with script support
-- Configurable file watcher with support for filesystem events and directory walking
-- Ignoring specific files or directories with [glob](<https://en.wikipedia.org/wiki/Glob_(programming)>) patterns
+- Configurable file watcher with support for filesystem events and directory
+  walking
+- Ignoring specific files or directories with
+  [glob](https://en.wikipedia.org/wiki/Glob_(programming)) patterns
 - Not limited to deno projects with a powerful script configuration

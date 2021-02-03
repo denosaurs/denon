@@ -2,12 +2,14 @@
 title: Templates
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
-**Denon** is designed to be simple but also extremely configurable to fit your project needs. It supports `JSON`, `YAML`, and `Typescript` configuration file. Example in this page are provided in all three formats.
+**Denon** is designed to be simple but also extremely configurable to fit your
+project needs. It supports `JSON`, `YAML`, and `Typescript` configuration file.
+Example in this page are provided in all three formats.
 
-to create a basic configuration in the root directory of your project you can run:
+to create a basic configuration in the root directory of your project you can
+run:
 
 ```
 denon --init
@@ -23,21 +25,17 @@ this will create a basic `denon.json` file:
 }
 ```
 
-you can also initialize from a custom template
-(see the [`templates`](https://github.com/denosaurs/denon/tree/master/templates) folder for all the available templates)
+you can also initialize from a custom template (see the
+[`templates`](https://github.com/denosaurs/denon/tree/master/templates) folder
+for all the available templates)
 
 ```
 denon --init <template>
 ```
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="template for denon.json"

@@ -28,10 +28,13 @@
   <hr>
 </p>
 
-denon is the [deno](https://deno.land/) replacement for [nodemon](https://nodemon.io/)
-providing a feature packed, highly configurable and easy to use experience.
+denon is the [deno](https://deno.land/) replacement for
+[nodemon](https://nodemon.io/) providing a feature packed, highly configurable
+and easy to use experience.
 
-denon does **not** require _any_ additional changes to your code or method of development. `denon` is a replacement wrapper for `deno`. To use `denon`,replace the word `deno` on the command line when executing your script.
+denon does **not** require _any_ additional changes to your code or method of
+development. `denon` is a replacement wrapper for `deno`. To use `denon`,replace
+the word `deno` on the command line when executing your script.
 
 <p align="center">
 	<br>
@@ -46,8 +49,10 @@ Denon provides most of the features you would expect of a file watcher and more.
 - Automatically restart your deno projects
 - Drop-in replacement for `deno` executable
 - Extensive configuration options with script support
-- Configurable file watcher with support for filesystem events and directory walking
-- Ignoring specific files or directories with [glob](<https://en.wikipedia.org/wiki/Glob_(programming)>) patterns
+- Configurable file watcher with support for filesystem events and directory
+  walking
+- Ignoring specific files or directories with
+  [glob](https://en.wikipedia.org/wiki/Glob_(programming)) patterns
 - Not limited to deno projects with a powerful script configuration
 
 ## Install
@@ -66,11 +71,13 @@ deno install -qAf --unstable https://deno.land/x/denon/denon.ts
 deno install -qAf --unstable https://x.nest.land/denon/denon.ts
 ```
 
-> ⚠️ Make sure you are using `deno` version `^1.4.0` to install this executable. You can upgrade running `deno upgrade`.
+> ⚠️ Make sure you are using `deno` version `^1.4.0` to install this executable.
+> You can upgrade running `deno upgrade`.
 
 ## Usage
 
-denon wraps your application, so you can pass all the arguments you would normally pass to your app:
+denon wraps your application, so you can pass all the arguments you would
+normally pass to your app:
 
 ```bash
 denon run app.ts
@@ -108,9 +115,12 @@ denon --help
 
 ## Configuration
 
-denon is designed to be simple but also extremely configurable to fit your project needs. It supports both json and yaml for the configuration file. The configuration options in yaml is the same as json making it compatible.
+denon is designed to be simple but also extremely configurable to fit your
+project needs. It supports both json and yaml for the configuration file. The
+configuration options in yaml is the same as json making it compatible.
 
-to create a basic configuration in the root directory of your project file you can run:
+to create a basic configuration in the root directory of your project file you
+can run:
 
 ```bash
 denon --init
@@ -126,8 +136,9 @@ this will create a basic `scripts.json` file:
 }
 ```
 
-you can also initialize from a custom template
-(see [src/templates.ts](https://github.com/denosaurs/denon/tree/master/src/templates.ts) file for all the available templates)
+you can also initialize from a custom template (see
+[src/templates.ts](https://github.com/denosaurs/denon/tree/master/src/templates.ts)
+file for all the available templates)
 
 ```bash
 denon --init typescript
@@ -153,7 +164,8 @@ Denon configuration can be provided as a JSON file:
 
 #### JSON Schema
 
-You can use a JSON schema to have type checking on your configuration. Simply add:
+You can use a JSON schema to have type checking on your configuration. Simply
+add:
 
 ```jsonc
 {
@@ -217,7 +229,9 @@ export default config;
 
 ### Available options
 
-denon takes inspiration from the awesome [velociraptor](https://github.com/umbopepato/velociraptor) module in the way it handles scripts.
+denon takes inspiration from the awesome
+[velociraptor](https://github.com/umbopepato/velociraptor) module in the way it
+handles scripts.
 
 #### Scripts
 
@@ -262,11 +276,13 @@ Scripts can also be defined by a complex object:
 
 ### Script Options
 
-Options can be script specific or be declared as global in the root of the config file.
+Options can be script specific or be declared as global in the root of the
+config file.
 
 #### Environment variables
 
-Environment variables can be provided as an object and are passed directly to the child process.
+Environment variables can be provided as an object and are passed directly to
+the child process.
 
 ```jsonc
 {
@@ -290,8 +306,9 @@ Environment variables can be provided as an object and are passed directly to th
 
 #### Permissions
 
-Permission can be granted to child processes. You can provide specific permissions for each script,
-but you can also declare permissions globally, following the same format.
+Permission can be granted to child processes. You can provide specific
+permissions for each script, but you can also declare permissions globally,
+following the same format.
 
 ```jsonc
 {
@@ -330,8 +347,8 @@ but you can also declare permissions globally, following the same format.
 
 #### File watching
 
-While file watching is a core feature of `denon` you always have the option
-of disabling file watching and run a script only once:
+While file watching is a core feature of `denon` you always have the option of
+disabling file watching and run a script only once:
 
 ```jsonc
 {
@@ -353,7 +370,9 @@ of disabling file watching and run a script only once:
 
 #### Import Map
 
-Load import map file. Take a look a at the [official docs](https://deno.land/manual/linking_to_external_code/import_maps) for additional info.
+Load import map file. Take a look a at the
+[official docs](https://deno.land/manual/linking_to_external_code/import_maps)
+for additional info.
 
 > ⚠️ This feature in unstable in the current version of the deno executable.
 
@@ -406,7 +425,8 @@ Enable if the script is using unstable features of deno stdlib:
 
 #### Inspect and InspectBrk
 
-Activate inspector on `host:port`. If `inspectBrk` is used the executions breaks at the start of the user script:
+Activate inspector on `host:port`. If `inspectBrk` is used the executions breaks
+at the start of the user script:
 
 ```jsonc
 {
@@ -542,8 +562,8 @@ Huge thanks to all our amazing supporters :heart:
 
 - `Command not found error`
 
-  This probably means that the executable path of your os does not include
-  the `.deno/bin` directory, where denon will be installed.
+  This probably means that the executable path of your os does not include the
+  `.deno/bin` directory, where denon will be installed.
 
   To fix this you must update your `$PATH`:
 
@@ -551,11 +571,14 @@ Huge thanks to all our amazing supporters :heart:
   echo 'export PATH="$HOME/.deno/bin:$PATH"' >> ~/.bashrc
   ```
 
-  as mentioned in the [deno manual](https://deno.land/manual/tools/script_installer).
+  as mentioned in the
+  [deno manual](https://deno.land/manual/tools/script_installer).
 
 ### Contribution
 
-Pull request, issues and feedback are very welcome. Code style is formatted with `deno fmt` and commit messages are done following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) spec.
+Pull request, issues and feedback are very welcome. Code style is formatted with
+`deno fmt` and commit messages are done following
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) spec.
 
 ### Licence
 

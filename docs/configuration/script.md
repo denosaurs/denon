@@ -2,29 +2,24 @@
 title: Script Options
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
-:::info
-For the sake of brevity Typescript example omit the import for the `DenonConfig`:
+:::info For the sake of brevity Typescript example omit the import for the
+`DenonConfig`:
 
-`import { DenonConfig } from "https://deno.land/x/denon/mod.ts";`
-:::
+`import { DenonConfig } from "https://deno.land/x/denon/mod.ts";` :::
 
-**Denon** takes inspiration from the awesome [velociraptor](https://github.com/umbopepato/velociraptor) module in the way it handles scripts.
+**Denon** takes inspiration from the awesome
+[velociraptor](https://github.com/umbopepato/velociraptor) module in the way it
+handles scripts.
 
 ## Scripts
 
 Scripts are declared inside the `scripts` object and are identified by a name:
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -44,7 +39,6 @@ values={[
 <TabItem value="yaml">
 
 ```yml title="denon.yml"
-
 scripts:
   # they all resolve to `deno run app.ts` when you run `denon start`
   start: "app.ts"
@@ -52,8 +46,6 @@ scripts:
   start: "run app.ts"
   # OR
   start: "deno run app.ts"
-
-
 ```
 
 </TabItem>
@@ -77,14 +69,9 @@ export default <DenonConfig>{
 
 Scripts can also be defined by a complex object:
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -161,20 +148,17 @@ export default <DenonConfig>{
 
 ## Script Options
 
-Options can be script specific or be declared as global in the root of the config file.
+Options can be script specific or be declared as global in the root of the
+config file.
 
 ### Environment variables
 
-Environment variables can be provided as an object and are passed directly to the child process.
+Environment variables can be provided as an object and are passed directly to
+the child process.
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -240,17 +224,13 @@ export default <DenonConfig>{
 
 ### Permissions
 
-Permission can be granted to child processes. You can provide specific permissions for each script,
-but you can also declare permissions globally, following the same format.
+Permission can be granted to child processes. You can provide specific
+permissions for each script, but you can also declare permissions globally,
+following the same format.
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -291,7 +271,6 @@ values={[
 <TabItem value="yaml">
 
 ```yml title="denon.yml"
-
 # globally applied to all scripts
 # as object ...
 allow:
@@ -315,13 +294,6 @@ scripts:
     allow:
       - "run" # --allow-run
       - "net" # --allow -net
-
-
-
-
-
-
-
 ```
 
 </TabItem>
@@ -366,17 +338,12 @@ export default <DenonConfig>{
 
 ### File watching
 
-While file watching is a core feature of `denon` you always have the option
-of disabling file watching and run a script only once:
+While file watching is a core feature of `denon` you always have the option of
+disabling file watching and run a script only once:
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -439,20 +406,16 @@ export default <DenonConfig>{
 
 ### Import Map
 
-Load import map file. Take a look a at the [official docs](https://deno.land/manual/linking_to_external_code/import_maps) for additional info.
+Load import map file. Take a look a at the
+[official docs](https://deno.land/manual/linking_to_external_code/import_maps)
+for additional info.
 
-:::caution
-This feature in unstable in the current version of the deno executable.
-:::
+:::caution This feature in unstable in the current version of the deno
+executable. :::
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -502,14 +465,9 @@ export default <DenonConfig>{
 
 Load tsconfig.json configuration file:
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -559,14 +517,9 @@ export default <DenonConfig>{
 
 Enable if the script is using unstable features of deno runtime:
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -614,16 +567,12 @@ export default <DenonConfig>{
 
 ### Inspect and InspectBrk
 
-Activate inspector on `host:port`. If `inspectBrk` is used the executions breaks at the start of the user script:
+Activate inspector on `host:port`. If `inspectBrk` is used the executions breaks
+at the start of the user script:
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -645,7 +594,6 @@ values={[
 <TabItem value="yaml">
 
 ```yml title="denon.yml"
-
 scripts:
   cmd: deno run app.ts
   desc: Run the main server.
@@ -653,10 +601,6 @@ scripts:
   inspect: "127.0.0.1:9229",
   # OR
   inspectBrk: "127.0.0.1:9229"
-
-
-
-
 ```
 
 </TabItem>
@@ -684,14 +628,9 @@ export default <DenonConfig>{
 
 Check the specified lock file:
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -741,14 +680,9 @@ export default <DenonConfig>{
 
 Load certificate authority from PEM encoded file:
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -798,14 +732,9 @@ export default <DenonConfig>{
 
 Set log level: (possible values: `debug`, `info`)
 
-<Tabs
-groupId="configuration-format"
-defaultValue="json"
-values={[
-{label: 'JSON', value: 'json'},
-{label: 'YML', value: 'yaml'},
-{label: 'Typescript', value: 'typescript'},
-]}>
+<Tabs groupId="configuration-format" defaultValue="json" values={[ {label:
+'JSON', value: 'json'}, {label: 'YML', value: 'yaml'}, {label: 'Typescript',
+value: 'typescript'}, ]}>
 <TabItem value="json">
 
 ```json title="denon.json"
@@ -830,7 +759,6 @@ scripts:
   desc: Run the main server.
 
   log: "debug" # or "info"
-
 ```
 
 </TabItem>

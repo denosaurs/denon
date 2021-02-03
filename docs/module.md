@@ -2,6 +2,4 @@
 title: Importing Denon
 ---
 
-:::caution
-Work in Progress
-:::
+:::caution Work in Progress :::
