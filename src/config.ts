@@ -207,7 +207,7 @@ export async function writeConfigTemplate(template: Template): Promise<void> {
     logger.info(
       `\`${template.filename}\` created in current working directory`,
     );
-  } catch (e) {
+  } catch {
     logger.error(
       `\`${template.filename}\` cannot be saved in current working directory`,
     );

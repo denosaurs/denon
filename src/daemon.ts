@@ -109,7 +109,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       s = await process.status();
       process.close();
       logger.debug(`got status of process with pid ${process.pid}`);
-    } catch (error) {
+    } catch {
       logger.debug(`error getting status of process with pid ${process.pid}`);
     }
     const p = this.#processes[pid];
