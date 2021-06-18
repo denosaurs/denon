@@ -1,4 +1,4 @@
-// Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
+// Copyright 2020-2021 the denosaurs team. All rights reserved. MIT license.
 
 // provide better logging, see src/log.ts
 export * as log from "https://deno.land/x/branch@0.1.5/mod.ts";

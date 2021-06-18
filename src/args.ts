@@ -1,4 +1,4 @@
-// Copyright 2020-present the denosaurs team. All rights reserved. MIT license.
+// Copyright 2020-2021 the denosaurs team. All rights reserved. MIT license.
 
 /** Regex to test if string matches version format */
 const reVersion = /^v?[0-9]+\.[0-9]+\.[0-9]+$/;
