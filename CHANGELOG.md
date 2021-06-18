@@ -2,8 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog],
-and this project adheres to [Semantic Versioning].
+The format is based on [Keep a Changelog], and this project adheres to
+[Semantic Versioning].
 
 ## [2.4.7] - 2021-02-03
 
@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning].
 
 ### Bug Fixes
 
-- change *.* to **/*.* ([`201d7bc`])
+- change _._ to **/_._ ([`201d7bc`])
 
 ## [2.4.4] - 2020-10-10
 

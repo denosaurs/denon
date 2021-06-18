@@ -266,7 +266,6 @@ Scripts can also be defined by a complex object:
       // they are described in the next paragraph
       "allow": ["env", "write"],
       "unstable": true
-
       // running `denon start` will resolve in
       // deno run --allow-env --allow-write --unstable app.ts
     }
@@ -316,13 +315,13 @@ following the same format.
   // as object ...
   "allow": {
     "read": "/etc,/tmp", // --allow-read=/etc,/tmp
-    "env": true     // --allow-env
+    "env": true // --allow-env
   },
   // ... or as array
   "allow": [
     "run", // --allow-run
     "net" // --allow-net
-  ]
+  ],
 
   "scripts": {
     "start": {
@@ -333,7 +332,7 @@ following the same format.
       // as object ...
       "allow": {
         "read": "/etc,/tmp", // --allow-read=/etc,/tmp
-        "env": true     // --allow-env
+        "env": true // --allow-env
       },
       // ... or as array
       "allow": [
@@ -354,7 +353,7 @@ disabling file watching and run a script only once:
 {
   // globally applied to all scripts
   // now denon will essentialy be a script runner
-  "watch": false
+  "watch": false,
 
   "scripts": {
     "start": {
