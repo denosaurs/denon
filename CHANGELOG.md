@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], and this project adheres to
 [Semantic Versioning].
 
+## [2.4.9] - 2021-09-21
+
+### Bug Fixes
+
+- deno 1.14 support, signals ([`1a824a5`])
+
 ## [2.4.8] - 2021-06-18
 
 ## [2.4.7] - 2021-02-03
@@ -30,7 +36,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ### Bug Fixes
 
-- change _._ to **/_._ ([`201d7bc`])
+- change *.* to **/*.* ([`201d7bc`])
 
 ## [2.4.4] - 2020-10-10
 
@@ -246,6 +252,8 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
+[2.4.9]: https://github.com/denosaurs/denon/compare/2.4.8...2.4.9
+[`1a824a5`]: https://github.com/denosaurs/denon/commit/1a824a5611ef6e0c56309aa00d02c1961c353e77
 [2.4.8]: https://github.com/denosaurs/denon/compare/2.4.7...2.4.8
 [2.4.7]: https://github.com/denosaurs/denon/compare/2.4.6...2.4.7
 [`0776e6c`]: https://github.com/denosaurs/denon/commit/0776e6c58a2322c14b6e145b8d0f918fdd97c80e
