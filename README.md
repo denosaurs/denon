@@ -552,6 +552,13 @@ Huge thanks to all our amazing supporters :heart:
         <sub><b>Luca Casonato</b></sub>
       </a>
     </td>
+    <td align="center">
+      <a href="https://github.com/sant123">
+        <img src="https://avatars0.githubusercontent.com/u/7959437?s=200&u=5a9294123bdf7301054aacbc88fda275f72ad4cb&v=4" width="100px;" alt=""/>
+        <br/>
+        <sub><b>Santiago Aguilar Hernández</b></sub>
+      </a>
+    </td>
   </tr>
 </table>
 
