@@ -89,11 +89,11 @@ export class Daemon implements AsyncIterable<DenonEvent> {
       const p = pcopy[id];
       if (Deno.build.os === "windows") {
         logger.debug(`closing (windows) process with pid ${p.pid}`);
-        p.kill(9);
+        p.kill("SIGKILL");
         p.close();
       } else {
         logger.debug(`killing (unix) process with pid ${p.pid}`);
-        p.kill(9);
+        p.kill("SIGKILL");
       }
     }
   }
@@ -146,11 +146,11 @@ export class Daemon implements AsyncIterable<DenonEvent> {
 
   private async onExit(): Promise<void> {
     if (Deno.build.os !== "windows") {
-      const signs = [
-        Deno.Signal.SIGHUP,
-        Deno.Signal.SIGINT,
-        Deno.Signal.SIGTERM,
-        Deno.Signal.SIGTSTP,
+      const signs: Deno.Signal[] = [
+        "SIGHUP",
+        "SIGINT",
+        "SIGTERM",
+        "SIGTSTP",
       ];
       await Promise.all(signs.map((s) => {
         (async () => {
