@@ -144,7 +144,7 @@ export class Daemon implements AsyncIterable<DenonEvent> {
     }
   }
 
-  private async onExit(): Promise<void> {
+  private onExit(): void {
     if (Deno.build.os !== "windows") {
       const signs: Deno.Signal[] = [
         "SIGHUP",
@@ -152,13 +152,12 @@ export class Daemon implements AsyncIterable<DenonEvent> {
         "SIGTERM",
         "SIGTSTP",
       ];
-      await Promise.all(signs.map((s) => {
-        (async () => {
-          await Deno.signal(s);
+      signs.map((s) => {
+        Deno.addSignalListener(s, () => {
           this.killAll();
           Deno.exit(0);
-        })();
-      }));
+        });
+      });
     }
   }
 
