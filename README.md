@@ -553,10 +553,10 @@ Huge thanks to all our amazing supporters :heart:
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/sant123">
-        <img src="https://avatars0.githubusercontent.com/u/7959437?s=200&u=5a9294123bdf7301054aacbc88fda275f72ad4cb&v=4" width="100px;" alt=""/>
+      <a href="https://github.com/denoland">
+        <img src="https://avatars.githubusercontent.com/u/42048915?s=200&v=4" width="100px;" alt=""/>
         <br/>
-        <sub><b>Santiago Aguilar Hernández</b></sub>
+        <sub><b>Denoland</b></sub>
       </a>
     </td>
   </tr>
