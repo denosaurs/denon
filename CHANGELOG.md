@@ -36,7 +36,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ### Bug Fixes
 
-- change *.* to **/*.* ([`201d7bc`])
+- change _._ to **/_._ ([`201d7bc`])
 
 ## [2.4.4] - 2020-10-10
 
