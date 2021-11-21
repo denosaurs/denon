@@ -33,6 +33,9 @@ export const configs = [
   "scripts.config.ts",
   "denon.config.js",
   "scripts.config.js",
+
+  "scripts.ts",
+  "scripts.js",
 ];
 
 export const reConfig = new RegExp(
