@@ -153,7 +153,7 @@ export async function readConfig(
   config.watcher.paths.push(Deno.cwd());
 
   if (file) {
-    if (file.endsWith("config.js") || file.endsWith("config.ts")) {
+    if (file.endsWith(".js") || file.endsWith(".ts")) {
       const parsed = await importConfig(file);
       if (parsed) {
         config = merge(
