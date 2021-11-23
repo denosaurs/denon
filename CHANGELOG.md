@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], and this project adheres to
 [Semantic Versioning].
 
+## [2.4.10] - 2021-11-18
+
 ## [2.4.9] - 2021-09-21
 
 ### Bug Fixes
@@ -252,6 +254,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
+[2.4.10]: https://github.com/denosaurs/denon/compare/2.4.9...2.4.10
 [2.4.9]: https://github.com/denosaurs/denon/compare/2.4.8...2.4.9
 [`1a824a5`]: https://github.com/denosaurs/denon/commit/1a824a5611ef6e0c56309aa00d02c1961c353e77
 [2.4.8]: https://github.com/denosaurs/denon/compare/2.4.7...2.4.8
