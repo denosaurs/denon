@@ -66,7 +66,7 @@ Deno.test({
 
     const values = {
       "--cert": "secure.pem",
-      "--importmap": "cool.code.json",
+      "--import-map": "cool.code.json",
       "--lock": "lock.json",
       "--log-level": "info",
       "--config": "tsconfig.json",

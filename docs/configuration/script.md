@@ -425,7 +425,7 @@ value: 'typescript'}, ]}>
       "cmd": "deno run app.ts",
       "desc": "Run the main server.",
 
-      "importmap": "importmap.json"
+      "importMap": "importmap.json"
     }
   }
 }
@@ -439,7 +439,7 @@ scripts:
   cmd: deno run app.ts
   desc: Run the main server.
 
-  importmap: "importmap.json"
+  importMap: "importmap.json"
 ```
 
 </TabItem>
@@ -452,7 +452,7 @@ export default <DenonConfig>{
       cmd: "deno run app.ts",
       desc: "Run the main server.",
 
-      importmap: "importmap.json",
+      importMap: "importmap.json",
     },
   },
 };

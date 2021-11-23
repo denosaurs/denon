@@ -65,7 +65,7 @@
           "description": "Permissions that are granted to the script.",
           "$ref": "#/definitions/flags"
         },
-        "importmap": {
+        "importMap": {
           "description": "Load import map file.",
           "type": "string",
           "default": "importmap.json"
