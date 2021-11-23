@@ -16,7 +16,7 @@
     <img alt="Denon Releases" src="https://img.shields.io/github/v/release/denosaurs/denon?logo=github" />
   </a>
   <a href="https://github.com/denoland/deno">
-    <img alt="Denon Supported Version" src="https://img.shields.io/badge/deno-^1.4.0-informational?logo=deno" />
+    <img alt="Denon Supported Version" src="https://img.shields.io/badge/deno-^1.6.0-informational?logo=deno" />
   </a>
   <a href="https://discord.gg/shHG8vg">
     <img alt="Denon Chat" src="https://img.shields.io/discord/713043818806509608?logo=discord&logoColor=white" />
@@ -71,7 +71,7 @@ deno install -qAf --unstable https://deno.land/x/denon/denon.ts
 deno install -qAf --unstable https://x.nest.land/denon/denon.ts
 ```
 
-> ⚠️ Make sure you are using `deno` version `^1.4.0` to install this executable.
+> ⚠️ Make sure you are using `deno` version `^1.6.0` to install this executable.
 > You can upgrade running `deno upgrade`.
 
 ## Usage
@@ -553,10 +553,10 @@ Huge thanks to all our amazing supporters :heart:
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/sant123">
-        <img src="https://avatars0.githubusercontent.com/u/7959437?s=200&u=5a9294123bdf7301054aacbc88fda275f72ad4cb&v=4" width="100px;" alt=""/>
+      <a href="https://github.com/denoland">
+        <img src="https://avatars.githubusercontent.com/u/42048915?s=200&v=4" width="100px;" alt=""/>
         <br/>
-        <sub><b>Santiago Aguilar Hernández</b></sub>
+        <sub><b>Denoland</b></sub>
       </a>
     </td>
   </tr>
