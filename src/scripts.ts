@@ -62,11 +62,11 @@ export interface ScriptOptions {
   /** A list of boolean `--allow-*` deno cli options or
    * a map of option names to values */
   allow?: string[] | FlagsObject | "all";
-  /** The path to an importmap json file,
-   * passed to deno cli's `--importmap` option.
+  /** The path to an import map json file,
+   * passed to deno cli's `--import-map` option.
    *
    * **Note** This currently requires the `--unstable` flag */
-  importmap?: string;
+  importMap?: string;
   /** The path to a tsconfig json file,
    * passed to deno cli's `--tsconfig` option. */
   tsconfig?: string;
@@ -120,9 +120,9 @@ export function buildFlags(options: ScriptOptions): string[] {
       });
     }
   }
-  if (options.importmap) {
-    flags.push("--importmap");
-    flags.push(options.importmap);
+  if (options.importMap) {
+    flags.push("--import-map");
+    flags.push(options.importMap);
   }
   if (options.lock) {
     flags.push("--lock");
