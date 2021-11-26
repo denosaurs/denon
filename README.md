@@ -382,7 +382,7 @@ for additional info.
       "cmd": "deno run app.ts",
       "desc": "Run the main server.",
 
-      "importmap": "importmap.json"
+      "importMap": "importmap.json"
     }
   }
 }

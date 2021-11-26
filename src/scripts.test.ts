@@ -13,7 +13,7 @@ Deno.test({
       env: {
         SECRET: "123", // not going to show up
       },
-      importmap: "cool.code.json",
+      importMap: "cool.code.json",
       inspect: "127.0.0.1:4321",
       inspectBrk: "127.0.0.1:1234",
       lock: "lock.json",
@@ -66,7 +66,7 @@ Deno.test({
 
     const values = {
       "--cert": "secure.pem",
-      "--importmap": "cool.code.json",
+      "--import-map": "cool.code.json",
       "--lock": "lock.json",
       "--log-level": "info",
       "--config": "tsconfig.json",
