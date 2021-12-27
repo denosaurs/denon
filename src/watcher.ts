@@ -6,7 +6,7 @@ const logger = log.create("path");
 
 /** Represents a change in the filesystem.
  * Should reflect the Deno.FsEvent. */
-type FileAction = "any" | "access" | "create" | "modify" | "remove";
+type FileAction = "any" | "access" | "create" | "modify" | "remove" | "other";
 
 /** A file that was changed, created or removed */
 export interface FileEvent {
